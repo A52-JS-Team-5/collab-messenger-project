@@ -3,7 +3,7 @@ import AppContext from "../../context/AuthContext.js";
 import { checkEmailExists, createUserHandle, getUserByHandle } from "../../services/users.services.js";
 import { registerUser } from "../../services/auth.services.js";
 import { useNavigate } from 'react-router-dom';
-import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGHT, MAX_USERNAME_LENGTH, MIN_NAME_LENGTH, MAX_NAME_LENGTH } from "../../common/constants.js";
+import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_NAME_LENGTH, MAX_NAME_LENGTH } from "../../common/constants.js";
 import { isEmailValid, isPhoneNumberValid } from "../../common/helpers.js";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -50,8 +50,8 @@ const Register = () => {
 
     if (!values.handle) {
       errors.handle = 'Username is required.';
-    } else if (values.handle.length < MIN_USERNAME_LENGHT || values.handle.length > MAX_USERNAME_LENGTH) {
-      errors.handle = `Username must be between ${MIN_USERNAME_LENGHT} and ${MAX_USERNAME_LENGTH} symbols.`;
+    } else if (values.handle.length < MIN_USERNAME_LENGTH || values.handle.length > MAX_USERNAME_LENGTH) {
+      errors.handle = `Username must be between ${MIN_USERNAME_LENGTH} and ${MAX_USERNAME_LENGTH} symbols.`;
     }
 
     if (!values.password || values.password.length < MIN_PASSWORD_LENGTH) {
