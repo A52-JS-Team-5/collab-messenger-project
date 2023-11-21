@@ -1,0 +1,54 @@
+.avatar {
+  vertical-align: middle;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  border-width: 2px;
+  border-color: gray;
+  border-style: solid;
+}
+
+.update-picture {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  border-radius: 8px;
+  border: 1px solid #000;
+}
+
+.picture-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.picture-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.picture-intro h2 {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 900;
+  text-align: left;
+}
+
+.picture-intro p {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  text-align: left;
+}
+
+.picture-form-control {
+  display: flex;
+  gap: 32px;
+  align-self: stretch;
+}
