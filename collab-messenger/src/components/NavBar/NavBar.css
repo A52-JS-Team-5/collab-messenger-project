@@ -1,0 +1,40 @@
+.navigation-menu {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#iconLogo:hover {
+  cursor: pointer;
+}
+
+#navbar {
+  border: 1px solid #eaeaea;
+  background-color: #fdfdfd;
+}
+
+#post-button {
+  background-color: #FFE600;
+  color: black;
+  border: none;
+}
+
+#post-button:hover {
+  color: #FFE600;
+  background-color: black;
+  border: none;
+}
+
+#search-button {
+  background-color: black;
+  color: #FFE600;
+  border: none;
+}
+
+#search-button:hover {
+  color: white;
+}
+
+#main-posts-search {
+  background-color: white;
+}
