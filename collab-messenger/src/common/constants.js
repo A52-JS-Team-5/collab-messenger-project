@@ -1,6 +1,6 @@
 export const ZERO = 0;
 
-export const MIN_USERNAME_LENGHT = 5;
+export const MIN_USERNAME_LENGTH = 5;
 
 export const MAX_USERNAME_LENGTH = 35;
 
@@ -10,7 +10,7 @@ export const MIN_NAME_LENGTH = 1;
 
 export const MAX_NAME_LENGTH = 32;
 
-export const MIN_CHANNEL_NAME_LENGTH =3;
+export const MIN_CHANNEL_NAME_LENGTH = 3;
 
 export const MAX_CHANNEL_NAME_LENGTH = 40;
 
