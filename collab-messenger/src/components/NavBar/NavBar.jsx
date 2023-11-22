@@ -2,14 +2,15 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import AppContext from '../../context/AuthContext';
+// import { useContext } from 'react';
+// import AppContext from '../../context/AuthContext';
 import './NavBar.css';
+import icon from '/icon.png'
 
 export default function NavBar({ user, onLogout, loggedUserHandle }) {
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const userData = useContext(AppContext);
+  // const userData = useContext(AppContext);
   const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
 
   const handleClick = () => {
@@ -34,27 +35,30 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
     }
   };
 
-  const handleSearch = () => {
-    navigate('/search-results', { state: { searchTerm: searchTerm } });
-    setSearchTerm('');
-  }
+  // const handleSearch = () => {
+  //   navigate('/search-results', { state: { searchTerm: searchTerm } });
+  //   setSearchTerm('');
+  // }
 
-  const handleEnterKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch()
-      setSearchTerm('');
-    }
-  };
+  // const handleEnterKeyPress = (e) => {
+  //   if (e.key === 'Enter') {
+  //     handleSearch()
+  //     setSearchTerm('');
+  //   }
+  // };
 
   return (
     <nav className='sticky top-4 z-[50]'>
       <div id='navbar' className="navbar rounded-xl flex flex-row shadow-lg">
-        <div className='basis-2/4 gap-2 search justify-center'>
+        <div className="basis-1/4">
+          <img src={icon} className='max-h-14' id='icon' alt="Chatter Logo" onClick={() => { navigate("/") }} />
+        </div>
+        {/* <div className='basis-2/4 gap-2 search justify-center'>
           <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
             onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl' placeholder="What are you searching for today?" />
           <button onClick={handleSearch} className='btn btn-outline' id='search-button'><i className="fa-solid fa-magnifying-glass"></i></button>
-        </div>
-        <div className='basis-1/4 justify-end hidden 2xl:flex'>
+        </div> */}
+        <div className='basis-full justify-end hidden 2xl:flex'>
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
               <li><Link to='/'>Home</Link></li>
@@ -79,11 +83,11 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
           )}
         </div>
         {/*Mobile Nav*/}
-        <div className='basis-1/4 justify-end hidden max-2xl:flex'>
+        <div className='basis-full justify-end hidden max-2xl:flex'>
           <div className='flex flex-row gap-0.5 justify-end'>
             <input id="drawer" type="checkbox" className="drawer-toggle drawer-checkbox" />
             <div className="drawer-content">
-              <label htmlFor="drawer" className="drawer-button btn btn-ghost m-1"><i className="fa-solid fa-bars fa-2xl"></i></label>
+              <label htmlFor="drawer" className="drawer-button btn btn-primary m-1"><i className="fa-solid fa-bars fa-2xl"></i></label>
             </div>
             <div className="drawer-side">
               <label htmlFor="drawer" aria-label="close sidebar" className="drawer-overlay"></label>
