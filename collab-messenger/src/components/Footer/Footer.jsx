@@ -18,11 +18,11 @@ export default function Footer() {
   
   return (
     <div className="bottom-0">
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-col md:flex-row md:items-center md:justify-between'>
         <div className="logo">
           <img src={icon} className='w-10' alt="Chatter logo" />
         </div>
-        <div className='pl-14 flex flex-rol items-center text-black space-x-4'>
+        <div className='pl-14 flex flex-col md:flex-row md:items-center text-black space-y-4 md:space-y-0 md:space-x-4'>
           <ul onClick={handleLinkClick}><Link to='/'>Home</Link></ul>
           <ul onClick={handleLinkClick}><Link to='/about'>About</Link></ul>
           <ul onClick={handleLinkClick}><Link to='/login'>Login</Link></ul>
@@ -39,7 +39,7 @@ export default function Footer() {
       <br />
       <hr className="text-black"/>
       <br />
-      <div className='text-black flex space-x-4 items-center justify-center'>
+      <div className='text-black flex flex-col md:flex-row md:items-center md:justify-center space-y-2 md:space-y-0 md:space-x-4'>
         <p className="text-black">&copy; Assemble 2023 - All rights reserved</p>
         {/* to add onClick events for the respective pages */}
         <p>Privacy Policy</p> 
