@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import EditUserProfile from './views/EditUserProfile/EditUserProfile';
 import Footer from './components/Footer/Footer';
 import PageNotFound from './views/PageNotFound/PageNotFound';
+import Faqs from './views/FAQs/Faqs'
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -87,6 +88,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/about" element={<About />} />
+            <Route path="/faq" element={<Faqs />} />
             <Route path="/users/:userHandle" element={<UserProfile />} />
             <Route path="/users/:userHandle/edit" element={<EditUserProfile loggedUser={user}/>} />
             <Route path='*' element={<PageNotFound />}/>
