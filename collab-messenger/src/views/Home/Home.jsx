@@ -99,22 +99,6 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="hero my-8 bg-grey">
-        <div className="hero-content flex-col w-full">
-          <div className='w-full'>
-            <div className='card bg-base-100 flex-col md:flex-row items-center justify-between'>
-              <div className='text md:w-2/3 p-4'>
-                <h2 className='text-left'>Medium length heading goes here</h2>
-                <p className='text-left'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
-              </div>
-            <div className='flex items-center justify-center md:justify-end md:w-1/3 p-4 md:pl-0 md:pr-4'>
-              <button className="bg-pink text-black mr-2" onClick={() => navigate('/register')}>Register</button>
-              <button className="bg-darker-blue text-white" onClick={() => navigate('/login')}>Login</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
   )
 }
