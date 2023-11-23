@@ -76,8 +76,9 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
                 </div>
               </label>
               <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52">
-                <li onClick={handleClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>
-                <li onClick={handleClick}><Link to={`/users/${loggedUserHandle}/edit`}>Edit Profile</Link></li>
+                {/*<li onClick={handleClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>
+                <li onClick={handleClick}><Link to={`/users/${loggedUserHandle}/edit`}>Edit Profile</Link></li>*/}
+                <li onClick={handleClick}><Link to={`/app/insights`}>Go to App</Link></li>
                 <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
               </ul>
             </div>
@@ -99,8 +100,9 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
                 <li><Link to='/faq' onClick={handleLinkClick}>FAQs</Link></li>
                 {user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
                 {user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
-                {user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>}
-                {user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to={`/users/${loggedUserHandle}/edit`}>Edit Profile</Link></li>}
+                {/*user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>}
+                {user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to={`/users/${loggedUserHandle}/edit`}>Edit Profile</Link></li>*/}
+                <li onClick={handleClick}><Link to={`/app/insights`}>Go to App</Link></li>
                 {user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout}>Logout</Link></li>}
               </ul>
             </div>
@@ -116,4 +118,3 @@ NavBar.propTypes = {
   onLogout: PropTypes.func,
   loggedUserHandle: PropTypes.string,
 };
-
