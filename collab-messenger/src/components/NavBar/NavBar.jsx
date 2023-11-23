@@ -63,6 +63,7 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
             <ul className="menu menu-horizontal px-1">
               <li><Link to='/'>Home</Link></li>
               <li><Link to='/about'>About</Link></li>
+              <li><Link to='/faq'>FAQs</Link></li>
               {user === null && <li><Link to='/register'>Register</Link></li>}
               {user === null && <li><Link to='/login'>Login</Link></li>}
             </ul>
@@ -95,6 +96,7 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
                 {/* Sidebar content here */}
                 <li onClick={handleLinkClick}><Link to='/'>Home</Link></li>
                 <li><Link to='/about' onClick={handleLinkClick}>About</Link></li>
+                <li><Link to='/faq' onClick={handleLinkClick}>FAQs</Link></li>
                 {user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
                 {user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
                 {user !== null && loggedUserHandle && <li onClick={handleLinkClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>}
