@@ -26,7 +26,7 @@ export const createUserHandle = (handle, uid, email, name, surname, phoneNumber)
     status: 'online',
     createdOn: Date.now(),
   })
-  .catch(e => console.log(e.message))
+    .catch(e => console.log(e.message))
 };
 
 export const getUserData = (uid) => {
@@ -61,10 +61,15 @@ const fromUsersDocument = (snapshot) => {
       email: user.email,
       handle: user.handle,
       createdOn: new Date(user.createdOn).toLocaleDateString(),
-      isAdmin: user.isAdmin,
-      likedPosts: user.likedPosts ? Object.keys(user.likedPosts) : [],
-      commentedPost: user.comments ? Object.keys(user.commentedPost) : [],
-      isBlocked: user.isBlocked
+      phoneNumber: user.phoneNumber,
+      photoURL: user.photoURL,
+      teamsOwner: user.teamsOwner ? Object.keys(user.teamsOwner) : [],
+      teamsMember: user.teamsMember ? Object.keys(user.teamsMember) : [],
+      channels: user.channels ? Object.keys(user.channels) : [],
+      chats: user.chats ? Object.keys(user.chats) : [],
+      messages: user.messages ? Object.keys(user.messages) : [],
+      status: user.status,
+      bio: user.bio ? user.bio : '',
     };
   });
 };
@@ -122,11 +127,11 @@ export const checkEmailExists = (email) => {
     })
     .catch(e => console.log(e.message));
 };
-
+/*
 export const changeAdminStatus = (userHandle, currentStatus) => {
   const updates = { isAdmin: !currentStatus };
   update(ref(db, `users/${userHandle}`), updates)
-    .catch((e) => console.log('Error in changing admin status', e.message)); 
+    .catch((e) => console.log('Error in changing admin status', e.message));
 }
 
 export const changeBlockedStatus = (userHandle, currentStatus) => {
@@ -134,7 +139,7 @@ export const changeBlockedStatus = (userHandle, currentStatus) => {
   update(ref(db, `users/${userHandle}`), updates)
     .catch((e) => console.log('Error in changing blocked status', e.message));
 }
-
+*/
 export const editUserProfile = (handle, updates) => {
   return update(ref(db, `users/${handle}`), updates)
     .then(() => {
@@ -191,3 +196,23 @@ export const sortNamesFromZToA = (allUsers) => [...allUsers].sort(descendingSort
 export const sortUsersByDate = (allUsers) => [...allUsers].sort(ascendingDateSort);
 
 export const sortUsersByDateDesc = (allUsers) => [...allUsers].sort(descendingDateSort);
+
+export const searchUsers = (query) => {
+  if (query!=='') {
+    return new Promise((resolve, reject) => {
+      // Fetch all users from the database
+      getAllUsers()
+        .then((allUsers) => {
+          // Filter users based on the search query
+          const filteredUsers = allUsers.filter(
+            (user) => user.handle.toLowerCase().includes(query.toLowerCase())
+          );
+
+          resolve(filteredUsers);
+        })
+        .catch((error) => {
+          reject(new Error('Error fetching users from the database: ' + error.message));
+        });
+    });
+  }
+};
