@@ -13,6 +13,9 @@ module.exports = {
       'darker-blue': '#0C12D7',
       pink: '#EE4FE8',
       black: '#000C1A',
+      lightBlue: '#D7E4F6',
+      blue30: '#B2D5FF',
+      pureWhite: '#FFFFFF',
     },
   },
   // eslint-disable-next-line no-undef
