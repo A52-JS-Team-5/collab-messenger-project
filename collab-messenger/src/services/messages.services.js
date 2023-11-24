@@ -24,6 +24,7 @@ export const createMessage = (content, userHandle, chatId) => {
     author: userHandle,
     createdOn: Date.now(),
     chatId: chatId,
+    reactions: []
   };
 
   return push(messagesRef, newMessage)
@@ -50,7 +51,7 @@ export const getMessageById = (messageId) => {
 };
 
 export const editMessage = (messageId, updates) => {
-  update(ref(db, `/messages/${messageId}`), updates)
+  return update(ref(db, `/messages/${messageId}`), updates)
     .catch((e) => {
       console.log('Error editing comment: ', e.message);
     });
