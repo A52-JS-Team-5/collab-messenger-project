@@ -180,7 +180,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editC
 
       <div className="chat-footer relative">
         {reactionValues?.length > 0 && 
-          <div className="dropdown dropdown-hover dropdown-top">
+          <div className={`dropdown dropdown-hover ${messageClass === 'chat-end' ? 'dropdown-left' : 'dropdown-right'} dropdown-end`}>
             <label tabIndex={0}>{reactionValues}{reactionValues.length}</label>
             <ul tabIndex={0} className="dropdown-content z-[1] menu shadow bg-white rounded-box w-28">
               {Object.entries(reactions).map(userReaction => {
