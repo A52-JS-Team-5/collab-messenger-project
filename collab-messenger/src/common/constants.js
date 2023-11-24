@@ -21,3 +21,5 @@ export const MAX_TEAM_NAME_LENGTH = 40;
 export const MIN_MESSAGE_LENGTH = 1;
 
 export const MAX_MESSAGE_LENGTH = 4000;
+
+export const MIN_GROUP_CHAT_MEMBERS = 3;
