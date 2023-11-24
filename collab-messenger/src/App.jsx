@@ -18,11 +18,14 @@ import Footer from './components/Footer/Footer';
 import PageNotFound from './views/PageNotFound/PageNotFound';
 import Faqs from './views/FAQs/Faqs'
 import Insights from './views/Insights/Insights';
-import Chats from './views/Chats/Chats';
+// import Chats from './views/Chats/Chats';
+import ChatsLayout from './views/ChatsLayout/ChatsLayout'
 import SideMenu from './components/SideMenu/SideMenu';
 import AppNav from './components/AppNav/AppNav';
 import Teams from './views/Teams/Teams';
 import SingleTeamView from './views/SingleTeamView/SingleTeamView';
+import SearchResults from './views/SearchResults/SearchResults';
+import ChatDetails from './components/ChatDetails/ChatDetails';
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -100,8 +103,11 @@ function App() {
                   <Route path="/app/users/:userHandle" element={<UserProfile />} />
                   <Route path="/app/users/:userHandle/edit" element={<EditUserProfile loggedUser={user} />} />
                   <Route path='*' element={<PageNotFound />} />
+                  <Route path='/search-results' element={<SearchResults />} />
                   <Route path="/app/insights" element={<Insights />} />
-                  <Route path="/app/chats" element={<Chats />} />
+                  <Route path='/app/chats' element={<ChatsLayout /> }>              
+                    <Route path=':chatId' element={<ChatDetails /> }/>
+                  </Route>
                   <Route path="/app/teams" element={<Teams />} />
                   <Route path="/app/teams/:teamId" element={<SingleTeamView />} />
                   <Route path="/" element={<Home />} />
