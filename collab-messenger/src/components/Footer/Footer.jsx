@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="hero-content flex-col w-full">
           <div className='w-full'>
             <div className='card bg-base-100 flex-col md:flex-row items-center justify-between'>
-              <div className='text md:w-2/3 p-4'>
+              <div className='text md:w-2/3 p-4 text-white'>
                 <h1 className='text-left'>Medium length heading</h1>
                 <p className='text-left'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
               </div>
