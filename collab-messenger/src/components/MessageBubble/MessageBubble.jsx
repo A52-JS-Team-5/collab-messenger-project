@@ -1,15 +1,18 @@
 import Avatar from '../Avatar/Avatar';
 import { editMessage } from '../../services/messages.services';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import QuickReactions from "react-quick-reactions";
+import AppContext from '../../context/AuthContext';
 
 export default function MessageBubble({ message, messageClass, userAvatar, editCommentOption }) {
+  const loggedUser = useContext(AppContext);
   const [form, setForm] = useState('');
   const [showComment, setShowComment] = useState(true);
   const [areEmojisVisible, setAreEmojisVisible] = useState(false);
   const [originalContent, setOriginalContent] = useState(message.content);
-  const [reactions, setReactions] = useState(message?.reactions || []);
+  const [reactions, setReactions] = useState(message?.reactions || {});
+  const [reactionValues, setReactionValues] = useState([]);
   const isGif = message.content.includes('giphy');
 
   const onEdit = () => {
@@ -38,13 +41,17 @@ export default function MessageBubble({ message, messageClass, userAvatar, editC
   };
 
   const onReaction = (emoji) => {
-    if (reactions.includes(emoji) === false) {
-      setReactions(prevReactions => [...prevReactions, emoji]);
+    if (!reactions[loggedUser.userData?.handle]) {
+      setReactions(prevReactions => ({
+        ...prevReactions, 
+        [`${loggedUser.userData?.handle}`]: emoji}
+      ));
     }
   };
 
   useEffect(() => {
     editMessage(message.id, { reactions: reactions });
+    setReactionValues(Object.values(reactions));
   }, [reactions, message.id]);
 
   return (
@@ -171,8 +178,12 @@ export default function MessageBubble({ message, messageClass, userAvatar, editC
         )
       )}
 
-      <div className="chat-footer flex">
-        {reactions?.length > 0 && <div className='p-0.5'>{reactions}{reactions.length}</div>}
+      <div className="chat-footer relative">
+        {reactionValues?.length > 0 && 
+          <div>
+            {reactionValues}{reactionValues.length}
+          </div>
+        }
       </div>
     </div>
   )

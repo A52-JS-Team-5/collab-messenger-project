@@ -24,7 +24,7 @@ export const createMessage = (content, userHandle, chatId) => {
     author: userHandle,
     createdOn: Date.now(),
     chatId: chatId,
-    reactions: []
+    reactions: {}
   };
 
   return push(messagesRef, newMessage)
