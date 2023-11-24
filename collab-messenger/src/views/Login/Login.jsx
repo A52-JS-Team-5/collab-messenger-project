@@ -92,7 +92,7 @@ const Login = () => {
               <p>New to Chatter?</p>
               <Link to='/login'>Create an account</Link>
             </div>
-            <button className="btn bg-black self-center text-white w-full" onClick={onLogin}>Sign In</button>
+            <button className="btn bg-black self-center text-white w-1/2" onClick={onLogin}>Sign In</button>
           </div>
         </div>
       </div>
