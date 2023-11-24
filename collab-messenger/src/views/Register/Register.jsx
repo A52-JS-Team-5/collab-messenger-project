@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import AppContext from "../../context/AuthContext.js";
 import { checkEmailExists, createUserHandle, getUserByHandle } from "../../services/users.services.js";
 import { registerUser } from "../../services/auth.services.js";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_NAME_LENGTH, MAX_NAME_LENGTH } from "../../common/constants.js";
 import { isEmailValid, isPhoneNumberValid } from "../../common/helpers.js";
 import { toast } from 'react-toastify';
@@ -113,41 +113,51 @@ const Register = () => {
     <>
       <div className="hero min-h-[90vh] px-40 max-2xl:px-6">
         <div className="hero-content flex-col lg:flex-row pt-10 gap-16 max-2xl:gap-8">
-          <div className='signup-wrapper min-w-[50%] card rounded border-2 border-black rounded-3xl bg-beige shadow-xl'>
-            <h2 className="self-center text-3xl text-black pb-8">Sign Up</h2>
+          <div className='signup-wrapper min-w-[50%] card rounded border-2 border-black rounded-3xl bg-beige shadow-xl w-[500px]'>
+            <h2 className="self-center text-3xl text-black pb-8 font-bold">Create account</h2>
             <div className='form-control flex flex-wrap flex-auto'>
-              <label className="label" htmlFor='name'>
-                <span className="label-text text-black pl-3">Name</span>
-              </label>
-              <input type='text' id="name" placeholder="Enter your first name" className="input input-bordered w-full bg-white" value={form.name} onChange={updateForm('name')} autoComplete='name' />
-              <span className="err-message text-red">{formErrorMsg.name}</span>
-              <label className="label" htmlFor='surname'>
-                <span className="label-text text-black pl-3">Surname</span>
-              </label>
-              <input type='text' id="surname" placeholder="Enter your surname" className="input input-bordered w-full bg-white" value={form.surname} onChange={updateForm('surname')} autoComplete='surname' />
-              <span className="err-message text-red">{formErrorMsg.surname}</span>
+              <div className="flex space-x-3">
+                <div className="">
+                  <label className="label" htmlFor='name'>
+                    <span className="label-text text-black pl-3">Name</span>
+                  </label>
+                  <input type='text' id="name" placeholder="Enter Your First Name" className="input input-bordered w-full bg-white" value={form.name} onChange={updateForm('name')} autoComplete='name' />
+                  <span className="err-message text-red">{formErrorMsg.name}</span>
+                </div>
+                <div>
+                  <label className="label" htmlFor='surname'>
+                    <span className="label-text text-black pl-3">Surname</span>
+                  </label>
+                  <input type='text' id="surname" placeholder="Enter Your Surname" className="input input-bordered w-full bg-white" value={form.surname} onChange={updateForm('surname')} autoComplete='surname' />
+                  <span className="err-message text-red">{formErrorMsg.surname}</span>
+                </div>
+              </div>
               <label className="label" htmlFor='email'>
                 <span className="label-text text-black pl-3" >Email</span>
               </label>
-              <input type='email' id="email" placeholder="Enter your email" className="input input-bordered w-full bg-white" value={form.email} onChange={updateForm('email')} autoComplete='email' />
+              <input type='email' id="email" placeholder="Enter Your Email" className="input input-bordered w-full bg-white" value={form.email} onChange={updateForm('email')} autoComplete='email' />
               <span className="err-message text-red">{formErrorMsg.email}</span>
               <label className="label" htmlFor='handle'>
                 <span className="label-text text-black pl-3">Username</span>
               </label>
-              <input type='text' id="handle" placeholder="Enter your username" className="input input-bordered w-full bg-white" value={form.handle} onChange={updateForm('handle')} />
+              <input type='text' id="handle" placeholder="Enter Your Username" className="input input-bordered w-full bg-white" value={form.handle} onChange={updateForm('handle')} />
               <span className="err-message text-red">{formErrorMsg.handle}</span>
               <label className="label" htmlFor='password'>
                 <span className="label-text text-black pl-3">Password</span>
               </label>
-              <input type='password' id="password" placeholder="Enter your password" className="input input-bordered w-full bg-white" value={form.password} onChange={updateForm('password')} />
+              <input type='password' id="password" placeholder="Enter Your Password" className="input input-bordered w-full bg-white" value={form.password} onChange={updateForm('password')} />
               <span className="err-message text-red">{formErrorMsg.password}</span>
               <label className="label" htmlFor='tel-number'>
                 <span className="label-text text-black pl-3">Phone Number</span>
               </label>
-              <input type='text' id="tel-number" placeholder="Enter your telephone number" className="input input-bordered w-full bg-white" value={form.phoneNumber} onChange={updateForm('phoneNumber')} />
+              <input type='text' id="tel-number" placeholder="Enter Your Phone #" className="input input-bordered w-full bg-white" value={form.phoneNumber} onChange={updateForm('phoneNumber')} />
               <span className="err-message text-red">{formErrorMsg.phoneNumber}</span>
               <br />
-              <button className="btn bg-black text-white self-center w-full" onClick={onRegister}>Register</button>
+              <div className="text-left pb-6 pl-3 flex space-x-32">
+                <p>Already have an account?</p>
+                <Link to='/login'>Sign in instead</Link>
+              </div>
+              <button className="btn bg-black text-white self-center w-1/2" onClick={onRegister}>Sign Up</button>
             </div>
           </div>
         </div>
