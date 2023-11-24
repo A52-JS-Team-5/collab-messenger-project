@@ -59,7 +59,7 @@ function Home() {
             <h2 className="text-5xl font-bold text-black text-center max-lg:text-center">Customer Testimonials</h2>
             <p className="py-6 text-black text-center max-lg:text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </div>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-white'>
             <div className='card bg-base-100'>
               <p className='p-4 text-left'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare.</p>
               <div className='card-body flex-row items-center'>
