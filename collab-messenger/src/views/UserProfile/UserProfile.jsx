@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { getUserByHandle } from '../../services/users.services';
 import UserDetails from '../../components/UserDetails/UserDetails';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserProfile = () => {
   const { userHandle } = useParams();
@@ -17,6 +19,7 @@ const UserProfile = () => {
         setLoading(false);
       })
       .catch((error) => {
+        toast('Cannot load user profile. Please try again later.');
         console.error('Error fetching user data: ', error);
         setError(error);
         setLoading(false);
