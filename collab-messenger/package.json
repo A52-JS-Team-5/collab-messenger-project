@@ -16,7 +16,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.1.1",
+    "react-giphy-searchbox-techedge": "^1.5.4-techedge.0",
     "react-router-dom": "^6.19.0",
+    "react-select": "^5.8.0",
     "react-toastify": "^9.1.3"
   },
   "devDependencies": {
