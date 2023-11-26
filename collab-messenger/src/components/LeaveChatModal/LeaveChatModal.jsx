@@ -23,7 +23,7 @@ export default function LeaveChatModal({ chatId }) {
 
     leaveChat(chatId, loggedUser.userData.handle)
       .then(() => {
-        navigate(`/chats`);
+        navigate(`/app/chats`);
       })
       .catch(e => {
         toast('Error in leaving chat. Please try again later.')
@@ -37,13 +37,13 @@ export default function LeaveChatModal({ chatId }) {
     <div className="edit-post-view">
       <button className="btn btn-ghost" onClick={handleToggle}><i className="fa-solid fa-right-from-bracket"></i></button>
       <div id="edit-post-modal" className={modalClass}>
-        <div className="modal-box">
+        <div className="modal-box bg-light-gray">
           <div className="post-description flex flex-col gap-2">
             <h3>Are you sure you want to leave this chat?</h3>
           </div>
           <div className="modal-action flex-row">
-            <button className="btn btn-outline btn-warning" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={onLeave} className="btn btn-warning">Leave Chat</button>
+            <button className="btn btn-outline text-blue hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
+            <button type="button" onClick={onLeave} className="btn text-black bg-blue hover:bg-lightBlue">Leave Chat</button>
           </div>
         </div>
       </div>
