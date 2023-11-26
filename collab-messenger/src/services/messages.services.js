@@ -16,6 +16,28 @@ export const addMessage = (userHandle, chatId, messageId, message) => {
     .catch((e) => console.log('Error adding message: ', e.message));
 };
 
+export const createFileUploadMessage = (content, userHandle, chatId, title, type, ) => {
+  const messagesRef = ref(db, 'messages');
+
+  const newMessage = {
+    content: content,
+    author: userHandle,
+    createdOn: Date.now(),
+    chatId: chatId,
+    reactions: {},
+    title: title,
+    type: type
+  };
+
+  return push(messagesRef, newMessage)
+    .then((newMessageRef) => {
+      return newMessageRef.key;
+    })
+    .catch((error) => {
+      console.log(`Error creating message: ${error.message}`);
+    });
+};
+
 export const createMessage = (content, userHandle, chatId) => {
   const messagesRef = ref(db, 'messages');
 
