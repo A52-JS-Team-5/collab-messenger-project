@@ -37,7 +37,7 @@ export default function AppNav({ onLogout}) {
     }, [user])
 
     const handleSearch = () => {
-        navigate('/search-results', { state: { searchTerm: searchTerm } });
+        navigate('/app/search-results', { state: { searchTerm: searchTerm } });
         setSearchTerm('');
     }
 
