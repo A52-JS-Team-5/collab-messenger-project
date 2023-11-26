@@ -103,7 +103,7 @@ function App() {
                   <Route path="/app/users/:userHandle" element={<UserProfile />} />
                   <Route path="/app/users/:userHandle/edit" element={<EditUserProfile loggedUser={user} />} />
                   <Route path='*' element={<PageNotFound />} />
-                  <Route path='/search-results' element={<SearchResults />} />
+                  <Route path='/app/search-results' element={<SearchResults />} />
                   <Route path="/app/insights" element={<Insights />} />
                   <Route path='/app/chats' element={<ChatsLayout /> }>              
                     <Route path=':chatId' element={<ChatDetails /> }/>
