@@ -12,24 +12,28 @@ import { ref, onValue } from 'firebase/database';
 export default function ChatBox({ chatId }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
-  const [chatData, setChatData] = useState({
-    lastMessage: ''
-  })
-  const isGif = chatData.lastMessage.includes('giphy');
-  const [title, setTitle] = useState('');
+  const [chatData, setChatData] = useState({})
+  const [lastMessage, setLastMessage] = useState('');
+  const [isLastMsgFile, setIsLastMsgFile] = useState(false);
+  const [isLastMsgGif, setIsLastMsgGif] = useState(false);
+  const [ChatTitle, setChatTitle] = useState('');
 
   useEffect(() => {
     getChatById(chatId)
       .then((data) => {
         setChatData(data);
         if(data.isGroup === true) {
-          setTitle(data.title);
+          setChatTitle(data.title);
         } else {
-          setTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
+          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
         }
+
+        setLastMessage(data.lastMessage);
+        setIsLastMsgGif(data.lastMessage.includes('giphy'));
+        setIsLastMsgFile(data.lastMessage.includes('chat_uploads'));
       })
       .catch((e) => {
-        toast('Error in getting chat data. Please try again')
+        toast('Error in getting chat data. Please try again');
         console.log(e.message);
       })
   
@@ -44,7 +48,7 @@ export default function ChatBox({ chatId }) {
     return () => {
       chatListener();
     };
-  }, [chatId, loggedUser.userData?.handle])
+  }, [chatId, loggedUser.userData?.handle, lastMessage]);
 
   return (
     <div onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
@@ -55,25 +59,19 @@ export default function ChatBox({ chatId }) {
           </div>
         </div>
       ) : (
-        <Avatar user={title} />
+        <Avatar user={ChatTitle} />
       )}
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-medium">
-              {title}
+              {ChatTitle}
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-            {isGif === true ? (
               <p className="text-xs font-medium text-black">
-                GIF
+                {isLastMsgGif ? 'GIF' : isLastMsgFile ? 'File Sent' : lastMessage}
               </p>
-            ) : (
-              <p className="text-xs font-medium text-black">
-                {chatData?.lastMessage}
-              </p>
-            )}
           </div>
         </div>
       </div>
