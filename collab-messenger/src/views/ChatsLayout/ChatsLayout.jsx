@@ -26,7 +26,6 @@ export default function ChatsLayout() {
         console.log(e.message)
       })
 
-    // all chats listener
     const chatsRef = ref(db, `chats`);
     const chatsListener = onValue(chatsRef, (snapshot) => {
       const updatedChatData = snapshot.val();
@@ -69,16 +68,15 @@ export default function ChatsLayout() {
 
   return (
     <>
-      <div className="flex flex-row justify-start w-full h-[79vh] mt-4">
-        <div className="basis-80 h-[91vh] bg-grey text-black border-r-[0.5px]">
+      <div className="flex flex-row justify-start w-full">
+        <div className="basis-80 h-[91vh] bg-grey text-black">
           <div className="p-2 flex place-content-end">
             <StartGroupChatModal />
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             {allLoggedUserChats.map(chat => (
-              <ChatBox key={chat.id} chatId={chat.id}/>
-              ))
-            }
+              <ChatBox key={chat.id} chatId={chat.id}/>)
+            )}
           </div>
         </div>
         <div className="basis-11/12 w-full h-[92vh] flex items-center place-content-evenly overflow-auto">
