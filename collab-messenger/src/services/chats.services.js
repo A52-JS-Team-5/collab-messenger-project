@@ -1,11 +1,4 @@
-import {
-  ref,
-  push,
-  get,
-  query,
-  update,
-  remove
-} from 'firebase/database';
+import { ref, push, get, query, update, remove } from 'firebase/database';
 import { db } from '../config/firebase-config';
 import { ZERO } from '../common/constants';
 
@@ -30,12 +23,12 @@ export const createChat = (...participants) => {
     messages: {},
     createdOn: Date.now(),
     isGroup: false,
-    lastMessage: ''
+    lastMessage: '',
   };
 
-  participants.forEach(participant => {
+  participants.forEach((participant) => {
     newChat.participants[`${participant}`] = true;
-  })
+  });
 
   return push(chatsRef, newChat)
     .then((newChatRef) => {
@@ -50,11 +43,14 @@ export const addChat = (userHandle, loggedUserHandle, chatId) => {
   const updateChats = {};
   updateChats[`/users/${userHandle}/chats/${chatId}`] = true;
   updateChats[`/users/${loggedUserHandle}/chats/${chatId}`] = true;
-  updateChats[`/users/${userHandle}/chatParticipants/${loggedUserHandle}`] = chatId;
-  updateChats[`/users/${loggedUserHandle}/chatParticipants/${userHandle}`] = chatId;
+  updateChats[`/users/${userHandle}/chatParticipants/${loggedUserHandle}`] =
+    chatId;
+  updateChats[`/users/${loggedUserHandle}/chatParticipants/${userHandle}`] =
+    chatId;
 
-  return update(ref(db), updateChats)
-    .catch((e) => console.log(`Error adding chat to users' data`, e.message));
+  return update(ref(db), updateChats).catch((e) =>
+    console.log(`Error adding chat to users' data`, e.message)
+  );
 };
 
 const fromChatsDocument = (snapshot) => {
@@ -68,7 +64,7 @@ const fromChatsDocument = (snapshot) => {
       title: chat.title,
       participants: chat.participants ? Object.keys(chat.participants) : [],
       messages: chat.messages ? Object.keys(chat.messages) : [],
-      lastMessage: chat.lastMessage
+      lastMessage: chat.lastMessage,
     };
   });
 };
@@ -88,7 +84,7 @@ export const getAllChats = () => {
 const userChatsDocument = (snapshots) => {
   return snapshots.map((snapshot) => {
     if (!snapshot || !snapshot.val) {
-      throw new Error("Invalid snapshot:", snapshot);
+      throw new Error('Invalid snapshot:', snapshot);
     }
 
     const chat = snapshot.val();
@@ -98,7 +94,7 @@ const userChatsDocument = (snapshots) => {
       isGroup: chat.isGroup,
       participants: chat.participants ? Object.keys(chat.participants) : [],
       messages: chat.messages ? Object.keys(chat.messages) : [],
-      lastMessage: chat.lastMessage
+      lastMessage: chat.lastMessage,
     };
   });
 };
@@ -110,18 +106,20 @@ export const getLoggedUserChats = (userHandle) => {
         return [];
       }
       const chatIds = Object.keys(snapshot.val());
-      const chatRefs = chatIds.map(chatId => get(ref(db, `chats/${chatId}`)));
+      const chatRefs = chatIds.map((chatId) => get(ref(db, `chats/${chatId}`)));
 
       return Promise.all(chatRefs);
     })
     .then((chatsSnapshots) => {
-      if(chatsSnapshots.length === 0) {
+      if (chatsSnapshots.length === 0) {
         return [];
       }
       return userChatsDocument(chatsSnapshots);
     })
-    .catch((e) => console.log('Error in getting chats of logged user: ', e.message));
-}
+    .catch((e) =>
+      console.log('Error in getting chats of logged user: ', e.message)
+    );
+};
 
 export const createGroupChat = (title, participants) => {
   const chatsRef = ref(db, 'chats');
@@ -131,12 +129,12 @@ export const createGroupChat = (title, participants) => {
     messages: {},
     createdOn: Date.now(),
     isGroup: true,
-    lastMessage: ''
+    lastMessage: '',
   };
 
-  participants.forEach(participant => {
-    return newChat.participants[`${participant.value}`] = true;
-  })
+  participants.forEach((participant) => {
+    return (newChat.participants[`${participant.value}`] = true);
+  });
 
   return push(chatsRef, newChat)
     .then((newChatRef) => {
@@ -149,24 +147,23 @@ export const createGroupChat = (title, participants) => {
 
 export const addGroupChat = (chatId, participants) => {
   const updateChats = {};
-  participants.forEach(participant => {
-    return updateChats[`/users/${participant.value}/chats/${chatId}`] = true;
-  })
+  participants.forEach((participant) => {
+    return (updateChats[`/users/${participant.value}/chats/${chatId}`] = true);
+  });
 
-  return update(ref(db), updateChats)
-    .catch((e) => console.log(`Error adding chat to users' data`, e.message));
+  return update(ref(db), updateChats).catch((e) =>
+    console.log(`Error adding chat to users' data`, e.message)
+  );
 };
 
 export const leaveChat = (chatId, userHandle) => {
-
   return Promise.all([
     remove(ref(db, `/users/${userHandle}/chats/${chatId}`)),
     remove(ref(db, `chats/${chatId}/participants/${userHandle}`)),
-  ])
-  .catch((e) => console.log('Error in deleting comment', e.message));
+  ]).catch((e) => console.log('Error in leaving chat', e.message));
 };
 
-function ascendingSort(a, b) {
+export function ascendingSort(a, b) {
   if (a.title < b.title) {
     return -1;
   }
@@ -176,7 +173,7 @@ function ascendingSort(a, b) {
   return 0;
 }
 
-function descendingSort(a, b) {
+export function descendingSort(a, b) {
   if (a.title > b.title) {
     return -1;
   }
@@ -186,7 +183,7 @@ function descendingSort(a, b) {
   return 0;
 }
 
-function ascendingDateSort(a, b) {
+export function ascendingDateSort(a, b) {
   if (a.createdOn < b.createdOn) {
     return -1;
   }
@@ -196,7 +193,7 @@ function ascendingDateSort(a, b) {
   return 0;
 }
 
-function descendingDateSort(a, b) {
+export function descendingDateSort(a, b) {
   if (a.createdOn > b.createdOn) {
     return -1;
   }
@@ -216,10 +213,9 @@ export const sortByDateDesc = (allChats) =>
   [...allChats].sort(descendingDateSort);
 
 export const getChatById = (id) => {
-
   return get(ref(db, `chats/${id}`))
-    .then(result => {
-      if(!result.exists()) {
+    .then((result) => {
+      if (!result.exists()) {
         throw new Error(`Chat with id ${id} does not exist!`);
       }
       const chat = result.val();
@@ -228,5 +224,5 @@ export const getChatById = (id) => {
       if (!chat.messages) chat.messages = {};
       return chat;
     })
-    .catch(e => console.log('Error in getting chat by ID:', e.message))
+    .catch((e) => console.log('Error in getting chat by ID:', e.message));
 };
