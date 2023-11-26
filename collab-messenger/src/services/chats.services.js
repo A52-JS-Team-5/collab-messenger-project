@@ -2,6 +2,16 @@ import { ref, push, get, query, update, remove } from 'firebase/database';
 import { db } from '../config/firebase-config';
 import { ZERO } from '../common/constants';
 
+export const updateChatFiles = (chatId, fileUrl) => {
+  const updateChat = {};
+  updateChat[`/chats/${chatId}/uploadedFiles/url`] = fileUrl;
+
+  return update(ref(db), updateChat)
+    .catch((e) =>
+      console.log(`Error adding chat to users' data`, e.message)
+    );
+}
+
 export const getChatsCount = () => {
   return get(ref(db, `chats`))
     .then((snapshot) => {
