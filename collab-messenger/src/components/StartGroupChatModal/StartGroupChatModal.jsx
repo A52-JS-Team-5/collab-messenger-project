@@ -41,7 +41,7 @@ export default function StartGroupChatModal() {
         return chatId;
       })
       .then((chatId) => {
-        navigate(`/chats/${chatId}`);
+        navigate(`${chatId}`);
       })
       .catch(e => {
         console.log('Error creating a new chat: ', e.message);
@@ -63,18 +63,20 @@ export default function StartGroupChatModal() {
     <div className="start-chat-view">
       <button className="btn btn-ghost font-black" onClick={handleToggle}>+<i className="fa-solid fa-user-group"></i></button>
       <div className={modalClass}>
-        <div className="modal-box">
-          <div className="post-description flex flex-col gap-2">
+        <div className="modal-box bg-light-gray">
+          <div className="post-description flex flex-col gap-2 bg-light-gray">
             <h3 className="font-semibold leading-7 text-gray-900">Create A Group Chat</h3>
             <p className="mt-1 text-sm leading-6 text-gray-600">Create a chat with more than 2 users.</p>
             <div>
               <label className="label">
-                <span className="label-text">Chat Title</span>
+                <span className="label-text text-black bg-transparent">Chat Title</span>
               </label>
-              <input type="text" defaultValue={title} onChange={(e) => {setTitle(e.target.value)}} className="input input-bordered w-full text-white" />
+              <input type="text" defaultValue={title} onChange={(e) => {setTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white" />
             </div>
             <div className="z-[100]">
-              <label className="block text-sm font-medium leading-6 text-gray-900">Participants</label>
+              <label className="label">
+                <span className="label-text text-black bg-transparent">Participants</span>
+              </label>
               <div className="mt-2">
                 {users.length !== 0 && <ReactSelect styles={{
                   menuPortal: (base) => ({
@@ -83,7 +85,7 @@ export default function StartGroupChatModal() {
                   }),
                   option: (provided, state) => ({
                     ...provided,
-                    backgroundColor: state.isSelected ? 'blue' : 'white',
+                    backgroundColor: state.isSelected ? 'pink' : 'white',
                     color: 'black',
                    }),
                 }} classNames={{
@@ -93,8 +95,8 @@ export default function StartGroupChatModal() {
             </div>
           </div>
           <div className="modal-action flex-row">
-            <button className="btn btn-outline btn-warning" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={createChat} className="btn btn-warning">Create Chat</button>
+            <button className="btn btn-outline text-pink bg-transparent" onClick={handleToggle}>Cancel</button>
+            <button type="button" onClick={createChat} className="bg-pink text-white">Create Chat</button>
           </div>
         </div>
       </div>
