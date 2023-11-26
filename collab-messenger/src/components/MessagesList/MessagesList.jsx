@@ -28,15 +28,15 @@ export default function MessagesList({ chatMessages }) {
   }, [chatMessages]);
 
   return (
-    <div className="comments-list overflow-y-auto " >
+    <div className="overflow-y-auto" >
       {messages.map(message => {
         const messageClass = loggedUser?.userData?.handle === message.author ? 'chat-end' : 'chat-start';
         const userAvatar = loggedUser?.userData?.handle === message.author ? loggedUser?.userData?.handle : message.author;
-        const editCommentOption = loggedUser.userData?.handle === message.author;
+        const editMessageOption = loggedUser.userData?.handle === message.author;
         
         return (
           <div key={message.id}>
-            <MessageBubble message={message} messageClass={messageClass} userAvatar={userAvatar} editCommentOption={editCommentOption} />
+            <MessageBubble message={message} messageClass={messageClass} userAvatar={userAvatar} editMessageOption={editMessageOption} />
           </div>
         )
       })}
