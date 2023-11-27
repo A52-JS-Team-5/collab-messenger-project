@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import ManageTeam from '../ManageTeam/ManageTeam';
-import TeamMembersList from '../TeamMembersDetails/TeamMembersDetails';
+import TeamMembersList from '../TeamMembersList/TeamMembersList';
 
 const TeamDetails = ({ teamDetails, showManageTeam }) => {
     const [activeTab, setActiveTab] = useState(0); // 0 for Members, 1 for Channels, 2 for Basic Details
