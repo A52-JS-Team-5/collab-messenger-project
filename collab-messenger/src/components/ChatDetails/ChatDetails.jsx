@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getChatById } from '../../services/chats.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,7 +7,7 @@ import MessagesList from '../MessagesList/MessagesList';
 import { createMessage, addMessage } from '../../services/messages.services';
 import AppContext from '../../context/AuthContext';
 import { db } from '../../config/firebase-config';
-import { ref, onValue, query, orderByChild, equalTo } from 'firebase/database';
+import { ref, onValue, query, orderByChild, equalTo, update } from 'firebase/database';
 import Avatar from '../Avatar/Avatar';
 import LeaveChatModal from '../LeaveChatModal/LeaveChatModal';
 import ReactGiphySearchbox from 'react-giphy-searchbox-techedge';
@@ -16,7 +16,6 @@ import UploadFile from '../UploadFile/UploadFile';
 export default function ChatDetails() {
   const loggedUser = useContext(AppContext);
   const { chatId } = useParams();
-  const navigate = useNavigate();
   const [isGifSearchVisible, setIsGifSearchVisible] = useState(false);
   const [chatData, setChatData] = useState({
     title: '',
@@ -83,10 +82,6 @@ export default function ChatDetails() {
   useEffect(() => {
     getChatById(chatId)
       .then((data) => {
-        if(!Object.keys(data.participants).includes(loggedUser.userData?.handle)) {
-          navigate('/');
-          toast('You do not have access to this chat.');
-        }
         setChatData(data);
         if (data.messages) {
           setAllMessages(Object.keys(data.messages))
@@ -104,9 +99,28 @@ export default function ChatDetails() {
         const updatedChatData = snapshot.val();
         if (updatedChatData) {
           setChatData(updatedChatData);
+
           if (updatedChatData.messages) {
             setAllMessages(Object.keys(updatedChatData.messages))
-          } 
+          }
+        }
+        
+        if (updatedChatData?.participantsReadMsg) {
+          const loggedUserLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData.handle];
+          const isLatestMessage = loggedUserLastReadMessage === updatedChatData.lastMessage;
+
+          if (!isLatestMessage){
+            const updateUserLastReadMessage = () => {
+              const updateMsg = {};
+              updateMsg[`/chats/${chatId}/participantsReadMsg/${loggedUser.userData.handle}`] = updatedChatData.lastMessage;
+
+              return update(ref(db), updateMsg)
+                .catch((e) =>
+                  console.log(`Error adding last read message to logged user data`, e.message)
+                );
+            };
+            updateUserLastReadMessage();
+          }
         }
       });
   
@@ -124,12 +138,12 @@ export default function ChatDetails() {
         chatListener();
         messagesListener();
       };
-  }, [chatId, loggedUser.userData?.handle, navigate])
+  }, [chatId, loggedUser.userData?.handle]);
 
   return (
     <div id='chat-details-wrapper' className="w-full h-[90vh] overflow-y-auto bg-w [&::-webkit-scrollbar]:[width:8px]
       [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
-      <div id="header" className="sticky w-full flex border-b-[0.5px] sm:px-4 py-3 ph-4 lg:px-6 justify-between items-center shadow-sm">
+      <div id="header" className="sticky w-full flex border-b-[0.5px] sm:px-4 py-3 lg:px-6 justify-between items-center shadow-sm">
         <div id="header-content" className="flex gap-3 items-center">
           <div id='chat-avatar' className="flex flex-row gap-3">
             {isGroupChat === true ? (
@@ -140,9 +154,9 @@ export default function ChatDetails() {
               </div>
             ) : (
               <Avatar user={chatTitle} />
+              // {/* <div className="flex flex-col text-sm font-light text-neutral-500">Active</div> */}
             )}
             <div id='chat-title' className="flex place-items-end">{chatTitle}</div> 
-            {/* <div className="flex flex-col text-sm font-light text-neutral-500">Active</div> */}
           </div>
         </div>
         {isGroupChat && <LeaveChatModal chatId={chatId} />}
@@ -155,18 +169,21 @@ export default function ChatDetails() {
           <p className="self-center">Start a conversation</p>
         )}
       </div>
-      <div id='chat-options' className='sticky py-4 px-4 bg-transparent border-t flex items-center gap-2 lg:gap-4 w-full'>
+      <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 lg:gap-4 w-full'>
         <span id='search-gifs-option' className="hover:cursor-pointer hover:bg-mint btn btn-sm text-black bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</span>
         <UploadFile message={message} setMessageFunc={setMessage} />
         <textarea id='add-message-option' className="text-black bg-white font-light py-2 px-4 bg-neutral-100 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
         {<button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-mint cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>}
       </div>
       {isGifSearchVisible === true && (
-        <div id='giphy-searchbox-wrapper' className='fixed bottom-20 right-40'>
+        <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
           <ReactGiphySearchbox
             apiKey="Iy7WxBnblvFgo3jx4SFOIte0fBIDKY0X" 
             onSelect={gif => addGif(gif.images.fixed_height.url)}
             rating
+            wrapperClassName=''
+            searchFormClassName='bg-blue text-black w-[270px]'
+            listWrapperClassName='w-[270px] border-[0.5px]'
           />
         </div>
       )}
