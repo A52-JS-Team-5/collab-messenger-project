@@ -1,6 +1,6 @@
-import { get, ref, query, equalTo, orderByChild, update, push } from 'firebase/database';
+import { get, ref, query, equalTo, orderByChild, update, push, remove } from 'firebase/database';
 import { db } from '../config/firebase-config';
-import { ZERO } from '../common/constants';
+import { DEFAULT_TEAM_PHOTO, ZERO } from '../common/constants';
 
 export const getTeamByName = (name) => {
     return get(query(ref(db, 'teams'), orderByChild('name'), equalTo(name)))
@@ -8,8 +8,27 @@ export const getTeamByName = (name) => {
 };
 
 export const getTeamById = (id) => {
-    return get(query(ref(db, 'teams'), orderByChild('id'), equalTo(id)))
-        .catch((e) => console.log('Error in getting team data', e.message));
+
+    return get(ref(db, `teams/${id}`))
+        .then(result => {
+            if (!result.exists()) {
+                throw new Error(`Team with id ${id} does not exist!`);
+            }
+
+            const team = result.val();
+
+            return {
+                name: team.name,
+                createdOn: team.createdOn,
+                description: team.description,
+                id: id,
+                owner: team.owner,
+                members: team.members ? Object.keys(team.members) : [],
+                channels: team.channels ? Object.keys(team.channels) : [],
+                photoURL: team.photoURL,
+            }
+        })
+        .catch(e => console.log(e.message))
 };
 
 export const createTeam = (name, description, owner, members, channels) => {
@@ -21,7 +40,7 @@ export const createTeam = (name, description, owner, members, channels) => {
         description: description,
         members: members,
         channels: channels,
-        photoURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg',
+        photoURL: DEFAULT_TEAM_PHOTO,
         createdOn: Date.now(),
     };
 
@@ -76,13 +95,14 @@ export const getTeamsByUser = (handle) => {
                         }
 
                         return {
+                            id: snapshot.key,
                             name: team.name,
                             createdOn: team.createdOn,
-                            id: key,
                             owner: team.owner,
                             members: team.members ? Object.keys(team.members) : [],
                             channels: team.channels ? Object.keys(team.channels) : [],
                             photoURL: team.photoURL,
+                            description: team.description,
                         };
                     });
                 })
@@ -99,6 +119,7 @@ export const getTeamsByMember = (handle) => {
             const teams = [];
             snapshot.forEach((teamSnapshot) => {
                 const team = teamSnapshot.val();
+
                 if (team.members && team.members[handle] !== undefined) {
                     teams.push({
                         id: teamSnapshot.key,
@@ -108,9 +129,12 @@ export const getTeamsByMember = (handle) => {
                         members: team.members ? Object.keys(team.members) : [],
                         channels: team.channels ? Object.keys(team.channels) : [],
                         photoURL: team.photoURL,
+                        description: team.description,
                     });
                 }
             });
+
+            return teams;
         })
         .catch((error) => {
             console.error('Error getting teams:', error.message);
@@ -138,4 +162,18 @@ export const updateTeamMembers = (teamId, members) => {
 
     return update(ref(db), updateTeam)
         .catch((e) => console.log('Error adding details', e.message));
+}
+
+export const removeTeamMember = (teamId, member) => {
+    const updates = {};
+    updates[`/teams/${teamId}/members/${member}`] = null;
+    updates[`/users/${member}/teamsMember/${teamId}`] = null;
+
+    return update(ref(db), updates)
+        .catch((e) => console.log('Error updating details', e.message));
+}
+
+export const deleteTeam = (teamId) => {
+    return remove(ref(db, `teams/${teamId}`))
+        .catch((e) => console.log('Error in deleting team', e.message));
 }
