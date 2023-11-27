@@ -9,7 +9,6 @@ import { addMessage, createFileUploadMessage } from '../../services/messages.ser
 import { updateChatFiles } from "../../services/chats.services";
 
 export default function UploadFile({ message, setMessageFunc }) {
-  // const [selectedFile, setSelectedFile] = useState('');
   const loggedUser = useContext(AppContext);
   const storage = getStorage();
   const { chatId } = useParams();
@@ -50,7 +49,6 @@ export default function UploadFile({ message, setMessageFunc }) {
       <label tabIndex={0} className="btn hover:cursor-pointer hover:bg-mint btn btn-sm text-black bg-transparent flex items-center w-fit"><i className="fa-solid fa-paperclip"></i></label>
       <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 bg-light-gray">
         <li><a><input type="file" className='text-black' accept=".jpeg,.jpg,.gif,.pdf" onChange={(event) => {handleFileUpload(event.target.files[0]);}}/></a></li>
-        {/* <li><a><input type="submit" placeholder='Submit' onClick={handleFileUpload} className='hover:cursor-pointer text-black'/></a></li> */}
       </ul>
     </div>
   )
