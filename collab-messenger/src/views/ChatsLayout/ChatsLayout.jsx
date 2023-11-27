@@ -52,10 +52,11 @@ export default function ChatsLayout() {
               isGroup: chat.isGroup,
               participants: chat.participants ? Object.keys(chat.participants) : [],
               messages: chat.messages ? Object.keys(chat.messages) : [],
-              lastMessage: chat.lastMessage || ''
+              lastMessage: chat.lastMessage || '',
+              participantsReadMsg: chat.participantsReadMsg || {}
             };
           });
-          setAllLoggedUserChats(updatedChatData)
+          setAllLoggedUserChats(updatedChatData);
         }
       }
     });
@@ -64,7 +65,7 @@ export default function ChatsLayout() {
       chatsListener();
     }
   
-  }, [loggedUser.userData?.handle, userChatIds])
+  }, [loggedUser.userData?.handle, userChatIds]);
 
   return (
     <>
