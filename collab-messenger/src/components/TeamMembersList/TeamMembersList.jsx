@@ -5,7 +5,7 @@ import { getUserByHandle } from '../../services/users.services';
 import AddTeamMembers from '../AddTeamMembers/AddTeamMembers';
 import RemoveTeamMember from '../RemoveTeamMember/RemoveTeamMember';
 
-const TeamMembersList = ({ teamDetails }) => {
+const TeamMembersList = ({ teamDetails, showManageTeam }) => {
     const navigate = useNavigate();
     const [memberDetails, setMemberDetails] = useState([]);
     const [owner, setOwner] = useState(null);
@@ -62,7 +62,7 @@ const TeamMembersList = ({ teamDetails }) => {
             <div className='flex flex-col bg-white rounded-md pt-4'>
                 <div className='flex flex-row justify-between items-center pl-4 pr-4'>
                     <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white' />
-                    <AddTeamMembers />
+                    {showManageTeam && <AddTeamMembers />}
                 </div>
                 {searchQuery === '' ? (
                     <div className='mt-2'>
@@ -104,7 +104,7 @@ const TeamMembersList = ({ teamDetails }) => {
                                                         <p className='text-xs'>{`@${member.handle}`}</p>
                                                     </div>
                                                 </div>
-                                                <RemoveTeamMember teamId={teamData.id} memberId={member.id} />
+                                                {showManageTeam && <RemoveTeamMember teamId={teamData.id} memberId={member.id} />}
                                             </li>
                                         ))}
                                 </ul>
@@ -125,7 +125,7 @@ const TeamMembersList = ({ teamDetails }) => {
                                                 <p className='text-xs'>{`@${member.handle}`}</p>
                                             </div>
                                         </div>
-                                        <RemoveTeamMember teamId={teamData.id} memberId={member.id} />
+                                        {showManageTeam && <RemoveTeamMember teamId={teamData.id} memberId={member.id} />}
                                     </li>
                                 ))}
                             </ul>
@@ -141,4 +141,5 @@ export default TeamMembersList;
 
 TeamMembersList.propTypes = {
     teamDetails: PropTypes.object,
+    showManageTeam: PropTypes.bool,
 };

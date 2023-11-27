@@ -28,7 +28,7 @@ const TeamDetails = ({ teamDetails, showManageTeam }) => {
                     <a role="tab" className={`tab max-sm:block ${activeTab === 1 && 'tab-active'}`} onClick={() => handleTabClick(1)}>Channels</a>
                     {showManageTeam && <a role="tab" className={`tab max-sm:block ${activeTab === 2 && 'tab-active'}`} onClick={() => handleTabClick(2)}>Basic Details</a>}
                 </div>
-                {activeTab === 0 && <TeamMembersList teamDetails={teamData} />}
+                {activeTab === 0 && <TeamMembersList teamDetails={teamData} showManageTeam={showManageTeam} />}
                 {activeTab === 1 && <p>Channels</p>}
                 {activeTab === 2 && showManageTeam && <ManageTeam teamDetails={teamData} />}
             </div>
