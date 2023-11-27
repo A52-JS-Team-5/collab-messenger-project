@@ -198,14 +198,17 @@ export const sortUsersByDate = (allUsers) => [...allUsers].sort(ascendingDateSor
 export const sortUsersByDateDesc = (allUsers) => [...allUsers].sort(descendingDateSort);
 
 export const searchUsers = (query) => {
-  if (query!=='') {
+  if (query !== '') {
     return new Promise((resolve, reject) => {
       // Fetch all users from the database
       getAllUsers()
         .then((allUsers) => {
           // Filter users based on the search query
           const filteredUsers = allUsers.filter(
-            (user) => user.handle.toLowerCase().includes(query.toLowerCase())
+            (user) =>
+              user.name.toLowerCase().includes(query.toLowerCase()) ||
+              user.surname.toLowerCase().includes(query.toLowerCase()) ||
+              user.handle.toLowerCase().includes(query.toLowerCase())
           );
 
           resolve(filteredUsers);
