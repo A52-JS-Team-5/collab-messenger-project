@@ -12,9 +12,45 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
   const [areEmojisVisible, setAreEmojisVisible] = useState(false);
   const [originalContent, setOriginalContent] = useState(message.content);
   const [reactions, setReactions] = useState(message?.reactions || {});
+  const reactionOptions = [
+    {
+      id: "laughing",
+      name: "Laughing",
+      content: "😂",
+    },
+    {
+      id: "crying",
+      name: "Crying",
+      content: "😢",
+    },
+    {
+      id: "heart",
+      name: "Heart",
+      content: "❤️",
+    },
+    {
+      id: "thumbs-up",
+      name: "Thumbs Up",
+      content: "👍",
+    },
+    {
+      id: "thumbs-down",
+      name: "Thumbs Down",
+      content: "👎",
+    },
+  ];
   const [reactionValues, setReactionValues] = useState([]);
-  const isGif = message.content.includes('giphy');
+  const isGif = message.content.includes('giphy');   
   const isLink = message.content.includes('chat_uploads');
+  const isImage = message.content.includes('pdf');
+  const timeOptions = { 
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric', 
+    hour: 'numeric', 
+    minute: 'numeric',
+    hour12: false // Use 24-hour format
+  };
 
   const onEdit = () => {
     setShowComment(!showComment);
@@ -60,51 +96,24 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
       <Avatar user={userAvatar}/>
       <div className="chat-header">
         {message.author}
-        <time id='message-sent-date' className="text-xs opacity-50 pl-1">{new Date(message.createdOn).toLocaleString()}</time>
+        <time id='message-sent-date' className="text-xs opacity-50 pl-1">{new Date(message.createdOn).toLocaleString('en-GB', timeOptions)}</time>
       </div>
 
       {showComment === false ? ( // is edit button clicked on?
         // if yes -> show input
         <div key={message.id} className='flex space-between'>
-          <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered input-xs w-full max-w-xs" />
-          <button className="btn btn-ghost btn-xs flex self-center text-white" onClick={setNewContent}>Save</button>
+          <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md" />
+          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-mint" onClick={setNewContent}>Save</button>
         </div>
       ) : (
         isGif === true ? (
           <div className='flex flex-row'>
             <img src={message.content} alt="GIF" />
-            {editMessageOption && (<div className="flex self-start pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={onEdit}><i className="fa-solid fa-pen-to-square"></i></div>)}
             {editMessageOption !== true && (
               <div className='flex flex-row'>
                 <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
                   <QuickReactions
-                    reactionsArray={[
-                      {
-                        id: "laughing",
-                        name: "Laughing",
-                        content: "😂",
-                      },
-                      {
-                        id: "crying",
-                        name: "Crying",
-                        content: "😢",
-                      },
-                      {
-                        id: "heart",
-                        name: "Heart",
-                        content: "❤️",
-                      },
-                      {
-                        id: "thumbs-up",
-                        name: "Thumbs Up",
-                        content: "👍",
-                      },
-                      {
-                        id: "thumbs-down",
-                        name: "Thumbs Down",
-                        content: "👎",
-                      },
-                    ]}
+                    reactionsArray={reactionOptions}
                     placement='right'
                     isVisible={areEmojisVisible}
                     onClose={() => setAreEmojisVisible(false)}
@@ -121,90 +130,41 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
           </div>
         ) : (
           isLink === true ? (
-            <div className='flex flex-row border w-48 h-20 items-center rounded-xl'>
+            isImage !== true ? (
+            <img src={message.content} alt='Image File Sent' width={200} />
+            ) : (
+              <div className='flex flex-row border w-48 h-20 bg-white items-center rounded-xl'>
               <i className="fa-regular fa-file fa-xl p-5"></i>
-              <a download="test-file" href={message.content} >{message.title}</a>
-              
+              <a download href={message.content}>{message.title}</a>
               {editMessageOption !== true && (
-                <div className='flex flex-row'>
-                  <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
-                    <QuickReactions
-                      reactionsArray={[
-                        {
-                          id: "laughing",
-                          name: "Laughing",
-                          content: "😂",
-                        },
-                        {
-                          id: "crying",
-                          name: "Crying",
-                          content: "😢",
-                        },
-                        {
-                          id: "heart",
-                          name: "Heart",
-                          content: "❤️",
-                        },
-                        {
-                          id: "thumbs-up",
-                          name: "Thumbs Up",
-                          content: "👍",
-                        },
-                        {
-                          id: "thumbs-down",
-                          name: "Thumbs Down",
-                          content: "👎",
-                        },
-                      ]}
-                      placement='right'
-                      isVisible={areEmojisVisible}
-                      onClose={() => setAreEmojisVisible(false)}
-                      onClickReaction={(reaction) => {
-                        onReaction(reaction.content)
-                      }}
-                      trigger={
-                        <div className='flex self-center' onClick={() => setAreEmojisVisible(!areEmojisVisible)}><i className="fa-regular fa-face-smile opacity-50"></i></div>
-                      }
-                    />
+                  <div className='flex flex-row'>
+                    <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
+                      <QuickReactions
+                        reactionsArray={reactionOptions}
+                        placement='right'
+                        isVisible={areEmojisVisible}
+                        onClose={() => setAreEmojisVisible(false)}
+                        onClickReaction={(reaction) => {
+                          onReaction(reaction.content)
+                        }}
+                        trigger={
+                          <div className='flex self-center' onClick={() => setAreEmojisVisible(!areEmojisVisible)}><i className="fa-regular fa-face-smile opacity-50"></i></div>
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
               )}
             </div>
+            )
           ) : (
             <div className='flex flex-row'>
               {editMessageOption && (<div className="flex self-center pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={onEdit}><i className="fa-solid fa-pen-to-square"></i></div>)}
-              <div className="chat-bubble">{message.content}</div>
+              <div className="chat-bubble bg-white text-black">{message.content}</div>
               {editMessageOption !== true && (
                 <div className='flex flex-row'>
                   <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
                     <QuickReactions
-                      reactionsArray={[
-                        {
-                          id: "laughing",
-                          name: "Laughing",
-                          content: "😂",
-                        },
-                        {
-                          id: "crying",
-                          name: "Crying",
-                          content: "😢",
-                        },
-                        {
-                          id: "heart",
-                          name: "Heart",
-                          content: "❤️",
-                        },
-                        {
-                          id: "thumbs-up",
-                          name: "Thumbs Up",
-                          content: "👍",
-                        },
-                        {
-                          id: "thumbs-down",
-                          name: "Thumbs Down",
-                          content: "👎",
-                        },
-                      ]}
+                      reactionsArray={reactionOptions}
                       placement='right'
                       isVisible={areEmojisVisible}
                       onClose={() => setAreEmojisVisible(false)}
