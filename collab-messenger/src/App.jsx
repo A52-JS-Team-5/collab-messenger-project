@@ -98,15 +98,15 @@ function App() {
             {error && <div>Error: {error.message}</div>}
             {!loading && !error && (
               <div className='flex flex-col flex-1 min-h-[96vh]'>
-                {<AppNav onLogout={onLogout} user={user} loggedUserHandle={loggedUserHandle}/>}
+                {<AppNav onLogout={onLogout} user={user} loggedUserHandle={loggedUserHandle} />}
                 <Routes>
                   <Route path="/app/users/:userHandle" element={<UserProfile />} />
                   <Route path="/app/users/:userHandle/edit" element={<EditUserProfile loggedUser={user} />} />
                   <Route path='*' element={<PageNotFound />} />
                   <Route path='/app/search-results' element={<SearchResults />} />
                   <Route path="/app/insights" element={<Insights />} />
-                  <Route path='/app/chats' element={<ChatsLayout /> }>              
-                    <Route path=':chatId' element={<ChatDetails /> }/>
+                  <Route path='/app/chats' element={<ChatsLayout />} >
+                    <Route path=':chatId' element={<ChatDetails />} />
                   </Route>
                   <Route path="/app/teams" element={<Teams />} />
                   <Route path="/app/teams/:teamId" element={<SingleTeamView />} />
@@ -135,7 +135,7 @@ function App() {
                 </Routes>
               </div>
             )}
-            <Footer />
+            {!loading && !error && <Footer />}
           </div>
         )}
       </AppContext.Provider >
