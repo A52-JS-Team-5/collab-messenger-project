@@ -17,6 +17,7 @@ export default function ChatBox({ chatId }) {
   const [isLastMsgFile, setIsLastMsgFile] = useState(false);
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
   const [ChatTitle, setChatTitle] = useState('');
+  const [areMessagesRead, setAreMessagesRead] = useState(true);
 
   useEffect(() => {
     getChatById(chatId)
@@ -43,6 +44,13 @@ export default function ChatBox({ chatId }) {
       if (updatedChatData) {
         setChatData(updatedChatData);
       }
+      if (updatedChatData?.lastMessage){
+        setLastMessage(updatedChatData.lastMessage);
+      }
+      if (updatedChatData?.participantsReadMsg){
+        const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData.handle];
+        setAreMessagesRead(userLastReadMessage === updatedChatData.lastMessage);
+      }
     });
 
     return () => {
@@ -62,6 +70,7 @@ export default function ChatBox({ chatId }) {
         <Avatar user={ChatTitle} />
       )}
       <div className="min-w-0 flex-1">
+      
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-medium">
@@ -75,6 +84,11 @@ export default function ChatBox({ chatId }) {
           </div>
         </div>
       </div>
+      <div>{areMessagesRead === true ? <div className='flex w-2 h-2 rounded-full bg-transparent'></div> : (
+        <div className='pb-9'>
+          <div className='w-2 h-2 rounded-full bg-blue'></div>
+        </div>
+      )}</div>
     </div>
   )
 }
