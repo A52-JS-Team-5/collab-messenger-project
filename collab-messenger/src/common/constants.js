@@ -23,3 +23,5 @@ export const MIN_MESSAGE_LENGTH = 1;
 export const MAX_MESSAGE_LENGTH = 4000;
 
 export const MIN_GROUP_CHAT_MEMBERS = 3;
+
+export const DEFAULT_TEAM_PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg';
