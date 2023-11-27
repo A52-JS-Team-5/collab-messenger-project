@@ -31,7 +31,7 @@ const Teams = () => {
 
     return (
         <div className='mt-4'>
-            <div className='p-4 flex flex-row justify-between items-center bg-white rounded-lg'>
+            <div className='p-4 flex flex-row justify-between items-center bg-pureWhite rounded-lg'>
                 <h2 className='font-bold'>Your Teams</h2>
                 <CreateTeam />
             </div>
@@ -42,7 +42,7 @@ const Teams = () => {
                         <div className='grid grid-cols-5 max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-4 w-full'>
                             {teams.map(team => {
                                 return (
-                                    <div className='flex flex-col gap-4 p-6 rounded-md bg-white items-center cursor-pointer' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
+                                    <div className='flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
                                         <img src={team?.photoURL} className='w-20 h-20 object-cover rounded-full' />
                                         <div className='font-bold'>{team?.name}</div>
                                     </div>
