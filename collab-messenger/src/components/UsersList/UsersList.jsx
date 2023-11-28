@@ -28,7 +28,7 @@ function UserData({ user }) {
   const startChat = (event) => {
     event.preventDefault();
     if (existingChats && existingChatId && Object.keys(existingChats).includes(user?.handle)) {
-      navigate(`/chats/${existingChatId}`)
+      navigate(`/app/chats/${existingChatId}`)
     } else {
       createChat(user?.handle, loggedUser.userData?.handle)
         .then((chatId) => {
@@ -49,7 +49,7 @@ function UserData({ user }) {
     <div className='user-card flex flex-col gap-4 rounded-md border border-black items-start'>
       <div className='user-card-head'>
         <div className='author-description flex flex-col items-start'>
-          <div className='handle' onClick={() => navigate(`/users/${user?.id}`)}>{user?.id}</div>
+          <div className='handle' onClick={() => navigate(`/app/users/${user?.id}`)}>{user?.id}</div>
           <div className='email'>{user?.email}</div>
         </div>
       </div>
