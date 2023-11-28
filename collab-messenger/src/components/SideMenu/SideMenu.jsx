@@ -12,11 +12,11 @@ const SideMenu = () => {
     };
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col max-lg:hidden md:display-flex md:display-flex-col'>
             <img src={iconLogo} className='max-h-14 cursor-pointer' alt="Chatter App Logo" onClick={() => { navigate("/") }}/>
             <ul className="menu gap-2 rounded-box justify-center grow">
-                <li onClick={() => handleLinkClick('/app/insights')}>
-                    <Link to="/app/insights" className={`flex flex-col gap-2 h-20 justify-center ${activeLink === '/app/insights' ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
+                <li onClick={() => handleLinkClick('/app')}>
+                    <Link to="/app" className={`flex flex-col gap-2 h-20 justify-center ${activeLink === '/app' ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
                         <i className="fa-solid fa-house"></i>
                         <p className='text-xs'>Insights</p>
                     </Link>
