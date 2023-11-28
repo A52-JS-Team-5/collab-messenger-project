@@ -1,27 +1,16 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from '../../context/AuthContext';
+import iconLogo from '../../assets/app-icon/app-icon.svg';
 
 export default function AppNav({ onLogout}) {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
-    const { pathname } = useLocation();
-    const pageName = pathname.split('/').pop();
     const user = useContext(AppContext);
-
-    const getPageTitle = (pageName) => {
-        const isTeamsPage = pathname.includes('/app/teams/');
-
-        if (isTeamsPage) {
-            return "Team Details";
-        } else {
-            return pageName.charAt(0).toUpperCase() + pageName.slice(1);
-        }
-    };
 
     const handleClick = () => {
         const elem = document.activeElement;
@@ -49,15 +38,13 @@ export default function AppNav({ onLogout}) {
     };
 
     return (
-        <div className="flex flex-row gap-2">
-            <div className='flex flex-row self-stretch basis-1/2 items-center'>
-                <h1 className='text-2xl font-bold'>{getPageTitle(pageName)}</h1>
-            </div>
-            <div className='flex flex-row basis-1/2 justify-end gap-2'>
-                <div className='flex flex-row gap-2 justify-center'>
+        <div className="flex flex-row gap-2 self-stretch w-full">
+            <div className='flex flex-row justify-end gap-2 w-full'>
+            <img src={iconLogo} className='max-h-12 cursor-pointer lg:hidden sm:max-lg:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }}/>
+                <div className='flex flex-row gap-2 justify-center w-full'>
                     <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
                         onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl' placeholder="What are you searching for today?" />
-                    <button onClick={handleSearch} className='btn btn-outline' id='search-button'><i className="fa-solid fa-magnifying-glass"></i></button>
+                    <button onClick={handleSearch} className='btn bg-blue text-pureWhite border-none'><i className="fa-solid fa-magnifying-glass"></i></button>
                 </div>
                 {user !== null && (
                     <div className="dropdown dropdown-end">
