@@ -26,6 +26,7 @@ import Teams from './views/Teams/Teams';
 import SingleTeamView from './views/SingleTeamView/SingleTeamView';
 import SearchResults from './views/SearchResults/SearchResults';
 import ChatDetails from './components/ChatDetails/ChatDetails';
+import MobileSideMenu from './components/MobileSideMenu/MobileSideMenu';
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -104,7 +105,7 @@ function App() {
                   <Route path="/app/users/:userHandle/edit" element={<EditUserProfile loggedUser={user} />} />
                   <Route path='*' element={<PageNotFound />} />
                   <Route path='/app/search-results' element={<SearchResults />} />
-                  <Route path="/app/insights" element={<Insights />} />
+                  <Route path="/app" element={<Insights />} />
                   <Route path='/app/chats' element={<ChatsLayout />} >
                     <Route path=':chatId' element={<ChatDetails />} />
                   </Route>
@@ -114,6 +115,7 @@ function App() {
                 </Routes>
               </div>
             )}
+            {!loading && !error && <MobileSideMenu />}
           </div>
         ) : (
           <div className='flex flex-col'>
@@ -131,7 +133,7 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path='*' element={<PageNotFound />} />
                   <Route path="/faq" element={<Faqs />} />
-                  <Route path="/app/insights" element={<Insights />} />
+                  <Route path="/app" element={<Insights />} />
                 </Routes>
               </div>
             )}
