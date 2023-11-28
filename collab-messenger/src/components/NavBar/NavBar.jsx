@@ -78,7 +78,7 @@ export default function NavBar({ user, onLogout, loggedUserHandle }) {
               <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52">
                 {/*<li onClick={handleClick}><Link to={`/users/${loggedUserHandle}`}>See Profile</Link></li>
                 <li onClick={handleClick}><Link to={`/users/${loggedUserHandle}/edit`}>Edit Profile</Link></li>*/}
-                <li onClick={handleClick}><Link to={`/app/insights`}>Go to App</Link></li>
+                <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>
                 <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
               </ul>
             </div>
