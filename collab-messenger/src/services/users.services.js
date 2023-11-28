@@ -127,13 +127,13 @@ export const checkEmailExists = (email) => {
     })
     .catch(e => console.log(e.message));
 };
-/*
-export const changeAdminStatus = (userHandle, currentStatus) => {
-  const updates = { isAdmin: !currentStatus };
-  update(ref(db, `users/${userHandle}`), updates)
-    .catch((e) => console.log('Error in changing admin status', e.message));
+
+export const changeStatus = (userHandle, newStatus) => {
+  return update(ref(db, `users/${userHandle}`), { status: newStatus })
+    .catch((e) => console.log('Error in changing status:', e.message));
 }
 
+/*
 export const changeBlockedStatus = (userHandle, currentStatus) => {
   const updates = { isBlocked: !currentStatus };
   update(ref(db, `users/${userHandle}`), updates)
