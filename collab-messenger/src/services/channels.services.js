@@ -31,10 +31,12 @@ export const createChannel = (title, participants) => {
     createdOn: Date.now(),
     isPublic: false,
     lastMessage: '',
+    participantsReadMsg: {},
   };
 
   participants.forEach((participant) => {
     newChannel.participants[`${participant.value}`] = true;
+    newChannel.participants[`${participant.value}`] = '';
   });
 
   return push(channelsRef, newChannel)
@@ -46,17 +48,32 @@ export const createChannel = (title, participants) => {
     });
 };
 
-export const addChannel = (userHandle, loggedUserHandle, channelId) => {
+// export const addChannel = (userHandle, loggedUserHandle, channelId) => {
+//   const updateChannels = {};
+
+//   updateChannels[`/users/${userHandle}/channels/${channelId}`] = true;
+//   updateChannels[`/users/${loggedUserHandle}/channels/${channelId}`] = true;
+//   updateChannels[
+//     `/users/${userHandle}/channelParticipants/${loggedUserHandle}`
+//   ] = channelId;
+//   updateChannels[
+//     `/users/${loggedUserHandle}/channelParticipants/${userHandle}`
+//   ] = channelId;
+
+//   return update(ref(db), updateChannels).catch((e) =>
+//     console.log(`Error adding channel to users' data: ${e.message}`)
+//   );
+// };
+
+export const addChannel = (participants, channelId) => {
   const updateChannels = {};
 
-  updateChannels[`/users/${userHandle}/channels/${channelId}`] = true;
-  updateChannels[`/users/${loggedUserHandle}/channels/${channelId}`] = true;
-  updateChannels[
-    `/users/${userHandle}/channelParticipants/${loggedUserHandle}`
-  ] = channelId;
-  updateChannels[
-    `/users/${loggedUserHandle}/channelParticipants/${userHandle}`
-  ] = channelId;
+  participants.forEach((participant) => {
+    updateChannels[`/users/${participant.value}/channels/${channelId}`] = true;
+    updateChannels[
+      `/users/${participant.value}/channelParticipants/${participant.value}`
+    ] = channelId;
+  });
 
   return update(ref(db), updateChannels).catch((e) =>
     console.log(`Error adding channel to users' data: ${e.message}`)
@@ -77,6 +94,9 @@ const fromChannelsDocument = (snapshot) => {
         : [],
       messages: channel.messages ? Object.keys(channel.messages) : [],
       lastMessage: channel.lastMessage,
+      participantsReadMsg: channel.participantsReadMsg
+        ? channel.participantsReadMsg
+        : {},
     };
   });
 };
@@ -110,6 +130,7 @@ export const userChannelsDocument = (snapshots) => {
         : [],
       messages: channel.messages ? Object.keys(channel.messages) : [],
       lastMessage: channel.lastMessage,
+      participantsReadMsg: channel.participantsReadMsg,
     };
   });
 };
@@ -173,4 +194,10 @@ export const getChannelById = (id) => {
       return channel;
     })
     .catch((e) => console.log(`Error in getting channel by Id: ${e.message}`));
+};
+
+export const makeChannelPublic = (id) => {
+  return update(ref(db, `channels/${id}`), {
+    isPublic: true,
+  }).catch((e) => console.log(`Error in making channel public: ${e.message}`));
 };
