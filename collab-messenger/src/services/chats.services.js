@@ -6,11 +6,10 @@ export const updateChatFiles = (chatId, fileUrl) => {
   const updateChat = {};
   updateChat[`/chats/${chatId}/uploadedFiles/url`] = fileUrl;
 
-  return update(ref(db), updateChat)
-    .catch((e) =>
-      console.log(`Error adding chat to users' data`, e.message)
-    );
-}
+  return update(ref(db), updateChat).catch((e) =>
+    console.log(`Error adding chat to users' data`, e.message)
+  );
+};
 
 export const getChatsCount = () => {
   return get(ref(db, `chats`))
@@ -34,7 +33,7 @@ export const createChat = (...participants) => {
     createdOn: Date.now(),
     isGroup: false,
     lastMessage: '',
-    participantsReadMsg: {}
+    participantsReadMsg: {},
   };
 
   participants.forEach((participant) => {
@@ -77,7 +76,9 @@ const fromChatsDocument = (snapshot) => {
       participants: chat.participants ? Object.keys(chat.participants) : [],
       messages: chat.messages ? Object.keys(chat.messages) : [],
       lastMessage: chat.lastMessage,
-      participantsReadMsg: chat.participantsReadMsg ? chat.participantsReadMsg : {}
+      participantsReadMsg: chat.participantsReadMsg
+        ? chat.participantsReadMsg
+        : {},
     };
   });
 };
@@ -108,7 +109,7 @@ const userChatsDocument = (snapshots) => {
       participants: chat.participants ? Object.keys(chat.participants) : [],
       messages: chat.messages ? Object.keys(chat.messages) : [],
       lastMessage: chat.lastMessage,
-      participantsReadMsg: chat.participansLastReadMessages
+      participantsReadMsg: chat.participantsReadMsg,
     };
   });
 };
@@ -144,7 +145,7 @@ export const createGroupChat = (title, participants) => {
     createdOn: Date.now(),
     isGroup: true,
     lastMessage: '',
-    participantsReadMsg: {}
+    participantsReadMsg: {},
   };
 
   participants.forEach((participant) => {
@@ -176,7 +177,7 @@ export const leaveChat = (chatId, userHandle) => {
   return Promise.all([
     remove(ref(db, `/users/${userHandle}/chats/${chatId}`)),
     remove(ref(db, `chats/${chatId}/participants/${userHandle}`)),
-    remove(ref(db, `chats/${chatId}/participantsReadMsg/${userHandle}`))
+    remove(ref(db, `chats/${chatId}/participantsReadMsg/${userHandle}`)),
   ]).catch((e) => console.log('Error in leaving chat', e.message));
 };
 
@@ -238,7 +239,8 @@ export const getChatById = (id) => {
       const chat = result.val();
 
       if (!chat.participants) chat.participants = {};
-      if (!chat.participansLastReadMessages) chat.participansLastReadMessages = {};
+      if (!chat.participansLastReadMessages)
+        chat.participansLastReadMessages = {};
       if (!chat.messages) chat.messages = {};
       return chat;
     })
