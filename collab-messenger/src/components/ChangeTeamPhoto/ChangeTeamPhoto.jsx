@@ -70,8 +70,8 @@ export default function ChangeTeamPhoto({ teamDetails }) {
         <div className="flex flex-col gap-4 w-full">
             <div className='flex flex-col items-start gap-4'>
                 <div className='flex flex-col items-start'>
-                    <h3 className='font-bold text-lg'>Update Team Picture</h3>
-                    <p>A picture helps people recognize the team.</p>
+                    <h3 className='font-bold text-lg text-left'>Update Team Picture</h3>
+                    <p className="text-left">A picture helps people recognize the team.</p>
                 </div>
                 <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
                     <div className='flex flex-col self-stretch w-24 justify-top'>
