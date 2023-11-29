@@ -4,8 +4,10 @@ import { removeTeamMember } from "../../services/teams.services";
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createNotification, pushNotifications } from "../../services/notifications.services";
+import { REMOVED_FROM_TEAM_TYPE, REMOVED_NOTIFICATION } from "../../common/constants";
 
-const RemoveTeamMember = ({ teamId, memberId }) => {
+const RemoveTeamMember = ({ teamId, teamName, memberId }) => {
     const [open, setOpen] = useState(false);
     const handleToggle = () => setOpen((prev) => !prev);
 
@@ -23,7 +25,12 @@ const RemoveTeamMember = ({ teamId, memberId }) => {
 
         removeTeamMember(teamId, memberId)
             .then(() => {
-                toast('Member(s) removed successfully.')
+                toast('Member(s) removed successfully.');
+
+                return createNotification(`${REMOVED_NOTIFICATION} ${teamName}.`, REMOVED_FROM_TEAM_TYPE);
+            })
+            .then(notificationId => {
+                return pushNotifications(memberId, notificationId);
             })
             .catch((error) => {
                 console.log(error.message);
@@ -52,6 +59,7 @@ const RemoveTeamMember = ({ teamId, memberId }) => {
 
 RemoveTeamMember.propTypes = {
     teamId: PropTypes.string,
+    teamName: PropTypes.string,
     memberId: PropTypes.string,
 };
 
