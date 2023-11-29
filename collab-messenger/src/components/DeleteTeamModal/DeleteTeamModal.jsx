@@ -3,12 +3,14 @@ import cn from "classnames";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { deleteTeam } from "../../services/teams.services";
+import { deleteTeam, removeTeamFromUser } from "../../services/teams.services";
 import { useState } from "react";
+import { createNotification, pushNotifications } from "../../services/notifications.services";
+import { DELETED_TEAM_NOTIFICATION, DELETED_TEAM_TYPE } from "../../common/constants";
 
-const DeleteTeamModal = ({ teamId, isOpen, onClose }) => {
+const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(isOpen)
+  const [isModalOpen, setIsModalOpen] = useState(isOpen);
 
   const modalClass = cn({
     "modal modal-bottom sm:modal-middle": true,
@@ -21,13 +23,23 @@ const DeleteTeamModal = ({ teamId, isOpen, onClose }) => {
     deleteTeam(teamId)
       .then(() => {
         navigate(`/app/teams`);
+
+        return Promise.all(teamData.members.map((member) =>
+          removeTeamFromUser(teamId, member))
+        )
       })
+      .then(() => {
+        return createNotification(`${DELETED_TEAM_NOTIFICATION}: ${teamData.name}.`, DELETED_TEAM_TYPE)
+      })
+      .then((notificationId) =>
+        Promise.all(teamData.members.map((member) =>
+          pushNotifications(member, notificationId))))
       .catch(e => {
         toast('Error in deleting team. Please try again later.')
         console.log('Error deleting team: ', e.message);
       })
 
-      setIsModalOpen(false);
+    setIsModalOpen(false);
   }
 
   return (
@@ -49,6 +61,7 @@ const DeleteTeamModal = ({ teamId, isOpen, onClose }) => {
 }
 
 DeleteTeamModal.propTypes = {
+  teamData: PropTypes.object,
   teamId: PropTypes.string,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
