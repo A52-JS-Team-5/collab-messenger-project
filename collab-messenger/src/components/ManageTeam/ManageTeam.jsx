@@ -73,7 +73,7 @@ const ManageTeam = ({ teamDetails }) => {
             <div className="flex flex-col items-start w-full gap-2">
                 <div className="flex flex-col items-start">
                     <h2 className='font-bold text-lg'>Team Details</h2>
-                    <p>Basic information related to your team.</p>
+                    <p className="text-left">Basic information related to your team.</p>
                 </div>
                 <div className="flex flex-col gap-4 items-start w-full">
                     <div className="flex flex-row gap-4 items-center w-full">
