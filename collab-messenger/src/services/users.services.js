@@ -70,6 +70,7 @@ const fromUsersDocument = (snapshot) => {
       messages: user.messages ? Object.keys(user.messages) : [],
       status: user.status,
       bio: user.bio ? user.bio : '',
+      notifications: user.notifications ? Object.keys(user.notifications) : [],
     };
   });
 };
