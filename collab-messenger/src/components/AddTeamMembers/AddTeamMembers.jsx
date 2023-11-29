@@ -6,8 +6,11 @@ import cn from "classnames";
 import { searchUsers } from '../../services/users.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createNotification, pushNotifications } from '../../services/notifications.services';
+import { ADDED_TO_TEAM_NOTIFICATION, ADDED_TO_TEAM_TYPE } from '../../common/constants';
+import PropTypes from 'prop-types';
 
-const AddTeamMembers = () => {
+const AddTeamMembers = ( {teamName} ) => {
     const user = useContext(AppContext);
     const [open, setOpen] = useState(false);
     const handleToggle = () => setOpen((prev) => !prev);
@@ -68,8 +71,13 @@ const AddTeamMembers = () => {
 
         updateTeamMembers(teamId, membersToAdd)
             .then(() => {
-                toast('Member(s) added successfully.')
+                toast('Member(s) added successfully.');
+
+                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamName}.`, ADDED_TO_TEAM_TYPE, teamId);
             })
+            .then((notificationId) =>
+                Promise.all(membersToAdd.map((member) =>
+                    pushNotifications(member, notificationId))))
             .catch((error) => {
                 console.log(error.message);
                 toast('An error occurred while trying to add team members.')
@@ -150,5 +158,9 @@ const AddTeamMembers = () => {
         </div>
     );
 }
+
+AddTeamMembers.propTypes = {
+    teamName: PropTypes.string,
+};
 
 export default AddTeamMembers;
