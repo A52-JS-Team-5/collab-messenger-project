@@ -1,12 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const MobileSideMenu = () => {
     const [activeLink, setActiveLink] = useState('');
-    const navigate = useNavigate();
+    const navigate = useNavigate();   
+    const location = useLocation();
+
+    useEffect(() => {
+        setActiveLink(location.pathname);
+    }, [location.pathname]);
 
     const handleLinkClick = (link) => {
-        setActiveLink(link);
         navigate(link);
     };
 

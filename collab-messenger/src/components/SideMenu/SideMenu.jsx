@@ -1,34 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import iconLogo from '../../assets/app-icon/app-icon.svg'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './SideMenu.css';
 
 const SideMenu = () => {
     const [activeLink, setActiveLink] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleLinkClick = (link) => {
-        setActiveLink(link);
-    };
+    useEffect(() => {
+        setActiveLink(location.pathname);
+    }, [location.pathname]);
 
     return (
         <div className='flex flex-col max-lg:hidden md:display-flex md:display-flex-col'>
-            <img src={iconLogo} className='max-h-14 cursor-pointer' alt="Chatter App Logo" onClick={() => { navigate("/") }}/>
+            <img src={iconLogo} className='max-h-14 cursor-pointer' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
             <ul className="menu gap-2 rounded-box justify-center grow">
-                <li onClick={() => handleLinkClick('/app')}>
+                <li>
                     <Link to="/app" className={`flex flex-col gap-2 h-20 justify-center ${activeLink === '/app' ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
                         <i className="fa-solid fa-house"></i>
                         <p className='text-xs'>Insights</p>
                     </Link>
                 </li>
-                <li onClick={() => handleLinkClick('/app/chats')}>
-                    <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center ${activeLink === '/app/chats' ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
+                <li>
+                    <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center ${activeLink.includes('/app/chats') ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
                         <i className="fa-solid fa-message"></i>
                         <p className='text-xs'>Chats</p>
                     </Link>
                 </li>
-                <li onClick={() => handleLinkClick('/app/teams')}>
-                    <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center ${activeLink === '/app/teams' ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
+                <li>
+                    <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center ${activeLink.includes('/app/teams') ? 'active-link' : 'hover:!text-blue hover:bg-lightBlue focus:!bg-blue30'}`}>
                         <i className="fa-solid fa-users"></i>
                         <p className='text-xs'>Teams</p>
                     </Link>
