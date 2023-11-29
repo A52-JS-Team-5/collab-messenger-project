@@ -177,3 +177,11 @@ export const deleteTeam = (teamId) => {
     return remove(ref(db, `teams/${teamId}`))
         .catch((e) => console.log('Error in deleting team', e.message));
 }
+
+export const removeTeamFromUser = (teamId, member) => {
+    const updates = {};
+    updates[`/users/${member}/teamsMember/${teamId}`] = null;
+
+    return update(ref(db), updates)
+        .catch((e) => console.log('Error updating details', e.message));
+}
