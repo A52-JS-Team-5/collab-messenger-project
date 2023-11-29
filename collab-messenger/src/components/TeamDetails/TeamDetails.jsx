@@ -19,7 +19,7 @@ const TeamDetails = ({ teamDetails, showManageTeam }) => {
                 <img src={teamData?.photoURL} className='w-24 h-24 object-cover rounded-md'></img>
                 <div className='flex flex-col gap-0.5 items-start justify-center'>
                     <h2 className='text-lg font-bold'>{teamData?.name}</h2>
-                    <p>{teamData?.description}</p>
+                    <p className="text-left">{teamData?.description}</p>
                 </div>
             </div>
             <div className='flex flex-col gap-6'>
