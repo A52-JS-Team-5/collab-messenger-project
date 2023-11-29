@@ -25,3 +25,21 @@ export const MAX_MESSAGE_LENGTH = 4000;
 export const MIN_GROUP_CHAT_MEMBERS = 3;
 
 export const DEFAULT_TEAM_PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg';
+
+export const ADDED_TO_TEAM_NOTIFICATION = 'You have been added to a new team';
+
+export const REMOVED_NOTIFICATION = 'You have been removed from';
+
+export const ADDED_TO_CHANNEL_NOTIFICATION = 'You have been added to a new channel';
+
+export const DELETED_TEAM_NOTIFICATION = 'This team has been deleted';
+
+export const ADDED_TO_TEAM_TYPE = 'addedToTeam';
+
+export const REMOVED_FROM_TEAM_TYPE = 'removedFromTeam';
+
+export const ADDED_TO_CHANNEL_TYPE = 'addedToChannel';
+
+export const REMOVED_FROM_CHANNEL_TYPE = 'removedFromChannel';
+
+export const DELETED_TEAM_TYPE = 'deletedTeam';
