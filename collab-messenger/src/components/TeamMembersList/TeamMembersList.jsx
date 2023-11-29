@@ -62,7 +62,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
             <div className='flex flex-col bg-white rounded-md pt-4'>
                 <div className='flex flex-row justify-between items-center pl-4 pr-4'>
                     <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white' />
-                    {showManageTeam && <AddTeamMembers />}
+                    {showManageTeam && <AddTeamMembers teamName={teamData.name} />}
                 </div>
                 {searchQuery === '' ? (
                     <div className='mt-2'>
@@ -104,7 +104,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                                         <p className='text-xs'>{`@${member.handle}`}</p>
                                                     </div>
                                                 </div>
-                                                {showManageTeam && <RemoveTeamMember teamId={teamData.id} memberId={member.id} />}
+                                                {showManageTeam && <RemoveTeamMember teamId={teamData.id} teamName={teamData.name} memberId={member.id} />}
                                             </li>
                                         ))}
                                 </ul>
@@ -125,7 +125,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                                 <p className='text-xs'>{`@${member.handle}`}</p>
                                             </div>
                                         </div>
-                                        {showManageTeam && <RemoveTeamMember teamId={teamData.id} memberId={member.id} />}
+                                        {showManageTeam && <RemoveTeamMember teamId={teamData.id} teamName={teamData.name} memberId={member.id} />}
                                     </li>
                                 ))}
                             </ul>
