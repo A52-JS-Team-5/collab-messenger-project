@@ -1,12 +1,13 @@
 import { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppContext from '../../context/AuthContext';
-import { MIN_TEAM_NAME_LENGTH, MAX_TEAM_NAME_LENGTH } from '../../common/constants';
+import { MIN_TEAM_NAME_LENGTH, MAX_TEAM_NAME_LENGTH, ADDED_TO_TEAM_NOTIFICATION, ADDED_TO_TEAM_TYPE } from '../../common/constants';
 import { addTeam, createTeam, getTeamByName, updateTeamMembers } from '../../services/teams.services';
 import cn from "classnames";
 import { searchUsers } from '../../services/users.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createNotification, pushNotifications } from '../../services/notifications.services';
 
 export default function CreateTeam() {
     const user = useContext(AppContext);
@@ -117,6 +118,13 @@ export default function CreateTeam() {
         const membersToAdd = selectedMembers.map((member) => member.handle);
 
         updateTeamMembers(newTeamId, membersToAdd)
+            .then(() => {
+                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamData.name}.`, ADDED_TO_TEAM_TYPE, newTeamId)
+            })
+            .then((notificationId) =>
+                Promise.all(membersToAdd.map((member) =>
+                    pushNotifications(member, notificationId))))
+
             .then(() => {
                 navigate(`/app/teams/${newTeamId}`);
             })
