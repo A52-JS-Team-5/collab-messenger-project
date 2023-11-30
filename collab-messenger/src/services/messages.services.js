@@ -1,9 +1,4 @@
-import {
-  ref,
-  push,
-  get,
-  update,
-} from 'firebase/database';
+import { ref, push, get, update } from 'firebase/database';
 import { db } from '../config/firebase-config';
 
 export const addMessage = (userHandle, chatId, messageId, message) => {
@@ -12,11 +7,28 @@ export const addMessage = (userHandle, chatId, messageId, message) => {
   updateMessages[`/users/${userHandle}/messagedPosts/${chatId}`] = true;
   updateMessages[`/chats/${chatId}/lastMessage`] = message;
 
-  return update(ref(db), updateMessages)
-    .catch((e) => console.log('Error adding message: ', e.message));
+  return update(ref(db), updateMessages).catch((e) =>
+    console.log('Error adding message: ', e.message)
+  );
 };
 
-export const createFileUploadMessage = (content, userHandle, chatId, title, type, ) => {
+export const addMessageChannel = (channelId, messageId, message) => {
+  const updateChannelMessages = {};
+  updateChannelMessages[`/channels/${channelId}/messages/${messageId}`] = true;
+  updateChannelMessages[`/channels/${channelId}/lastMessage/`] = message;
+
+  return update(ref(db), updateChannelMessages).catch((e) =>
+    console.log(`Error in adding message to channel: ${e.message}`)
+  );
+};
+
+export const createFileUploadMessage = (
+  content,
+  userHandle,
+  chatId,
+  title,
+  type
+) => {
   const messagesRef = ref(db, 'messages');
 
   const newMessage = {
@@ -26,7 +38,7 @@ export const createFileUploadMessage = (content, userHandle, chatId, title, type
     chatId: chatId,
     reactions: {},
     title: title,
-    type: type
+    type: type,
   };
 
   return push(messagesRef, newMessage)
@@ -46,7 +58,7 @@ export const createMessage = (content, userHandle, chatId) => {
     author: userHandle,
     createdOn: Date.now(),
     chatId: chatId,
-    reactions: {}
+    reactions: {},
   };
 
   return push(messagesRef, newMessage)
@@ -55,6 +67,26 @@ export const createMessage = (content, userHandle, chatId) => {
     })
     .catch((error) => {
       console.log(`Error creating message: ${error.message}`);
+    });
+};
+
+export const createChannelMessage = (content, userHandle, channelId) => {
+  const messagesRef = ref(db, 'messages');
+
+  const newMessage = {
+    content: content,
+    author: userHandle,
+    createdOn: Date.now(),
+    channelId: channelId,
+    reactions: {},
+  };
+
+  return push(messagesRef, newMessage)
+    .then((newMessageRef) => {
+      return newMessageRef.key;
+    })
+    .catch((error) => {
+      console.log(`Error creating channel message: ${error.message}`);
     });
 };
 
@@ -73,10 +105,9 @@ export const getMessageById = (messageId) => {
 };
 
 export const editMessage = (messageId, updates) => {
-  return update(ref(db, `/messages/${messageId}`), updates)
-    .catch((e) => {
-      console.log('Error editing comment: ', e.message);
-    });
+  return update(ref(db, `/messages/${messageId}`), updates).catch((e) => {
+    console.log('Error editing comment: ', e.message);
+  });
 };
 
 // const commentAscDateSort = (a, b) => {
