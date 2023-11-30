@@ -6,12 +6,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import Pagination from "../../components/Pagination/Pagination";
 import UsersList from "../../components/UsersList/UsersList";
 import UsersSort from "../../components/UsersSort/UsersSort";
-// import EmptyIcon from '../../assets/empty-icon/empty-icon.png'
+import EmptyIcon from '../../assets/empty-icon/empty-icon.png'
 
 export default function SearchResults() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(15);
+  const [usersPerPage] = useState(10);
   const [numberOfUsers, setNumberOfUsers] = useState(0);
   const lastPostIndex = currentPage * usersPerPage;
   const firstPostIndex = lastPostIndex - usersPerPage;
@@ -39,11 +39,11 @@ export default function SearchResults() {
   
   return (
     <>        
-      <div className='flex flex-col px-40 max-xl:px-6 py-12'>
+      <div className='flex flex-col px-36 max-xl:px-6 py-2'>
         <div className="hero my-7">       
           <div className="hero-content text-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold">Found Users Based On Your Search</h1>
+              <h1 className="text-2xl font-bold">Found Users Based On Your Search</h1>
             </div>
           </div>
         </div> 
@@ -51,13 +51,13 @@ export default function SearchResults() {
       
       {numberOfUsers.length === 0 ? (
         <div className='flex flex-row justify-center gap-5'>
-          {/* <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" width={70} /> */}
+          <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" width={70} />
           <p className='mt-4'>Oops, no users or teams were found based on your search criteria. Please try again!</p>
         </div>
       ) : (
         <>
-          <div className='flex flex-col gap-8'>
-            <div className='flex flex-row justify-end'>
+          <div className='flex flex-col gap-3'>
+            <div className='flex flex-row justify-end pr-4'>
               <UsersSort users={users} setUsers={setUsers} />
             </div>
             <UsersList users={users} />
