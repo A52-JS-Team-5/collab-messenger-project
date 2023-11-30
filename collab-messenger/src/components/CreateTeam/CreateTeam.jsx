@@ -8,6 +8,7 @@ import { searchUsers } from '../../services/users.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createNotification, pushNotifications } from '../../services/notifications.services';
+import { addChannel, createChannel } from '../../services/channels.services';
 
 export default function CreateTeam() {
     const user = useContext(AppContext);
@@ -126,6 +127,10 @@ export default function CreateTeam() {
                     pushNotifications(member, notificationId))))
 
             .then(() => {
+                createChannel('General', membersToAdd)
+                .then((channelId) => {
+                    addChannel(membersToAdd, channelId, newTeamId, user.userData.handle);
+                })
                 navigate(`/app/teams/${newTeamId}`);
             })
             .catch((error) => {
