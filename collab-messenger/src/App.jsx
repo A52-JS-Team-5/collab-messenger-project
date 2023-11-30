@@ -27,6 +27,7 @@ import SingleTeamView from './views/SingleTeamView/SingleTeamView';
 import SearchResults from './views/SearchResults/SearchResults';
 import ChatDetails from './components/ChatDetails/ChatDetails';
 import MobileSideMenu from './components/MobileSideMenu/MobileSideMenu';
+import ChannelDetails from './components/ChannelDetails/ChannelDetails'
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -110,7 +111,9 @@ function App() {
                     <Route path=':chatId' element={<ChatDetails />} />
                   </Route>
                   <Route path="/app/teams" element={<Teams />} />
-                  <Route path="/app/teams/:teamId" element={<SingleTeamView />} />
+                  <Route path="/app/teams/:teamId" element={<SingleTeamView />} >
+                    <Route path=':channelId' element={<ChannelDetails />} />
+                  </Route>
                   <Route path="/" element={<Home />} />
                 </Routes>
               </div>
