@@ -5,12 +5,29 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from '../../context/AuthContext';
 import iconLogo from '../../assets/app-icon/app-icon.svg';
+import { db } from '../../config/firebase-config';
+import { ref, onValue } from 'firebase/database';
+import { changeStatus } from '../../services/users.services';
 
 export default function AppNav({ onLogout}) {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
     const user = useContext(AppContext);
+    const [currentStatus, setCurrentStatus] = useState(user?.status);
+    const statusColors = {
+        'Online': 'bg-green',
+        'Offline': 'bg-black',
+        'Away': 'bg-yellow'
+      };
+
+    const handleStatusChange = (event) => {
+        const selection = event.target.value;
+        if(user?.status !== selection) {
+          changeStatus(user?.handle, selection);
+          setCurrentStatus(selection);
+        }
+    }
 
     const handleClick = () => {
         const elem = document.activeElement;
@@ -23,7 +40,19 @@ export default function AppNav({ onLogout}) {
         if (user?.photoURL) {
             setPhotoURL(user.photoURL);
         }
-    }, [user])
+    }, [user]);
+
+    useEffect(() => {
+        const userRef = ref(db, `users/${user?.handle}/status`);
+        const userStatusListener = onValue(userRef, (snapshot) => {
+          const updatedStatus = snapshot.val();
+          setCurrentStatus(updatedStatus);
+        });
+    
+        return () => {
+          userStatusListener();
+        };
+      }, [user?.handle, currentStatus])
 
     const handleSearch = () => {
         navigate('/app/search-results', { state: { searchTerm: searchTerm } });
@@ -49,11 +78,19 @@ export default function AppNav({ onLogout}) {
                 {user !== null && (
                     <div className="dropdown dropdown-end">
                         <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full">
+                            <div className="w-10 rounded-full static">
                                 <img src={photoURL} />
                             </div>
+                            <div className={`absolute top-8 right-1 w-2 h-2 rounded-full ${statusColors[currentStatus]}`}></div>
                         </label>
                         <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52">
+                            <li><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent">
+                                <option>Online</option>
+                                <option>Away</option>
+                                <option>Offline</option>
+                                </select>
+                            </li>
+                            <div className="divider m-0"></div>
                             <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}`}>See Profile</Link></li>
                             <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}/edit`}>Edit Profile</Link></li>
                             <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
