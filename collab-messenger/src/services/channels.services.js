@@ -35,8 +35,7 @@ export const createChannel = (title, participants) => {
   };
 
   participants.forEach((participant) => {
-    newChannel.participants[`${participant.value}`] = true;
-    newChannel.participants[`${participant.value}`] = '';
+    newChannel.participants[`${participant}`] = true;
   });
 
   return push(channelsRef, newChannel)
@@ -48,32 +47,15 @@ export const createChannel = (title, participants) => {
     });
 };
 
-// export const addChannel = (userHandle, loggedUserHandle, channelId) => {
-//   const updateChannels = {};
-
-//   updateChannels[`/users/${userHandle}/channels/${channelId}`] = true;
-//   updateChannels[`/users/${loggedUserHandle}/channels/${channelId}`] = true;
-//   updateChannels[
-//     `/users/${userHandle}/channelParticipants/${loggedUserHandle}`
-//   ] = channelId;
-//   updateChannels[
-//     `/users/${loggedUserHandle}/channelParticipants/${userHandle}`
-//   ] = channelId;
-
-//   return update(ref(db), updateChannels).catch((e) =>
-//     console.log(`Error adding channel to users' data: ${e.message}`)
-//   );
-// };
-
-export const addChannel = (participants, channelId) => {
+export const addChannel = (participants, channelId, teamId, teamOwner) => {
   const updateChannels = {};
 
   participants.forEach((participant) => {
-    updateChannels[`/users/${participant.value}/channels/${channelId}`] = true;
-    updateChannels[
-      `/users/${participant.value}/channelParticipants/${participant.value}`
-    ] = channelId;
+    updateChannels[`/users/${participant}/channels/${channelId}`] = true;
   });
+
+  updateChannels[`/teams/${teamId}/channels/${channelId}`] = true;
+  updateChannels[`/users/${teamOwner}/channels/${channelId}`] = true;
 
   return update(ref(db), updateChannels).catch((e) =>
     console.log(`Error adding channel to users' data: ${e.message}`)
@@ -163,7 +145,7 @@ export const getLoggedUserChannels = (userHandle) => {
 export const leaveChannel = (channelId, userHandle) => {
   return Promise.all([
     remove(ref(db, `/users/${userHandle}/channels/${channelId}`)),
-    remove(ref(db, `channels/${channelId}/participants/${userHandle}`)),
+    remove(ref(db, `/channels/${channelId}/participants/${userHandle}`)),
   ]).catch((e) => console.log(`Error in leaving channel: ${e.message}`));
 };
 
