@@ -10,6 +10,8 @@ import TeamDetails from "../../components/TeamDetails/TeamDetails";
 import LeaveTeamModal from "../../components/LeaveTeamModal/LeaveTeamModal";
 import DeleteTeamModal from "../../components/DeleteTeamModal/DeleteTeamModal";
 import PageNotFound from "../PageNotFound/PageNotFound";
+import ChannelBox from "../../components/ChannelBox/ChannelBox";
+import { Outlet } from "react-router-dom";
 
 const SingleTeamView = () => {
 
@@ -21,6 +23,7 @@ const SingleTeamView = () => {
     const [showManageTeam, setShowManageTeam] = useState('');
     const [activeComponent, setActiveComponent] = useState(0); // 0 for ChannelView, 1 for TeamDetails
     const [isDeleted, setIsDeleted] = useState(false);
+    const [allTeamChannelsOfUser, setAllTeamChannelsOfUser] = useState([]);
 
     useEffect(() => {
         const teamRef = ref(db, `teams/${teamId}`);
@@ -30,6 +33,10 @@ const SingleTeamView = () => {
                 if (teamData) {
                     setTeamDetails(teamData);
                     setIsLoading(false);
+
+                    // add logic for filtering channels that the user is in with team channels
+                    const userChannels = teamData.channels.filter((channel) => Object.keys(user.userData?.channels).includes(channel));
+                    setAllTeamChannelsOfUser(userChannels);
 
                     // Check if the current user is the owner
                     if (teamData.owner === user.userData?.handle) {
@@ -67,7 +74,7 @@ const SingleTeamView = () => {
         return () => {
             teamListener();
         };
-    }, [teamId, user.userData?.handle]);
+    }, [teamId, user.userData?.handle, user.userData?.channels]);
 
     const handleClick = () => {
         const elem = document.activeElement;
@@ -138,6 +145,14 @@ const SingleTeamView = () => {
                             </div>
                         </div>
                         <div className="divider"></div>
+                        <div className="flex flex-col gap-1">
+                            {allTeamChannelsOfUser.map(channel => (
+                            <ChannelBox key={channel} channelId={channel}/>)
+                            )}
+                        </div>
+                    </div>
+                    <div className="basis-11/12 w-full h-[92vh] flex items-center place-content-evenly overflow-auto">
+                        <Outlet />
                     </div>
                     {activeComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} />}
                 </div>
