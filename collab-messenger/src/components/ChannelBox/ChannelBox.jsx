@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 export default function ChannelBox({ channelId }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
-  const [, setChannelData] = useState({});
   const [lastMessage, setLastMessage] = useState('');
   const [isLastMsgFile, setIsLastMsgFile] = useState(false);
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
@@ -23,13 +22,11 @@ export default function ChannelBox({ channelId }) {
   useEffect(() => {
     getChannelById(channelId)
       .then((data) => {
-        setChannelData(data);
         setChannelTitle(data.title);
 
         setLastMessage(data.lastMessage);
         setIsLastMsgGif(data.lastMessage.includes('giphy'));
-        // should this be chat_uploads or channel_uploads?
-        setIsLastMsgFile(data.lastMessage.includes('chat_uploads'));
+        setIsLastMsgFile(data.lastMessage.includes('channel_uploads'));
       })
       .catch((e) => {
         toast(`Error in getting channel data. Please try again.`);
@@ -39,9 +36,6 @@ export default function ChannelBox({ channelId }) {
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
-      if (updatedChannelData) {
-        setChannelData(updatedChannelData);
-      }
       if (updatedChannelData?.lastMessage) {
         setLastMessage(updatedChannelData.lastMessage);
       }
