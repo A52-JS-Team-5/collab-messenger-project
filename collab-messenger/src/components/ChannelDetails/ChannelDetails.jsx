@@ -1,17 +1,18 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
-import { addMessage } from "../../services/messages.services";
+// import { addMessage } from "../../services/messages.services";
+import { addMessageChannel } from "../../services/messages.services";
+import { createChannelMessage } from "../../services/messages.services";
 import { getChannelById } from "../../services/channels.services";
 import { db } from '../../config/firebase-config';
 import { ref, onValue, query, orderByChild, equalTo, update } from 'firebase/database';
 import MessagesList from '../MessagesList/MessagesList';
-import { createMessage } from '../../services/messages.services';
 import { useParams } from "react-router-dom";
 import Avatar from '../Avatar/Avatar';
-import LeaveChatModal from '../LeaveChatModal/LeaveChatModal';
 import ReactGiphySearchbox from 'react-giphy-searchbox-techedge';
 import UploadFile from '../UploadFile/UploadFile';
+import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
 
 export default function ChannelDetails() {
   const loggedUser = useContext(AppContext);
@@ -34,7 +35,6 @@ export default function ChannelDetails() {
 
   const isLink = message.content.includes('chat_uploads');
   const areThereMessages = allMessages.length > 0;
-  // logic for public?
 
   const updateMessage = (field) => (e) => {
     if (field === 'content' && message.content.includes('chat_uploads')) {
@@ -65,9 +65,9 @@ export default function ChannelDetails() {
       return;
     }
 
-    createMessage(message.content, loggedUser.userData.handle, channelId)
+    createChannelMessage(message.content, loggedUser.userData.handle, channelId)
       .then((messageId) => {
-        return addMessage(loggedUser.userData.handle, channelId, messageId, message.content)
+        return addMessageChannel(channelId, messageId, message.content)
       })
       .then(() => {
         setMessage((prevMessage) => ({
@@ -126,7 +126,7 @@ export default function ChannelDetails() {
         }
       });
 
-      const channelsRef = ref(db, 'channels');
+      const channelsRef = ref(db, 'messages');
       const channelMessagesQuery = query(channelsRef, orderByChild('channelId'), equalTo(channelId));
 
       const messagesListener = onValue(channelMessagesQuery, (snapshot) => {
@@ -152,12 +152,12 @@ export default function ChannelDetails() {
             <div id='chat-title' className="flex place-items-end">{channelTitle}</div> 
           </div>
         </div>
-        <LeaveChatModal channelId={channelId} />
+        <LeaveChannelModal channelId={channelId} channelTitle={channelTitle}/>
       </div>
       <div id='messages-wrapper' className="p-4 h-[70vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
           [&::-webkit-scrollbar-thumb]:bg-mint [&::-webkit-scrollbar-thumb]:rounded-md p-1">
         {areThereMessages === true ? (
-          <MessagesList channelMessages={allMessages} />
+          <MessagesList chatMessages={allMessages} />
         ) : (
           <p className="self-center">Start a conversation</p>
         )}
