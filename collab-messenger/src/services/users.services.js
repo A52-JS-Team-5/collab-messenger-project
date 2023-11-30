@@ -23,7 +23,7 @@ export const createUserHandle = (handle, uid, email, name, surname, phoneNumber)
     channels: [],
     chats: [],
     messages: [],
-    status: 'online',
+    status: 'Online',
     createdOn: Date.now(),
   })
     .catch(e => console.log(e.message))
