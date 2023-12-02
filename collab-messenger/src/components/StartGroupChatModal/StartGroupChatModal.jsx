@@ -12,8 +12,8 @@ export default function StartGroupChatModal() {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const handleToggle = () => setOpen((prev) => !prev);
-  const [title, setTitle] = useState('');
-  const [participants, setParticipants] = useState([]);
+  const [groupChatTitle, setGroupChatTitle] = useState('');
+  const [groupChatParticipants, setGroupChatParticipants] = useState([]);
 
   const modalClass = cn({
     "modal modal-bottom sm:modal-middle": true,
@@ -22,22 +22,22 @@ export default function StartGroupChatModal() {
 
   const navigate = useNavigate();
 
-  const createChat = (event) => {
+  const handleGroupChatCreation = (event) => {
     event.preventDefault();
 
-    if(!title) {
+    if(!groupChatTitle) {
       toast('You must include a title for the group chat!');
       return;
     }
 
-    if(participants.length < MIN_GROUP_CHAT_MEMBERS) {
+    if(groupChatParticipants.length < MIN_GROUP_CHAT_MEMBERS) {
       toast('You must add at least 3 users in the group chat!');
       return;
     }
 
-    createGroupChat(title, participants)
+    createGroupChat(groupChatTitle, groupChatParticipants)
       .then((chatId) => {
-        addGroupChat(chatId, participants)
+        addGroupChat(chatId, groupChatParticipants)
         return chatId;
       })
       .then((chatId) => {
@@ -61,7 +61,7 @@ export default function StartGroupChatModal() {
 
   return (
     <div className="start-chat-view">
-      <button className="btn btn-ghost font-black" onClick={handleToggle}>+<i className="fa-solid fa-user-group"></i></button>
+      <button className="btn btn-ghost btn-sm font-black" onClick={handleToggle}>+<i className="fa-solid fa-user-group fa-sm"></i></button>
       <div className={modalClass}>
         <div className="modal-box bg-light-gray">
           <div className="post-description flex flex-col gap-2 bg-light-gray">
@@ -71,7 +71,7 @@ export default function StartGroupChatModal() {
               <label className="label">
                 <span className="label-text text-black bg-transparent">Chat Title</span>
               </label>
-              <input type="text" defaultValue={title} onChange={(e) => {setTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white" />
+              <input type="text" defaultValue={groupChatTitle} onChange={(e) => {setGroupChatTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white" />
             </div>
             <div className="z-[100]">
               <label className="label">
@@ -90,13 +90,13 @@ export default function StartGroupChatModal() {
                    }),
                 }} classNames={{
                   control: () => "text-sm"
-                }} onChange={(selectedOptions) => {setParticipants(selectedOptions)}} isMulti menuPortalTarget={document.body} options={users.map((user) => ({value: user.id, label: user.handle}))} />}
+                }} onChange={(selectedOptions) => {setGroupChatParticipants(selectedOptions)}} isMulti menuPortalTarget={document.body} options={users.map((user) => ({value: user.id, label: user.handle}))} />}
               </div>
             </div>
           </div>
           <div className="modal-action flex-row">
             <button className="btn btn-outline text-pink bg-transparent" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={createChat} className="bg-pink text-white">Create Chat</button>
+            <button type="button" onClick={handleGroupChatCreation} className="bg-pink text-white">Create Chat</button>
           </div>
         </div>
       </div>
