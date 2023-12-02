@@ -8,8 +8,9 @@ import iconLogo from '../../assets/app-icon/app-icon.svg';
 import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
 import { changeStatus } from '../../services/users.services';
+import UserProfile from '../../views/UserProfile/UserProfile';
 
-export default function AppNav({ onLogout}) {
+export default function AppNav({ onLogout }) {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
@@ -19,13 +20,13 @@ export default function AppNav({ onLogout}) {
         'Online': 'bg-green',
         'Offline': 'bg-black',
         'Away': 'bg-yellow'
-      };
+    };
 
     const handleStatusChange = (event) => {
         const selection = event.target.value;
-        if(user.userData?.status !== selection) {
-          changeStatus(user.userData?.handle, selection);
-          setCurrentStatus(selection);
+        if (user.userData?.status !== selection) {
+            changeStatus(user.userData?.handle, selection);
+            setCurrentStatus(selection);
         }
     }
 
@@ -45,14 +46,14 @@ export default function AppNav({ onLogout}) {
     useEffect(() => {
         const userRef = ref(db, `users/${user.userData?.handle}/status`);
         const userStatusListener = onValue(userRef, (snapshot) => {
-          const updatedStatus = snapshot.val();
-          setCurrentStatus(updatedStatus);
+            const updatedStatus = snapshot.val();
+            setCurrentStatus(updatedStatus);
         });
-    
+
         return () => {
-          userStatusListener();
+            userStatusListener();
         };
-      }, [user.userData?.handle, currentStatus])
+    }, [user.userData?.handle, currentStatus])
 
     const handleSearch = () => {
         navigate('/app/search-results', { state: { searchTerm: searchTerm } });
@@ -66,10 +67,21 @@ export default function AppNav({ onLogout}) {
         }
     };
 
+    // State and functions for UserProfileModal
+    const [isUserProfileModalOpen, setIsUserProfileModalOpen] = useState(false);
+
+    const openUserProfileModal = () => {
+        setIsUserProfileModalOpen(true);
+    };
+
+    const closeUserProfileModal = () => {
+        setIsUserProfileModalOpen(false);
+    };
+
     return (
         <div className="flex flex-row gap-2 self-stretch w-full">
             <div className='flex flex-row justify-end gap-2 w-full'>
-            <img src={iconLogo} className='max-h-12 cursor-pointer lg:hidden sm:max-lg:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }}/>
+                <img src={iconLogo} className='max-h-12 cursor-pointer lg:hidden sm:max-lg:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
                 <div className='flex flex-row gap-2 justify-center w-full'>
                     <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
                         onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl' placeholder="What are you searching for today?" />
@@ -88,13 +100,14 @@ export default function AppNav({ onLogout}) {
                                 <option>Online</option>
                                 <option>Away</option>
                                 <option>Offline</option>
-                                </select>
+                            </select>
                             </li>
                             <div className="divider m-0"></div>
-                            <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}`}>See Profile</Link></li>
+                            <li onClick={openUserProfileModal}><a>See Profile</a></li>
                             <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}/edit`}>Edit Profile</Link></li>
                             <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
                         </ul>
+                        {isUserProfileModalOpen && <UserProfile userHandle={user?.userData?.handle} isOpen={isUserProfileModalOpen} onClose={closeUserProfileModal} />}
                     </div>
                 )}
             </div>
