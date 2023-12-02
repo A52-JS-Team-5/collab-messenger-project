@@ -4,7 +4,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import './App.css';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { logoutUser } from './services/auth.services';
-import { getUserData, getUsernameByUid } from './services/users.services';
+import { changeStatus, getUserData, getUsernameByUid } from './services/users.services';
 import { auth } from './config/firebase-config';
 import Home from './views/Home/Home';
 import About from './views/About/About';
@@ -18,7 +18,6 @@ import Footer from './components/Footer/Footer';
 import PageNotFound from './views/PageNotFound/PageNotFound';
 import Faqs from './views/FAQs/Faqs'
 import Insights from './views/Insights/Insights';
-// import Chats from './views/Chats/Chats';
 import ChatsLayout from './views/ChatsLayout/ChatsLayout'
 import SideMenu from './components/SideMenu/SideMenu';
 import AppNav from './components/AppNav/AppNav';
@@ -44,6 +43,7 @@ function App() {
 
   // logout the user
   const onLogout = () => {
+    changeStatus(appState.userData?.handle, "Offline");
     logoutUser()
       .then(() => {
         setAppState({
