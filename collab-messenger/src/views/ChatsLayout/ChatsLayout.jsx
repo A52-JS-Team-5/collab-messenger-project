@@ -6,16 +6,19 @@ import { Outlet } from "react-router-dom";
 import ChatBox from "../../components/ChatBox/ChatBox";
 import AppContext from "../../context/AuthContext";
 import StartGroupChatModal from "../../components/StartGroupChatModal/StartGroupChatModal";
+import StartPrivateChatModal from "../../components/StartPrivateChatModal/StartPrivateChatModal";
 import { db } from "../../config/firebase-config";
 import { ref, onValue } from 'firebase/database';
+import EmptyList from "../../components/EmptyList/EmptyList";
 
 export default function ChatsLayout() {
   const [allLoggedUserChats, setAllLoggedUserChats] = useState([]);
   const loggedUser = useContext(AppContext);
+  const loggedUserHandle = loggedUser.userData?.handle;
   const [userChatIds, setUserChatIds] = useState([]);
 
   useEffect(() => {
-    getLoggedUserChats(loggedUser.userData?.handle)
+    getLoggedUserChats(loggedUserHandle)
       .then(chats => {
         const sortedChats = sortByDateDesc(chats);
         setAllLoggedUserChats(sortedChats);
@@ -32,14 +35,7 @@ export default function ChatsLayout() {
 
       if (updatedChatData) {
         const chatIds = Object.keys(updatedChatData);
-        const userChats = [];
-
-        // check if user participates in changed chats 
-        chatIds.forEach(chat => {
-          if (userChatIds.includes(chat)) {
-            userChats.push(chat)
-          }
-        })
+        const userChats = chatIds.filter(chat => userChatIds.includes(chat));
 
         // if user participates in chats, set chatData with new data
         if (userChats.length > 0) {
@@ -65,25 +61,41 @@ export default function ChatsLayout() {
       chatsListener();
     }
   
-  }, [loggedUser.userData?.handle, userChatIds]);
+  }, [userChatIds, loggedUserHandle]);
 
   return (
-    <>
-      <div className="flex flex-row justify-start w-full">
-        <div className="basis-80 h-[91vh] bg-grey text-black">
-          <div className="p-2 flex place-content-end">
-            <StartGroupChatModal />
+    <div className="mt-5">
+      <div className="flex gap-3 h-[85vh] flex-row justify-start w-full">
+        <div className="basis-80 bg-white rounded-md text-black">
+          <div className="flex items-center justify-between p-2">
+            <p className="font-black text-xl pt-2 pl-2">Chats</p>
+            <div className="flex">
+              <div className="pt-2">
+                <StartPrivateChatModal />
+              </div>
+              <div className="pt-2">
+                <StartGroupChatModal />
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            {allLoggedUserChats.map(chat => (
-              <ChatBox key={chat.id} chatId={chat.id}/>)
-            )}
-          </div>
+          <div className="divider m-1"></div>
+          {allLoggedUserChats.length > 0 && (
+            <div className="flex flex-col gap-1 overflow-auto [&::-webkit-scrollbar]:[width:8px]
+            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md">
+              {allLoggedUserChats.map(chat => (
+                <ChatBox key={chat.id} chatId={chat.id}/>)
+              )}
+            </div>
+          )}
         </div>
-        <div className="basis-11/12 w-full h-[92vh] flex items-center place-content-evenly overflow-auto">
-          <Outlet />
+        <div className="w-full rounded-md flex items-center place-content-evenly overflow-auto">
+          {allLoggedUserChats.length > 0  ? (
+            <Outlet />
+          ) : (
+            <EmptyList />
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
