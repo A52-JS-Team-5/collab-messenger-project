@@ -1,10 +1,10 @@
-import PropTypes from "prop-types";
-import { useState, useContext } from "react";
 import cn from "classnames";
+import PropTypes from "prop-types";
+import { toast } from 'react-toastify';
+import { useState, useContext } from "react";
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import AppContext from "../../context/AuthContext";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { leaveChat } from "../../services/chats.services";
 
 export default function LeaveChatModal({ chatId }) {
@@ -18,10 +18,10 @@ export default function LeaveChatModal({ chatId }) {
     "modal-open": open,
   });
 
-  const onLeave = (event) => {
+  const handleChatLeaving = (event) => {
     event.preventDefault();
 
-    leaveChat(chatId, loggedUser.userData.handle)
+    leaveChat(chatId, loggedUser.userData?.handle)
       .then(() => {
         navigate(`/app/chats`);
       })
@@ -31,19 +31,21 @@ export default function LeaveChatModal({ chatId }) {
       })
     
     handleToggle();
-  }
+  };
 
   return (
-    <div className="edit-post-view">
-      <button className="btn btn-ghost" onClick={handleToggle}><i className="fa-solid fa-right-from-bracket"></i></button>
-      <div id="edit-post-modal" className={modalClass}>
+    <div>
+      <div className="rounded-full w-8 h-8 bg-lightBlue hover:cursor-pointer" title="Leave Chat" onClick={handleToggle}>
+        <i className="fa-solid fa-right-from-bracket mt-2"></i>
+      </div>
+      <div className={modalClass}>
         <div className="modal-box bg-light-gray">
           <div className="post-description flex flex-col gap-2">
             <h3>Are you sure you want to leave this chat?</h3>
           </div>
           <div className="modal-action flex-row">
             <button className="btn btn-outline text-blue hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={onLeave} className="btn text-black bg-blue hover:bg-lightBlue">Leave Chat</button>
+            <button type="button" onClick={handleChatLeaving} className="btn text-black bg-blue hover:bg-lightBlue">Leave Chat</button>
           </div>
         </div>
       </div>
