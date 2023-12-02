@@ -1,13 +1,13 @@
 import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { useState } from 'react';
 import { MIN_PASSWORD_LENGTH } from "../../common/constants";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [isSuccessful, setIsSuccessful] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [error, setError] = useState('')
 
   const handlePasswordChange = () => {
     const auth = getAuth();
@@ -20,11 +20,11 @@ export default function ChangePassword() {
     );
 
     if (!currentPassword) {
-      alert('Old password is required');
+      setError('Old password is required');
       return;
     }
     if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
-      alert('New password is required and must be at least 6 characters.');
+      setError('New password is required and must be at least 6 characters.');
       return;
     }
 
@@ -32,78 +32,69 @@ export default function ChangePassword() {
     reauthenticateWithCredential(user, credential)
       .then(() => {
         updatePassword(user, newPassword)
-        .then(() => {
-          setMessage('Password updated successfully.');
-          setIsSuccessful(true);
-        })
-        .catch((error) => {
-          setMessage(`Error updating password: ${error.message}`);
-          setFailed(true);
-        });
+          .then(() => {
+            toast('Password updated successfully.');
+          })
+          .catch(() => {
+            toast(`Error updating password. Please try again later.`);
+          });
       })
-      .catch((error) => {
-        setMessage(`Error re-authenticating: ${error.message}`);
-        setFailed(true);
+      .catch(() => {
+        toast(`Error re-authenticating. Please try again later.`);
       });
   };
 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className='change-password'>
-      <div className='password-intro'>
-        <h2>Password and Authentication</h2>
-        <p>A secure password helps protect your account.</p>
-      </div>
-      <button className="btn btn-tertiary" onClick={() => document.getElementById('my_modal_3').showModal()}>Change Password</button>
-      <dialog id="my_modal_3" className="modal flex-col justify-center">
-        <div className="modal-box flex-col gap-2 justify-center bg-neutral-50">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          </form>
-          <h3 className="font-bold text-lg">Change Password</h3>
-          <p className="py-4">Please, insert your new password below.</p>
-          <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">Your Old Password</span>
-            </label>
-            <input type={
-              showPassword ? "text" : "password"
-            } className="input input-bordered w-full max-w-xs bg-neutral-50" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-          </div>
-          <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">Your New Password</span>
-            </label>
-            <input type={
-              showPassword ? "text" : "password"
-            } className="input input-bordered w-full max-w-xs bg-neutral-50" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+    <div className='flex flex-col justify-between basis-4/5 rounded-md bg-pureWhite p-4 h-full gap-2'>
+      <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-4 max-lg:flex-col'>
+        <div className='flex flex-col items-start'>
+          <h3 className='font-bold text-lg text-left'>Password and Authentication</h3>
+          <p className="text-left">A secure password helps protect your account.</p>
+        </div>
+        <button className="btn border-none bg-pink text-pureWhite" onClick={() => document.getElementById('password_modal').showModal()}>Change Password</button>
+        <dialog id="password_modal" className="modal flex-col justify-center">
+          <div className="modal-box flex flex-col gap-4 justify-center bg-pureWhite w-[60vw]">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle hover:bg-lightBlue border-none text-blue bg-pureWhite absolute right-2 top-2">✕</button>
+            </form>
+            <div className='flex flex-col'>
+              <h3 className="font-bold text-lg text-left">Change Password</h3>
+              <p className="text-left">Please, insert your new password below.</p>
+            </div>
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Your Old Password</span>
+              </label>
+              <input type={
+                showPassword ? "text" : "password"
+              } className="input input-bordered w-full bg-pureWhite" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+              {error && <span className="err-message text-red">{error}</span>}
+            </div>
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Your New Password</span>
+              </label>
+              <input type={
+                showPassword ? "text" : "password"
+              } className="input input-bordered w-full bg-pureWhite" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+              {error && <span className="err-message text-red">{error}</span>}
+            </div>
             <div className="form-control">
               <label className="label cursor-pointer flex flex-row gap-2">
                 <span className="label-text">Show Password</span>
                 <input type="checkbox" className="checkbox" checked={showPassword} value={showPassword} onChange={() => setShowPassword((prev) => !prev)} />
               </label>
             </div>
+            {currentPassword !== '' && newPassword !== '' && newPassword.length >= MIN_PASSWORD_LENGTH && (
+              <form method="dialog" className="flex flex-row w-ful justify-end">
+                <button className="btn bg-pink border-none text-white" onClick={handlePasswordChange}>Change Password</button>
+              </form>
+            )}
           </div>
-          {currentPassword !== '' && newPassword !== '' && newPassword.length >= MIN_PASSWORD_LENGTH && (
-            <form method="dialog">
-              <button className="btn btn-active text-white" onClick={handlePasswordChange}>Change Password</button>
-            </form>
-          )}
-        </div>
-      </dialog >
-      {failed && (
-        <div className="alert alert-error">
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <span>{message}</span>
-        </div>
-      )}
-      {isSuccessful && (
-        <div className="alert alert-success">
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <span>{message}</span>
-        </div>
-      )}
-    </div >
+        </dialog >
+      </div >
+    </div>
   )
 }
