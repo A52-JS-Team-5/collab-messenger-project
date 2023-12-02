@@ -143,7 +143,7 @@ export default function CreateTeam() {
         if (query.trim() !== "") {
             searchUsers(query)
                 .then((filteredUsers) => {
-                    const currentUserHandle = user.userData && user.userData.handle;
+                    const currentUserHandle = user.userData.handle;
                     const nonTeamMembers = filteredUsers.filter(user => user.id !== currentUserHandle && !teamData.members[user.id]);
                     setSearchResults(nonTeamMembers);
                 })
