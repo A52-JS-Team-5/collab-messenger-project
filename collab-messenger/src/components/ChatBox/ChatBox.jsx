@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
+import StatusBubble from '../StatusBubble/StatusBubble';
+import GroupChatAvatar from '../GroupChatAvatar/GroupChatAvatar';
 
 export default function ChatBox({ chatId }) {
   const navigate = useNavigate();
@@ -16,8 +18,9 @@ export default function ChatBox({ chatId }) {
   const [lastMessage, setLastMessage] = useState('');
   const [isLastMsgFile, setIsLastMsgFile] = useState(false);
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
-  const [ChatTitle, setChatTitle] = useState('');
+  const [chatTitle, setChatTitle] = useState('');
   const [areMessagesRead, setAreMessagesRead] = useState(true);
+  const loggedUserHandle = loggedUser.userData?.handle;
 
   useEffect(() => {
     getChatById(chatId)
@@ -26,7 +29,7 @@ export default function ChatBox({ chatId }) {
         if(data.isGroup === true) {
           setChatTitle(data.title);
         } else {
-          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
+          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUserHandle));
         }
 
         setLastMessage(data.lastMessage);
@@ -48,47 +51,51 @@ export default function ChatBox({ chatId }) {
         setLastMessage(updatedChatData.lastMessage);
       }
       if (updatedChatData?.participantsReadMsg){
-        const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData.handle];
+        const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUserHandle];
         setAreMessagesRead(userLastReadMessage === updatedChatData.lastMessage);
+      }
+      if (updatedChatData?.title) {
+        setChatTitle(updatedChatData.title);
       }
     });
 
     return () => {
       chatListener();
     };
-  }, [chatId, loggedUser.userData?.handle, lastMessage]);
+  }, [chatId, loggedUserHandle, lastMessage]);
 
   return (
-    <div onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
+    <div id='chatBox-wrapper' onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
       {chatData?.isGroup === true ? (
-        <div className="chat-image avatar w-10 h-10">
-          <div className="rounded-full">
-            <img src={'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg'} />
-          </div>
-        </div>
+        <GroupChatAvatar />
       ) : (
-        <Avatar user={ChatTitle} />
+        <>
+          <Avatar user={chatTitle} isGroup={chatData?.isGroup} />
+          <StatusBubble view={'ChatBox'} userHandle={chatTitle} />
+        </>
       )}
-      <div className="min-w-0 flex-1">
-      
+      <div id='chatBox-content' className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-medium">
-              {ChatTitle}
+              {chatTitle}
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-              <p className="text-xs font-medium text-black">
-                {isLastMsgGif ? 'GIF' : isLastMsgFile ? 'File Sent' : lastMessage}
+              <p className="text-xs font-medium text-black"> 
+                {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage.length > 25 ? lastMessage.slice(0, 25) + ' ...' : lastMessage))}
               </p>
           </div>
         </div>
       </div>
-      <div>{areMessagesRead === true ? <div className='flex w-2 h-2 rounded-full bg-transparent'></div> : (
+      <div id='chatBox-notification'>{areMessagesRead === true ? (
+        <div className='flex w-2 h-2 rounded-full bg-transparent'></div>
+      ) : (
         <div className='pb-9'>
           <div className='w-2 h-2 rounded-full bg-blue'></div>
         </div>
-      )}</div>
+      )}
+      </div>
     </div>
   )
 }
