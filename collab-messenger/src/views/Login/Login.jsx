@@ -3,7 +3,7 @@ import AppContext from "../../context/AuthContext.js";
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { loginUser } from "../../services/auth.services.js";
-import { getUserByHandle } from "../../services/users.services.js";
+import { changeStatus, getUserByHandle } from "../../services/users.services.js";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -36,7 +36,7 @@ const Login = () => {
     return errors;
   }
 
-  const onLogin = (event) => {
+  const handleLogin = (event) => {
 
     event.preventDefault();
     const validationResult = validateFormInput(form);
@@ -46,13 +46,7 @@ const Login = () => {
     }
 
     getUserByHandle(form.username)
-      .then(snapshot => {
-        if (!snapshot.exists()) {
-          throw new Error(`Wrong username and/or password.`);
-        }
-
-        const userData = snapshot.val();
-
+      .then(userData => {
         loginUser(userData.email, form.password)
           .then(credential => {
             setContext({
@@ -60,6 +54,7 @@ const Login = () => {
             }); 
           })
           .then(() => navigate('/'))
+          .then(() => changeStatus(userData.handle, "Online"))
           .catch(e => {
             console.log(e.message);
             toast("Wrong email and/or password. Please try again.");
@@ -92,7 +87,7 @@ const Login = () => {
               <p>New to Chatter?</p>
               <Link to='/login'>Create an account</Link>
             </div>
-            <button className="btn bg-black self-center text-white w-1/2" onClick={onLogin}>Sign In</button>
+            <button className="btn bg-black self-center text-white w-1/2" onClick={handleLogin}>Sign In</button>
           </div>
         </div>
       </div>
