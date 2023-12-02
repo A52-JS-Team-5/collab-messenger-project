@@ -1,11 +1,11 @@
-import EmptyIcon from '../../assets/empty-icon/empty-icon.png'
+import EmptyImg from '../../assets/empty-icon/EmptyList.svg'
 
 const EmptyList = () => {
 
   return (
-    <div className='flex flex-row justify-center gap-5 px-24 max-xl:px-6 py-10 mt-4 w-full min-h-[80vh] items-center'>
-      <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" width={70} />
-      <p className='mt-4'>Nothing added yet</p>
+    <div className='flex flex-col justify-center gap-5 px-24 max-xl:px-6 py-10 mt-4 w-full items-center'>
+      <img src={EmptyImg} id='EmptyList' alt="Empty List Illustration" className='max-h-64'/>
+      <h1 className='text-xl font-bold'>Nothing to Show Yet.</h1>
     </div>
   )
 }
