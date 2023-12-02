@@ -2,9 +2,13 @@ import { get, set, ref, query, equalTo, orderByChild, update } from 'firebase/da
 import { db } from '../config/firebase-config';
 import { getAuth } from 'firebase/auth';
 import { ZERO } from '../common/constants';
+import { DEFAULT_USER_PHOTO } from '../common/constants';
 
 export const getUserByHandle = (handle) => {
   return get(ref(db, `users/${handle}`))
+    .then((snapshot) => {
+      return snapshot.val();
+    })
     .catch((e) => console.log('Error in getting user', e.message));
 };
 
@@ -17,7 +21,7 @@ export const createUserHandle = (handle, uid, email, name, surname, phoneNumber)
     name,
     surname,
     phoneNumber,
-    photoURL: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
+    photoURL:  DEFAULT_USER_PHOTO,
     teamsOwner: [],
     teamsMember: [],
     channels: [],
@@ -26,7 +30,7 @@ export const createUserHandle = (handle, uid, email, name, surname, phoneNumber)
     status: 'Online',
     createdOn: Date.now(),
   })
-    .catch(e => console.log(e.message))
+    .catch(e => console.log('Error in creating user:', e.message))
 };
 
 export const getUserData = (uid) => {
@@ -134,13 +138,6 @@ export const changeStatus = (userHandle, newStatus) => {
     .catch((e) => console.log('Error in changing status:', e.message));
 }
 
-/*
-export const changeBlockedStatus = (userHandle, currentStatus) => {
-  const updates = { isBlocked: !currentStatus };
-  update(ref(db, `users/${userHandle}`), updates)
-    .catch((e) => console.log('Error in changing blocked status', e.message));
-}
-*/
 export const editUserProfile = (handle, updates) => {
   return update(ref(db, `users/${handle}`), updates)
     .then(() => {
