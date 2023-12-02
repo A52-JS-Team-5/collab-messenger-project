@@ -14,7 +14,7 @@ export default function AppNav({ onLogout}) {
     const navigate = useNavigate();
     const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
     const user = useContext(AppContext);
-    const [currentStatus, setCurrentStatus] = useState(user?.status);
+    const [currentStatus, setCurrentStatus] = useState(user.userData?.status);
     const statusColors = {
         'Online': 'bg-green',
         'Offline': 'bg-black',
@@ -23,8 +23,8 @@ export default function AppNav({ onLogout}) {
 
     const handleStatusChange = (event) => {
         const selection = event.target.value;
-        if(user?.status !== selection) {
-          changeStatus(user?.handle, selection);
+        if(user.userData?.status !== selection) {
+          changeStatus(user.userData?.handle, selection);
           setCurrentStatus(selection);
         }
     }
@@ -37,13 +37,13 @@ export default function AppNav({ onLogout}) {
     };
 
     useEffect(() => {
-        if (user?.photoURL) {
-            setPhotoURL(user.photoURL);
+        if (user.userData?.photoURL) {
+            setPhotoURL(user.userData.photoURL);
         }
     }, [user]);
 
     useEffect(() => {
-        const userRef = ref(db, `users/${user?.handle}/status`);
+        const userRef = ref(db, `users/${user.userData?.handle}/status`);
         const userStatusListener = onValue(userRef, (snapshot) => {
           const updatedStatus = snapshot.val();
           setCurrentStatus(updatedStatus);
@@ -52,7 +52,7 @@ export default function AppNav({ onLogout}) {
         return () => {
           userStatusListener();
         };
-      }, [user?.handle, currentStatus])
+      }, [user.userData?.handle, currentStatus])
 
     const handleSearch = () => {
         navigate('/app/search-results', { state: { searchTerm: searchTerm } });
