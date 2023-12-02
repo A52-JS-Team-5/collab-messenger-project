@@ -4,14 +4,13 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import './App.css';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { logoutUser } from './services/auth.services';
-import { changeStatus, getUserData, getUsernameByUid } from './services/users.services';
+import { changeStatus, getUserData } from './services/users.services';
 import { auth } from './config/firebase-config';
 import Home from './views/Home/Home';
 import About from './views/About/About';
 import NavBar from './components/NavBar/NavBar';
 import Register from './views/Register/Register';
 import Login from './views/Login/Login';
-import UserProfile from './views/UserProfile/UserProfile';
 import { ToastContainer } from 'react-toastify';
 import EditUserProfile from './views/EditUserProfile/EditUserProfile';
 import Footer from './components/Footer/Footer';
@@ -73,21 +72,6 @@ function App() {
       })
   }, [user, appState]);
 
-  // Get the user handle
-  const [loggedUserHandle, setLoggedUserHandle] = useState(null);
-
-  useEffect(() => {
-    if (user) {
-      getUsernameByUid(user.uid)
-        .then((handle) => {
-          setLoggedUserHandle(handle);
-        })
-        .catch((error) => {
-          console.error('Error fetching user handle: ', error);
-        });
-    }
-  }, [user]);
-
   return (
     <BrowserRouter>
       <AppContext.Provider value={{ ...appState, setContext: setAppState }}>
@@ -100,10 +84,9 @@ function App() {
             {error && <div>Error: {error.message}</div>}
             {!loading && !error && (
               <div className='flex flex-col flex-1 min-h-[96vh]'>
-                {<AppNav onLogout={onLogout} user={user} loggedUserHandle={loggedUserHandle} />}
+                {<AppNav onLogout={onLogout} />}
                 <Routes>
-                  <Route path="/app/users/:userHandle" element={<UserProfile />} />
-                  <Route path="/app/users/:userHandle/edit" element={<EditUserProfile loggedUser={user} />} />
+                  <Route path="/app/users/:userHandle/edit" element={<EditUserProfile />} />
                   <Route path='*' element={<PageNotFound />} />
                   <Route path='/app/search-results' element={<SearchResults />} />
                   <Route path="/app" element={<Insights />} />
@@ -123,7 +106,7 @@ function App() {
         ) : (
           <div className='flex flex-col'>
             {/* If we're in the website part, we use the flex flex-col className, else - flex flex-row */}
-            {!loading && <NavBar user={user} onLogout={onLogout} loggedUserHandle={loggedUserHandle} />}
+            {!loading && <NavBar onLogout={onLogout} />}
             {/* Conditional rendering based on user, loading, and error */}
             {loading && <div>Loading...</div>}
             {error && <div>Error: {error.message}</div>}
