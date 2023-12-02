@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ChangeTeamPhoto from "../ChangeTeamPhoto/ChangeTeamPhoto";
 import PropTypes from 'prop-types';
 import { editTeam } from "../../services/teams.services";
@@ -9,8 +9,8 @@ const ManageTeam = ({ teamDetails }) => {
     const [error, setError] = useState(false);
     const [isTeamNameUpdated, setIsTeamNameUpdated] = useState(false);
     const [isTeamDescriptionUpdated, setIsTeamDescriptionUpdated] = useState(false);
-    const [teamName, setTeamName] = useState({});
-    const [teamDescription, setTeamDescription] = useState({});
+    const [teamName, setTeamName] = useState({ name: teamDetails.name });
+    const [teamDescription, setTeamDescription] = useState({ description: teamDetails.description });
 
     const updateTeamName = (e) => {
         setTeamName({
@@ -25,13 +25,6 @@ const ManageTeam = ({ teamDetails }) => {
         });
         setIsTeamDescriptionUpdated(true);
     }
-
-    useEffect(() => {
-        if (teamDetails) {
-            setTeamName(teamDetails.name);
-            setTeamDescription(teamDetails.description);
-        }
-    }, [teamDetails])
 
     const onTeamNameEdit = (event) => {
         event.preventDefault();
@@ -78,14 +71,14 @@ const ManageTeam = ({ teamDetails }) => {
                 <div className="flex flex-col gap-4 items-start w-full">
                     <div className="flex flex-row gap-4 items-center w-full">
                         <div className="form-control w-full">
-                            <input type='text' className="input input-bordered w-full bg-white" defaultValue={teamDetails.name} onChange={updateTeamName} />
+                            <input type='text' className="input input-bordered w-full bg-white" defaultValue={teamDetails.name} onChange={(e) => updateTeamName(e)} />
                             {error && <span className="err-message text-red">{error}</span>}
                         </div>
                         {isTeamNameUpdated && <button onClick={onTeamNameEdit} className="btn btn-square bg-pink text-pureWhite border-none"><i className="fa-regular fa-floppy-disk"></i></button>}
                     </div>
                     <div className="flex flex-row gap-4 items-end w-full">
                         <div className="form-control w-full">
-                            <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white" placeholder="Description" defaultValue={teamDetails.description} onChange={updateTeamDescription}></textarea>
+                            <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white" placeholder="Description" defaultValue={teamDetails.description} onChange={(e) => updateTeamDescription(e)}></textarea>
                         </div>
                         {isTeamDescriptionUpdated && <button onClick={onTeamDescriptionEdit} className="btn btn-square bg-pink text-pureWhite border-none"><i className="fa-regular fa-floppy-disk"></i></button>}
                     </div>
