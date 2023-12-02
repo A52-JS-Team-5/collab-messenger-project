@@ -1,79 +1,50 @@
+import PropTypes from 'prop-types';
 import Avatar from '../Avatar/Avatar';
 import { editMessage } from '../../services/messages.services';
 import { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
-import QuickReactions from "react-quick-reactions";
 import AppContext from '../../context/AuthContext';
+import MessageReactions from '../MessageReactions/MessageReactions';
 
 export default function MessageBubble({ message, messageClass, userAvatar, editMessageOption }) {
   const loggedUser = useContext(AppContext);
-  const [form, setForm] = useState('');
-  const [showComment, setShowComment] = useState(true);
+  const [messageInput, setMessageInput] = useState('');
+  const [isEditInputShown, setIsEditInputShown] = useState(false);
   const [areEmojisVisible, setAreEmojisVisible] = useState(false);
-  const [originalContent, setOriginalContent] = useState(message.content);
   const [reactions, setReactions] = useState(message?.reactions || {});
-  const reactionOptions = [
-    {
-      id: "laughing",
-      name: "Laughing",
-      content: "😂",
-    },
-    {
-      id: "crying",
-      name: "Crying",
-      content: "😢",
-    },
-    {
-      id: "heart",
-      name: "Heart",
-      content: "❤️",
-    },
-    {
-      id: "thumbs-up",
-      name: "Thumbs Up",
-      content: "👍",
-    },
-    {
-      id: "thumbs-down",
-      name: "Thumbs Down",
-      content: "👎",
-    },
-  ];
   const [reactionValues, setReactionValues] = useState([]);
-  const isGif = message.content.includes('giphy');   
-  const isLink = message.content.includes('chat_uploads');
-  const isImage = message.content.includes('pdf');
+  const isMessageGif = message.content.includes('giphy');   
+  const isMessageLink = message.content.includes('chat_uploads');
+  const isMessagePdf = message.content.includes('pdf');
   const timeOptions = { 
     year: 'numeric', 
     month: 'numeric', 
     day: 'numeric', 
     hour: 'numeric', 
     minute: 'numeric',
-    hour12: false // Use 24-hour format
+    hour12: false
   };
 
-  const onEdit = () => {
-    setShowComment(!showComment);
-    setForm(originalContent);
+  const handleOpenEditOption = () => {
+    setIsEditInputShown(!isEditInputShown);
+    setMessageInput(message.content);
   };
 
   const onInputChange = (e) => {
-    setForm(e.target.value);
-  }
+    setMessageInput(e.target.value);
+  };
 
-  const setNewContent = () => {
-    editMessage(message.id, { content: form });
-    setOriginalContent(form);
-    setShowComment(true);
-  }
+  const setNewMessageContent = () => {
+    editMessage(message.id, { content: messageInput });
+    setIsEditInputShown(false);
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
-      setShowComment(true);
+      setIsEditInputShown(false);
     }
 
     if (e.key === 'Enter') {
-      setNewContent();
+      setNewMessageContent();
     }
   };
 
@@ -99,85 +70,46 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
         <time id='message-sent-date' className="text-xs opacity-50 pl-1">{new Date(message.createdOn).toLocaleString('en-GB', timeOptions)}</time>
       </div>
 
-      {showComment === false ? ( // is edit button clicked on?
-        // if yes -> show input
-        <div key={message.id} className='flex space-between'>
-          <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md" />
-          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-mint" onClick={setNewContent}>Save</button>
+      {isEditInputShown === true ? (
+        <div className='flex space-between'>
+          <input type="text" value={`${messageInput}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md" />
+          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-mint" onClick={setNewMessageContent}>Save</button>
         </div>
       ) : (
-        isGif === true ? (
+        isMessageGif === true ? (
           <div className='flex flex-row'>
             <img src={message.content} alt="GIF" />
-            {editMessageOption !== true && (
-              <div className='flex flex-row'>
-                <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
-                  <QuickReactions
-                    reactionsArray={reactionOptions}
-                    placement='right'
-                    isVisible={areEmojisVisible}
-                    onClose={() => setAreEmojisVisible(false)}
-                    onClickReaction={(reaction) => {
-                      onReaction(reaction.content)
-                    }}
-                    trigger={
-                      <div className='flex self-center' onClick={() => setAreEmojisVisible(!areEmojisVisible)}><i className="fa-regular fa-face-smile opacity-50"></i></div>
-                    }
-                  />
-                </div>
-              </div>
-            )}
+            {editMessageOption !== true && <MessageReactions 
+              areEmojisVisible={areEmojisVisible} 
+              setAreEmojisVisible={setAreEmojisVisible} 
+              onReaction={onReaction} />
+            }
           </div>
         ) : (
-          isLink === true ? (
-            isImage !== true ? (
-            <img src={message.content} alt='Image File Sent' width={200} />
+          isMessageLink === true ? (
+            isMessagePdf !== true ? (
+              <img src={message.content} alt='Image File Sent' width={200} />
             ) : (
               <div className='flex flex-row border w-48 h-20 bg-white items-center rounded-xl'>
-              <i className="fa-regular fa-file fa-xl p-5"></i>
-              <a download href={message.content}>{message.title}</a>
-              {editMessageOption !== true && (
-                  <div className='flex flex-row'>
-                    <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
-                      <QuickReactions
-                        reactionsArray={reactionOptions}
-                        placement='right'
-                        isVisible={areEmojisVisible}
-                        onClose={() => setAreEmojisVisible(false)}
-                        onClickReaction={(reaction) => {
-                          onReaction(reaction.content)
-                        }}
-                        trigger={
-                          <div className='flex self-center' onClick={() => setAreEmojisVisible(!areEmojisVisible)}><i className="fa-regular fa-face-smile opacity-50"></i></div>
-                        }
-                      />
-                    </div>
-                  </div>
-              )}
-            </div>
+                <i className="fa-regular fa-file fa-xl p-5"></i>
+                <a download target="_blank" rel="noreferrer" href={message.content}>{message.title.length > 10 ? message.title.slice(0, 10) + '...' : message.title}</a>
+                {editMessageOption !== true && <MessageReactions 
+                  areEmojisVisible={areEmojisVisible} 
+                  setAreEmojisVisible={setAreEmojisVisible} 
+                  onReaction={onReaction} 
+                  isMessageImage={true} />
+                }
+              </div>
             )
           ) : (
             <div className='flex flex-row'>
-              {editMessageOption && (<div className="flex self-center pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={onEdit}><i className="fa-solid fa-pen-to-square"></i></div>)}
-              <div className="chat-bubble bg-white text-black">{message.content}</div>
-              {editMessageOption !== true && (
-                <div className='flex flex-row'>
-                  <div className="flex self-center pl-1 text-xs hover:cursor-pointer">
-                    <QuickReactions
-                      reactionsArray={reactionOptions}
-                      placement='right'
-                      isVisible={areEmojisVisible}
-                      onClose={() => setAreEmojisVisible(false)}
-                      onClickReaction={(reaction) => {
-                        onReaction(reaction.content)
-                      }}
-                      trigger={
-                        <div className='flex self-center' onClick={() => setAreEmojisVisible(!areEmojisVisible)}><i className="fa-regular fa-face-smile opacity-50"></i></div>
-                      }
-                    />
-                  </div>
-                </div>
-              )}
+              {editMessageOption && (<div className="flex self-center pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={handleOpenEditOption}><i className="fa-solid fa-pen-to-square"></i></div>)}
+              <div className="chat-bubble rounded-2xl bg-grey text-black">{message.content}</div>
+              {editMessageOption !== true && <MessageReactions
+                areEmojisVisible={areEmojisVisible} 
+                setAreEmojisVisible={setAreEmojisVisible} 
+                onReaction={onReaction} />
+              }
             </div>
           )
         )
