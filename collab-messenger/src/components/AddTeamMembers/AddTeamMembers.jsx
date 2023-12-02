@@ -1,5 +1,4 @@
 import { useState, useContext, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import AppContext from '../../context/AuthContext';
 import { updateTeamMembers } from '../../services/teams.services';
 import cn from "classnames";
@@ -10,14 +9,13 @@ import { createNotification, pushNotifications } from '../../services/notificati
 import { ADDED_TO_TEAM_NOTIFICATION, ADDED_TO_TEAM_TYPE } from '../../common/constants';
 import PropTypes from 'prop-types';
 
-const AddTeamMembers = ( {teamName} ) => {
+const AddTeamMembers = ({ teamDetails }) => {
     const user = useContext(AppContext);
     const [open, setOpen] = useState(false);
     const handleToggle = () => setOpen((prev) => !prev);
     const [searchResults, setSearchResults] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const inputRef = useRef();
-    const { teamId } = useParams();
 
     const modalClass = cn({
         "modal modal-bottom sm:modal-middle": true,
@@ -33,10 +31,9 @@ const AddTeamMembers = ( {teamName} ) => {
 
         if (userToAdd) {
             setTeamData({
-                ...teamData,
                 members: {
                     ...teamData.members,
-                    [userToAdd.handle]: userToAdd.name,
+                    [userToAdd.handle]: true,
                 },
             });
 
@@ -53,7 +50,6 @@ const AddTeamMembers = ( {teamName} ) => {
         const updatedSelectedMembers = selectedMembers.filter((member) => member.handle !== handle);
 
         setTeamData({
-            ...teamData,
             members: updatedMembers,
         });
 
@@ -69,11 +65,11 @@ const AddTeamMembers = ( {teamName} ) => {
     const handleSaveTeam = () => {
         const membersToAdd = selectedMembers.map((member) => member.handle);
 
-        updateTeamMembers(teamId, membersToAdd)
+        updateTeamMembers(teamDetails.id, membersToAdd)
             .then(() => {
                 toast('Member(s) added successfully.');
 
-                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamName}.`, ADDED_TO_TEAM_TYPE, teamId);
+                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamDetails.name}.`, ADDED_TO_TEAM_TYPE, teamDetails.id);
             })
             .then((notificationId) =>
                 Promise.all(membersToAdd.map((member) =>
@@ -93,8 +89,9 @@ const AddTeamMembers = ( {teamName} ) => {
         if (query.trim() !== "") {
             searchUsers(query)
                 .then((filteredUsers) => {
-                    const currentUserHandle = user.userData && user.userData.handle;
-                    const nonTeamMembers = filteredUsers.filter(user => user.id !== currentUserHandle && !teamData.members[user.id]);
+                    const currentUserHandle = user?.userData.handle;
+                    const nonTeamMembers = filteredUsers.filter((user) => user.handle !== currentUserHandle && !teamDetails?.members.includes(user.handle.toLowerCase()))
+
                     setSearchResults(nonTeamMembers);
                 })
                 .catch((error) => {
@@ -160,7 +157,7 @@ const AddTeamMembers = ( {teamName} ) => {
 }
 
 AddTeamMembers.propTypes = {
-    teamName: PropTypes.string,
+    teamDetails: PropTypes.object,
 };
 
 export default AddTeamMembers;
