@@ -15,8 +15,8 @@ const Insights = () => {
     }
 
     return (
-        <div className='mt-4 flex flex-row gap-4 h-[90vh] mt-4 w-full'>
-            <div className='flex flex-col gap-4 w-full h-[88vh]'>
+        <div className='mt-4 flex flex-row gap-4 h-[88vh] mt-4 w-full'>
+            <div className='flex flex-col gap-4 w-full h-[87vh]'>
                 <div className="flex flex-row justify-between rounded-md bg-pureWhite items-center h-1/5">
                     <div className='flex flex-col gap-2 items-start max-xl:p-4 xl:p-6 max-lg:basis-5/5 lg:basis-3/5'>
                         <h2 className='text-xl font-bold text-left'>{`👋 Hey, ${user?.userData?.name}! Thrilled to have you on board.`}</h2>
@@ -47,9 +47,9 @@ const Insights = () => {
                     )}
                 </div>
             </div>
-            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-full'>
+            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[89vh]'>
                 <div className='flex flex-col items-center gap-4'>
-                    <img src={user?.userData?.photoURL} alt="Avatar" className="h-32 w-32 opacity-90 aspect-square" />
+                    <img src={user?.userData?.photoURL} alt="Avatar" className="h-32 w-32 opacity-90 aspect-square rounded-full" />
                     <div className='flex flex-col'>
                         <h2 className='text-xl font-bold'>{user?.userData?.name}{' '}{user?.userData?.surname}</h2>
                         <p>@{user?.userData?.handle}</p>
