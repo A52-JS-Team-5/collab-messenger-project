@@ -173,6 +173,26 @@ export const addGroupChat = (chatId, participants) => {
   );
 };
 
+export const updateGroupChatParticipants = (chatId, participants) => {
+  const updates = {};
+
+  participants.forEach((participant) => {
+    updates[`/chats/${chatId}/participants/${participant.value}`] = true;
+    updates[`/users/${participant.value}/chats/${chatId}`] = true;
+  });
+
+  return update(ref(db), updates)
+    .catch((e) => console.log('Error adding group chat participants: ', e.message));
+}
+
+export const updateGroupChatTitle = (chatId, newTitle) => {
+  const updates = {};
+  updates[`/chats/${chatId}/title`] = newTitle;
+
+  return update(ref(db), updates)
+    .catch((e) => console.log('Error changing group chat title: ', e.message));
+}
+
 export const leaveChat = (chatId, userHandle) => {
   return Promise.all([
     remove(ref(db, `/users/${userHandle}/chats/${chatId}`)),
