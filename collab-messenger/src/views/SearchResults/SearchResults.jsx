@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Pagination from "../../components/Pagination/Pagination";
 import UsersList from "../../components/UsersList/UsersList";
 import UsersSort from "../../components/UsersSort/UsersSort";
-import EmptyIcon from '../../assets/empty-icon/empty-icon.png'
+import EmptyIcon from '../../assets/empty-icon/EmptyList.svg'
 
 export default function SearchResults() {
   const [users, setUsers] = useState([]);
@@ -36,22 +36,22 @@ export default function SearchResults() {
         console.log('Error getting users data: ', e.message)
       })
   }, [searchTerm, firstPostIndex, lastPostIndex])
-  
+
   return (
-    <>        
+    <>
       <div className='flex flex-col px-36 max-xl:px-6 py-2'>
-        <div className="hero my-7">       
+        <div className="hero my-7">
           <div className="hero-content text-center">
             <div className="max-w-md">
               <h1 className="text-2xl font-bold">Found Users Based On Your Search</h1>
             </div>
           </div>
-        </div> 
+        </div>
       </div>
-      
+
       {numberOfUsers.length === 0 ? (
-        <div className='flex flex-row justify-center gap-5'>
-          <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" width={70} />
+        <div className='flex flex-col justify-center gap-4'>
+          <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" className='max-h-64' />
           <p className='mt-4'>Oops, no users or teams were found based on your search criteria. Please try again!</p>
         </div>
       ) : (
@@ -62,11 +62,11 @@ export default function SearchResults() {
             </div>
             <UsersList users={users} />
             <div className="flex flex-row justify-center">
-              <Pagination numberOfUsers={numberOfUsers} usersPerPage={usersPerPage} setCurrentPage={setCurrentPage}/>
+              <Pagination numberOfUsers={numberOfUsers} usersPerPage={usersPerPage} setCurrentPage={setCurrentPage} />
             </div>
           </div>
         </>
-        )
+      )
       }
     </>
   )
