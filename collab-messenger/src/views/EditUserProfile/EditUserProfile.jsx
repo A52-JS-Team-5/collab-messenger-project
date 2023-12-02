@@ -1,42 +1,40 @@
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { editUserProfile, getUserData } from '../../services/users.services';
+import { editUserProfile, getUserByHandle } from '../../services/users.services';
 import ChangePassword from '../../components/ChangePassword/ChangePassword';
-import { MIN_NAME_LENGTH } from '../../common/constants';
+import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '../../common/constants';
 import ChangeProfilePicture from '../../components/ChangeProfilePicture/ChangeProfilePicture';
-import './EditUserProfile.css'
+import { useContext } from 'react';
+import AppContext from '../../context/AuthContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { isPhoneNumberValid } from '../../common/helpers';
 
-export default function EditUserProfile({ loggedUser }) {
+export default function EditUserProfile() {
   const [currentUser, setCurrentUser] = useState('');
   const [loading, setLoading] = useState(true);
-  const [isSuccessful, setIsSuccessful] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
+  const user = useContext(AppContext);
+  const [activeTab, setActiveTab] = useState(0); // 0 for Basic Details, 1 for Profile Picture, 2 for Password Update
+  const [formErrorMsg, setFormErrorMsg] = useState({});
   useEffect(() => {
-    getUserData(loggedUser.uid)
-      .then((snapshot) => {
-        const userKey = Object.keys(snapshot.val())[0];
-        const userData = snapshot.val()[userKey];
-        setCurrentUser(userData);
-        setLoading(false);
-        if (currentUser.isAdmin === true) {
-          setIsAdmin(true);
-        }
-      })
-      .catch((error) => {
-        setMessage('Error fetching user data: ', error);
-        setError(true);
-      });
-  }, [loggedUser.uid, currentUser.isAdmin]);
+    if (user?.userData?.handle) {
+      getUserByHandle(user.userData.handle)
+        .then((snapshot) => {
+          setCurrentUser(snapshot);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log('Error fetching user data: ', error);
+          toast('An error occurred. Please try again later.');
+        });
+    }
+  }, [user?.userData?.handle]);
 
   const [form, setForm] = useState({
     name: '',
     surname: '',
     bio: null,
-    phone: null,
+    phoneNumber: null,
   });
 
   const updateForm = (field) => (e) => {
@@ -53,115 +51,140 @@ export default function EditUserProfile({ loggedUser }) {
         name: currentUser.name,
         surname: currentUser.surname,
         bio: (currentUser.bio ? currentUser.bio : null),
-        phone: (currentUser.phone ? currentUser.phone : null),
+        phoneNumber: (currentUser.phoneNumber ? currentUser.phoneNumber : null),
       })
     }
   }, [currentUser]);
 
+  const validateFormInput = (values) => {
+    const errors = {};
+
+    if (!values.name) {
+      errors.name = 'Name is required.';
+    } else if (values.name.length < MIN_NAME_LENGTH || values.name.length > MAX_NAME_LENGTH) {
+      errors.name = `First name must be between ${MIN_NAME_LENGTH} and ${MAX_NAME_LENGTH} symbols.`;
+    }
+
+    if (!values.surname) {
+      errors.surname = 'Surname is required.';
+    } else if (values.surname.length < MIN_NAME_LENGTH || values.surname.length > MAX_NAME_LENGTH) {
+      errors.surname = `Last name must be between ${MIN_NAME_LENGTH} and ${MAX_NAME_LENGTH} symbols.`;
+    }
+
+    if (!values.phoneNumber) {
+      errors.phoneNumber = 'Phone number is required.'
+    } else if (!isPhoneNumberValid(values.phoneNumber) || values['phoneNumber'].length < 10) {
+      errors.phoneNumber = 'Phone number must only contain digits and be 10 characters long.'
+    }
+
+    setFormErrorMsg(errors);
+    return errors;
+  }
+
   const onEdit = (event) => {
     event.preventDefault();
 
-    if (!form.name) {
-      alert('Name is required');
+    const validationResult = validateFormInput(form);
+
+    if (Object.keys(validationResult).length !== 0) {
       return;
     }
 
     editUserProfile(currentUser.handle, form)
       .then((result) => {
         if (result === 'Successful update') {
-          setMessage('Profile details updated successfully.');
-          setIsSuccessful(true);
+          toast('Profile details updated successfully.');
         }
       })
       .catch((error) => {
-        setMessage(`Error updating details: ${error.message}`);
-        setError(true);
+        console.log(`Error updating details: ${error.message}`);
+        toast('An error occurred while updating profile details.');
       });
-    };
+  };
+
+  const handleTabClick = (tabIndex) => {
+    setActiveTab(tabIndex);
+  };
 
   return (
-    <div className='flex items-center justify-center flex flex-col gap-8 px-40 py-12 max-xl:px-6'>
-      <div className='flex flex-col gap-4'>
-        {!loading && <ChangeProfilePicture handle={currentUser.handle} />}
-        {!loading && (
-          <div className='basic-details'>
-            <div className='basic-details-intro'>
-              <h2>Basic Details</h2>
-              <p>Info about you across our forum.</p>
-            </div>
-            <div className='basic-details-input'>
-              <div className='name-details'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Name</span>
-                  </label>
-                  <input type="text" className="input input-bordered w-full max-w-3xl bg-light-gray" defaultValue={currentUser.name} onChange={updateForm('name')} />
-                </div>
-              </div>
-              <div className='surname-details'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Surname</span>
-                  </label>
-                  <input type="text" className="input input-bordered w-full max-w-3xl bg-light-gray" defaultValue={currentUser.surname} onChange={updateForm('surname')} />
-                </div>
-              </div>
-              <div className='email-details'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Email</span>
-                  </label>
-                  <input type="text" className="input input-bordered w-full max-w-3xl bg-light-gray" defaultValue={loggedUser.email} disabled />
-                </div>
-              </div>
-              <div className='username-details'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Username</span>
-                  </label>
-                  <input type="text" className="input input-bordered w-full max-w-3xl bg-light-gray" defaultValue={currentUser.handle} disabled />
-                </div>
-              </div>
-              {isAdmin && <div className='phone-details'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Phone Number</span>
-                  </label>
-                  <input type="tel" className="input input-bordered w-full max-w-3xl bg-light-gray" placeholder="+359 00 000 0000" defaultValue={currentUser.phone} onChange={updateForm('phone')}/>
-                </div>
-              </div>}
-              <div className='user-description'>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Bio</span>
-                  </label>
-                  <textarea className="textarea textarea-bordered h-24 textarea-md w-full max-w-3xl bg-light-gray" placeholder="Bio" defaultValue={currentUser.bio} onChange={updateForm('bio')}></textarea>
-                </div>
-              </div>
-              <div className='actions'>
-                {isUpdated && form.name && form.name.length >= MIN_NAME_LENGTH && <button className="btn btn-tertiary" onClick={onEdit}>Save Updates</button>}
-              </div>
-            </div>
-          </div>
-        )}
-        {error && (
-          <div className="alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>{message}</span>
-          </div>
-        )}
-        {isSuccessful && (
-          <div className="alert alert-success">
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>{message}</span>
-          </div>)
-        }
-        {!loading && <ChangePassword />}
+    <div className='flex flex-row gap-4 h-[87vh] w-full mt-4 max-lg:flex-col'>
+      <div role="tablist" className="tabs tabs-bordered flex flex-col gap-4 basis-1/5 rounded-md bg-pureWhite p-8 h-full">
+        <a role="tab" className={`tab w-full ${activeTab === 0 && 'tab-active'}`} onClick={() => handleTabClick(0)}>Basic Details</a>
+        <a role="tab" className={`tab w-full ${activeTab === 1 && 'tab-active'}`} onClick={() => handleTabClick(1)}>Profile Picture</a>
+        <a role="tab" className={`tab w-full ${activeTab === 2 && 'tab-active'}`} onClick={() => handleTabClick(2)}>Change Password</a>
       </div>
+      {!loading && activeTab === 0 && (
+        <div className="flex flex-col gap-2 basis-4/5 rounded-md bg-pureWhite p-4 h-full overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
+        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md">
+          <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-2'>
+            <div className='flex flex-col items-start gap-2 w-full'>
+              <div className='flex flex-col items-start'>
+                <h3 className='font-bold text-lg text-left'>Basic Details</h3>
+                <p className="text-left">Info about you across the app.</p>
+              </div>
+              <div className='flex flex-col gap-2 w-full'>
+                <div className='name-details'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Name</span>
+                    </label>
+                    <input type="text" className="input input-bordered w-full bg-white" defaultValue={currentUser.name} onChange={updateForm('name')} />
+
+                    {formErrorMsg.name && <span className="err-message text-red">{formErrorMsg.name}</span>}
+                  </div>
+                </div>
+                <div className='surname-details'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Surname</span>
+                    </label>
+                    <input type="text" className="input input-bordered w-full bg-white" defaultValue={currentUser.surname} onChange={updateForm('surname')} />
+                    {formErrorMsg.surname && <span className="err-message text-red">{formErrorMsg.surname}</span>}
+                  </div>
+                </div>
+                <div className='email-details'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Email</span>
+                    </label>
+                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black" defaultValue={currentUser.email} disabled />
+                  </div>
+                </div>
+                <div className='username-details'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Username</span>
+                    </label>
+                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black" defaultValue={currentUser.handle} disabled />
+                  </div>
+                </div>
+                <div className='phone-details'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Phone Number</span>
+                    </label>
+                    <input type="tel" className="input input-bordered w-full bg-white" placeholder="+359 00 000 0000" defaultValue={currentUser.phoneNumber} onChange={updateForm('phoneNumber')} />
+                    {formErrorMsg.phoneNumber && <span className="err-message text-red">{formErrorMsg.phoneNumber}</span>}
+                  </div>
+                </div>
+                <div className='user-description'>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Your Bio</span>
+                    </label>
+                    <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white" placeholder="Bio" defaultValue={currentUser.bio} onChange={updateForm('bio')}></textarea>
+                  </div>
+                </div>
+                <div className='flex flex-row justify-end'>
+                  {isUpdated && form.name && form.surname && <button className="btn bg-pink text-white border-none mt-1" onClick={onEdit}>Save Updates</button>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {!loading && activeTab === 1 && <ChangeProfilePicture handle={currentUser.handle} />}
+      {!loading && activeTab === 2 && <ChangePassword />}
     </div>
   )
 }
-
-EditUserProfile.propTypes = {
-  loggedUser: PropTypes.object,
-};
