@@ -1,16 +1,13 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getUserByHandle } from '../../services/users.services';
 import AddTeamMembers from '../AddTeamMembers/AddTeamMembers';
 import RemoveTeamMember from '../RemoveTeamMember/RemoveTeamMember';
+import UserProfile from '../../views/UserProfile/UserProfile';
 
 const TeamMembersList = ({ teamDetails, showManageTeam }) => {
-    const navigate = useNavigate();
     const [memberDetails, setMemberDetails] = useState([]);
-    const [owner, setOwner] = useState(null);
     const [loading, setLoading] = useState(true);
-
     const [teamData, setTeamData] = useState(teamDetails);
     useEffect(() => { setTeamData(teamDetails) }, [teamDetails]);
 
@@ -24,7 +21,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                 const memberPromises = teamData.members.map((memberId) =>
                     getUserByHandle(memberId)
                         .then((snapshot) => {
-                            const userData = snapshot.val();
+                            const userData = snapshot;
                             return { id: memberId, ...userData };
                         })
                         .catch((error) => {
@@ -38,9 +35,6 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                         const filteredUserDetails = userDetailsArray.filter((user) => user !== null);
                         setMemberDetails([...filteredUserDetails]);
 
-                        const ownerData = userDetailsArray.find((user) => user.id === teamData?.owner);
-                        setOwner(ownerData);
-
                         setLoading(false);
                     })
                     .catch((error) => console.error(`Error fetching member details: ${error.message}`));
@@ -48,7 +42,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
         };
 
         fetchMemberDetails();
-    }, [teamData]);
+    }, [teamData.members]);
 
     // Filter members based on the search query
     const filteredMembers = memberDetails.filter((member) =>
@@ -57,12 +51,25 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
         member.handle.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // State for the currently opened user profile modal
+    const [openUserProfileModal, setOpenUserProfileModal] = useState('');
+
+    // Function to open user profile modal for a specific user
+    const handleOpenUserProfileModal = (userHandle) => {
+        setOpenUserProfileModal(userHandle);
+    };
+
+    // Function to close user profile modal
+    const handleCloseUserProfileModal = () => {
+        setOpenUserProfileModal(false);
+    };
+
     return (
         !loading && (
             <div className='flex flex-col bg-white rounded-md pt-4'>
                 <div className='flex flex-row justify-between items-center pl-4 pr-4'>
                     <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white' />
-                    {showManageTeam && <AddTeamMembers teamName={teamData.name} />}
+                    {showManageTeam && <AddTeamMembers teamDetails={teamDetails} />}
                 </div>
                 {searchQuery === '' ? (
                     <div className='mt-2'>
@@ -72,13 +79,22 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                 Team Owner
                             </div>
                             <div className="collapse-content">
-                                <li key={owner.id} className='flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite' onClick={() => navigate(`/app/users/${owner.id}`)}>
-                                    <img src={owner.photoURL} className='h-8 w-8 rounded-full' alt={`User ${owner.name}`} />
-                                    <div className='flex flex-col items-start'>
-                                        <p className='text-sm'>{owner.name} {owner.surname}</p>
-                                        <p className='text-xs'>{`@${owner.handle}`}</p>
-                                    </div>
-                                </li>
+                                <ul>
+                                    {memberDetails
+                                        .filter((member) => member.handle === teamData.owner)
+                                        .map((member) => (
+                                            <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
+                                                <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
+                                                    <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
+                                                    <div className='flex flex-col items-start'>
+                                                        <p className='text-sm'>{member.name} {member.surname}</p>
+                                                        <p className='text-xs'>{`@${member.handle}`}</p>
+                                                    </div>
+                                                </div>
+                                                {openUserProfileModal === member.handle && <UserProfile userHandle={member.handle} isOpen={true} onClose={handleCloseUserProfileModal} />}
+                                            </li>
+                                        ))}
+                                </ul>
                             </div>
                         </div>
                         <div tabIndex={0} className="collapse collapse-arrow text-left">
@@ -94,16 +110,17 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                         </div>
                                     )}
                                     {memberDetails
-                                        .filter((member) => member.id !== teamData.owner) // Exclude owner from the list
+                                        .filter((member) => member.handle !== teamData.owner) // Exclude owner from the list
                                         .map((member) => (
                                             <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
-                                                <div className='flex flex-row gap-2' onClick={() => navigate(`/app/users/${member.id}`)}>
+                                                <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
                                                     <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
                                                     <div className='flex flex-col items-start'>
                                                         <p className='text-sm'>{member.name} {member.surname}</p>
                                                         <p className='text-xs'>{`@${member.handle}`}</p>
                                                     </div>
                                                 </div>
+                                                {openUserProfileModal === member.handle && <UserProfile userHandle={member.handle} isOpen={true} onClose={handleCloseUserProfileModal} />}
                                                 {showManageTeam && <RemoveTeamMember teamId={teamData.id} teamName={teamData.name} memberId={member.id} />}
                                             </li>
                                         ))}
@@ -118,14 +135,15 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                             <ul className='pl-4 pr-4 mt-'>
                                 {filteredMembers.map((member) => (
                                     <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
-                                        <div className='flex flex-row gap-2' onClick={() => navigate(`/app/users/${member.id}`)}>
+                                        <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
                                             <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
                                             <div className='flex flex-col items-start'>
                                                 <p className='text-sm'>{member.name} {member.surname}</p>
                                                 <p className='text-xs'>{`@${member.handle}`}</p>
                                             </div>
                                         </div>
-                                        {showManageTeam && <RemoveTeamMember teamId={teamData.id} teamName={teamData.name} memberId={member.id} />}
+                                        {openUserProfileModal === member.handle && (<UserProfile userHandle={member.handle} isOpen={true} onClose={handleCloseUserProfileModal} />)}
+                                        {showManageTeam && member.id !== teamData.owner && <RemoveTeamMember teamId={teamData.id} teamName={teamData.name} memberId={member.id} />}
                                     </li>
                                 ))}
                             </ul>
