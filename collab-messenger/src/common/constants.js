@@ -26,6 +26,8 @@ export const MIN_GROUP_CHAT_MEMBERS = 3;
 
 export const DEFAULT_TEAM_PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg';
 
+export const DEFAULT_USER_PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg';
+
 export const ADDED_TO_TEAM_NOTIFICATION = 'You have been added to a new team';
 
 export const REMOVED_NOTIFICATION = 'You have been removed from';
