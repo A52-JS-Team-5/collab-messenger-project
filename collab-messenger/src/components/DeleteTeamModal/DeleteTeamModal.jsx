@@ -4,17 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { deleteTeam, removeTeamFromUser } from "../../services/teams.services";
-import { useState } from "react";
 import { createNotification, pushNotifications } from "../../services/notifications.services";
 import { DELETED_TEAM_NOTIFICATION, DELETED_TEAM_TYPE } from "../../common/constants";
 
 const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(isOpen);
 
   const modalClass = cn({
     "modal modal-bottom sm:modal-middle": true,
-    "modal-open": isModalOpen,
+    "modal-open": isOpen,
   });
 
   const onLeave = (e) => {
@@ -39,7 +37,7 @@ const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
         console.log('Error deleting team: ', e.message);
       })
 
-    setIsModalOpen(false);
+    onClose();
   }
 
   return (
