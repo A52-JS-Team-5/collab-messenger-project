@@ -14,7 +14,7 @@ export default function Avatar({ user, chatComponent='' }) {
     if (loggedUserHandle !== user) {
       getUserByHandle(user)
         .then((userData) => {
-          if(userData.photoURL){
+          if(userData?.photoURL){
             setUserAvatar(userData.photoURL);
           }
         })
@@ -29,7 +29,7 @@ export default function Avatar({ user, chatComponent='' }) {
   }, [user, loggedUserHandle, loggedUserAvatar]);
 
   return (
-    <div className={`chat-image static avatar ${chatComponent ? 'w-23 h-23' : 'w-10 h-10'}`}>
+    <div className={`chat-image static avatar ${chatComponent === 'ChatInformation' ? 'w-24 h-24' : 'w-10 h-10'}`}>
       <div className="rounded-full">
         <img src={userAvatar} />
       </div>
@@ -39,5 +39,5 @@ export default function Avatar({ user, chatComponent='' }) {
 
 Avatar.propTypes = {
   user: PropTypes.string,
-  chatComponent: PropTypes.bool
+  chatComponent: PropTypes.string
 }
