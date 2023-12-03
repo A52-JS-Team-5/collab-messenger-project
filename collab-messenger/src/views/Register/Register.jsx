@@ -80,7 +80,7 @@ const Register = () => {
     // Check if a user with the handle exists
     getUserByHandle(form.handle)
       .then(snapshot => {
-        if (snapshot.exists()) {
+        if (snapshot) {
           toast(`Username @${form.handle} has already been taken!`)
           throw new Error(`Username @${form.handle} has already been taken!`);
         }
