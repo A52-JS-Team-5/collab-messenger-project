@@ -5,11 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import './NavBar.css';
 import icon from '/icon.png'
 import AppContext from '../../context/AuthContext';
+import { DEFAULT_USER_PHOTO } from '../../common/constants';
 
 export default function NavBar({ onLogout }) {
   const navigate = useNavigate();
   const user = useContext(AppContext);
-  const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
+  const [photoURL, setPhotoURL] = useState(DEFAULT_USER_PHOTO);
 
   const handleClick = () => {
     const elem = document.activeElement;
@@ -45,11 +46,11 @@ export default function NavBar({ onLogout }) {
               <li><Link to='/'>Home</Link></li>
               <li><Link to='/about'>About</Link></li>
               <li><Link to='/faq'>FAQs</Link></li>
-              {user === null && <li><Link to='/register'>Register</Link></li>}
-              {user === null && <li><Link to='/login'>Login</Link></li>}
+              {user.user === null && <li><Link to='/register'>Register</Link></li>}
+              {user.user === null && <li><Link to='/login'>Login</Link></li>}
             </ul>
           </div>
-          {user !== null && (
+          {user.user !== null && (
             <div className="dropdown dropdown-end">
               <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
@@ -77,10 +78,10 @@ export default function NavBar({ onLogout }) {
                 <li onClick={handleLinkClick}><Link to='/'>Home</Link></li>
                 <li><Link to='/about' onClick={handleLinkClick}>About</Link></li>
                 <li><Link to='/faq' onClick={handleLinkClick}>FAQs</Link></li>
-                {user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
-                {user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
-                {user !== null && <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>}
-                {user !== null && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout}>Logout</Link></li>}
+                {user.user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
+                {user.user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
+                {user.user !== null && <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>}
+                {user.user !== null && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout}>Logout</Link></li>}
               </ul>
             </div>
           </div>
