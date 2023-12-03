@@ -130,22 +130,28 @@ export const getTeamsByUser = (handle) => {
 
             return Promise.all(
                 Object.keys(teamsMember).map((key) => {
-                    return get(ref(db, `teams/${key}`)).then((snapshot) => {
-                        const team = snapshot.val();
+                    return get(ref(db, `teams/${key}`))
+                        .then((snapshot) => {
+                            const team = snapshot.val();
 
-                        if (team !== null) {
-                            return {
-                                id: snapshot.key,
-                                name: team.name,
-                                createdOn: team.createdOn,
-                                owner: team.owner,
-                                members: team.members ? Object.keys(team.members) : [],
-                                channels: team.channels ? Object.keys(team.channels) : [],
-                                photoURL: team.photoURL,
-                                description: team.description,
-                            };
-                        }
-                    });
+                            if (!snapshot.exists()) {
+                                return (`Team does not exist!`);
+                            }
+
+                            if (team !== null) {
+                                return {
+                                    id: snapshot.key,
+                                    name: team.name,
+                                    createdOn: team.createdOn,
+                                    owner: team.owner,
+                                    members: team.members ? Object.keys(team.members) : [],
+                                    channels: team.channels ? Object.keys(team.channels) : [],
+                                    photoURL: team.photoURL,
+                                    description: team.description,
+                                };
+                            }
+                        })
+                        .catch(e => console.log(e.message))
                 })
             );
         })

@@ -19,7 +19,7 @@ const Teams = () => {
         if (userData?.handle) {
             getTeamsByUser(userData.handle)
                 .then((teamsData) => {
-                    setTeams(teamsData);
+                    setTeams(teamsData.filter(team => team !== 'Team does not exist!'));
                     setIsLoading(false);
                 })
                 .catch((e) => {
@@ -40,10 +40,15 @@ const Teams = () => {
 
                 const promises = Object.keys(teamsMember).map((key) => {
                     const teamRef = ref(db, `teams/${key}`);
-                    return get(teamRef).then((teamSnapshot) => {
-                        const team = teamSnapshot.val();
+                    return get(teamRef)
+                        .then((teamSnapshot) => {
 
-                        if (team !== null) {
+                            if (!teamSnapshot.exists()) {
+                                return (`Team does not exist!`);
+                            }
+
+                            const team = teamSnapshot.val();
+
                             return {
                                 id: key,
                                 name: team.name,
@@ -54,14 +59,14 @@ const Teams = () => {
                                 photoURL: team.photoURL,
                                 description: team.description,
                             };
-                        }
-                    });
+                        })
+                        .catch(e => console.log(e.message))
                 });
 
                 // Wait for all promises to resolve
                 Promise.all(promises)
                     .then((teamDetails) => {
-                        setTeams(teamDetails);
+                        setTeams(teamDetails.filter(team => team !== 'Team does not exist!'));
                         setIsLoading(false);
                     })
                     .catch((error) => {
