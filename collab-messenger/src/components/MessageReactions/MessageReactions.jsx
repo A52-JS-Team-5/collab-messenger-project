@@ -16,7 +16,7 @@ export default function MessageReactions({areEmojisVisible, setAreEmojisVisible,
     {
       id: "heart",
       name: "Heart",
-      content: "❤️",
+      content: "🩷",
     },
     {
       id: "thumbs-up",
@@ -36,6 +36,8 @@ export default function MessageReactions({areEmojisVisible, setAreEmojisVisible,
         <QuickReactions
           reactionsArray={reactionOptions}
           placement='right'
+          hideHeader='true'
+          wide='true'
           isVisible={areEmojisVisible}
           onClose={() => setAreEmojisVisible(false)}
           onClickReaction={(reaction) => {
