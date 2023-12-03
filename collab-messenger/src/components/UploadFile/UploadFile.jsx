@@ -46,7 +46,7 @@ export default function UploadFile({ message, setMessageFunc }) {
 
   return (
     <div className="dropdown dropdown-right dropdown-end ">
-      <label tabIndex={0} className="btn hover:cursor-pointer hover:bg-grey btn btn-sm text-black bg-transparent flex items-center w-fit"><i className="fa-solid fa-paperclip"></i></label>
+      <button tabIndex={0} className="hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent rounded-md flex items-center w-fit"><i className="fa-solid fa-paperclip text-blue"></i></button>
       <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 bg-light-gray">
         <li><a><input type="file" className='text-black' accept=".jpeg,.jpg,.gif,.pdf" onChange={(event) => {handleFileUpload(event.target.files[0]);}}/></a></li>
       </ul>
