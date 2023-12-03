@@ -39,7 +39,7 @@ export default function AddGroupChatMembers({ chatId, chatParticipants }) {
   return (
     <div className="start-chat-view">
       <div className="rounded-full w-8 h-8 bg-lightBlue hover:cursor-pointer" title="Add More Participants" onClick={handleToggle}>
-        <i className="fa-regular fa-square-plus mt-2"></i>
+        <i className="fa-regular fa-square-plus mt-2 text-blue"></i>
       </div>
       <div className={modalClass}>
         <div className="modal-box bg-light-gray">
