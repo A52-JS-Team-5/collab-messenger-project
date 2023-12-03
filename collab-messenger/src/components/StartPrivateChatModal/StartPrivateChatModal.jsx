@@ -86,7 +86,9 @@ export default function StartGroupChatModal() {
                     onChange={(selectedOption) => {setParticipant(selectedOption.value)}
                     } 
                     menuPortalTarget={document.body} 
-                    options={users.map((user) => ({value: user.id, label: user.handle}))} 
+                    options={users
+                      .filter(user => user.handle !== loggedUser.userData?.handle)
+                      .map((user) => ({value: user.id, label: user.handle}))} 
                   />
                 )}
               </div>
