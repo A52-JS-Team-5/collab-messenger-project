@@ -12,6 +12,7 @@ import DeleteTeamModal from "../../components/DeleteTeamModal/DeleteTeamModal";
 import PageNotFound from "../PageNotFound/PageNotFound";
 import ChannelBox from "../../components/ChannelBox/ChannelBox";
 import { Outlet } from "react-router-dom";
+import AddChannelModal from "../../components/AddChannelModal/AddChannelModal";
 
 const SingleTeamView = () => {
 
@@ -110,6 +111,17 @@ const SingleTeamView = () => {
         setIsDeleteTeamModalOpen(false);
     };
 
+    // State and functions for CreateChannelModal
+    const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] = useState(false);
+
+    const openCreateChannelModal = () => {
+        setIsCreateChannelModalOpen(true);
+    }
+    
+    const closeCreateChannelModal = () => {
+        setIsCreateChannelModalOpen(false);
+    }    
+
     return (
         <div className='flex flex-row mt-4 gap-4 h-[90vh]'>
             {!isLoading && !isDeleted && (
@@ -122,8 +134,10 @@ const SingleTeamView = () => {
                                     All Teams
                                 </div>
                             </div>
-                            <div className='flex flex-col gap-4'>
-                                <img src={teamDetails?.photoURL} className='w-24 h-24 object-cover rounded-md'></img>
+                            <div className='flex flex-col gap-4 w-[38vh]'>
+                                <div className="place-self-center">
+                                    <img src={teamDetails?.photoURL} className='w-28 h-28 object-cover rounded-md'></img>
+                                </div>
                                 <div className='flex flex-row items-center justify-between'>
                                     <h2 className='text-xl text-left font-bold'>{teamDetails?.name}</h2>
                                     <div className="dropdown dropdown-end">
@@ -132,7 +146,7 @@ const SingleTeamView = () => {
                                         </label>
                                         <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52">
                                             <li onClick={() => handleListClick(1)}><a>Team Details</a></li>
-                                            <li onClick={handleClick}><a>Add Channel</a></li>
+                                            <li onClick={openCreateChannelModal}><a>Add Channel</a></li>
                                             {/*Leave - only for members who are not the owner*/}
                                             {!showManageTeam && <li onClick={openLeaveModal}><a>Leave Team</a></li>}
                                             {/*Delete - only for team owner*/}
@@ -141,11 +155,12 @@ const SingleTeamView = () => {
                                         {isLeaveModalOpen && (<LeaveTeamModal teamId={teamId} isOpen={isLeaveModalOpen} onClose={closeLeaveModal} />)}
                                         {isDeleteTeamModalOpen && (<DeleteTeamModal teamData={teamDetails} teamId={teamId} isOpen={isDeleteTeamModalOpen} onClose={closeDeleteTeamModal} />)}
                                     </div>
+                                    {isCreateChannelModalOpen && (<AddChannelModal teamId={teamId} teamParticipants={teamDetails.members} teamOwner={teamDetails.owner} isOpen={isCreateChannelModalOpen} onClose={closeCreateChannelModal} teamName={teamDetails.name}/>)}
                                 </div>
                             </div>
                         </div>
                         <div className="divider"></div>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 h-[32vh] overflow-y-auto">
                             {allTeamChannelsOfUser.map(channel => (
                             <ChannelBox key={channel} channelId={channel}/>)
                             )}
