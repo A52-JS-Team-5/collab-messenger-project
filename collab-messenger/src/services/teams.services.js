@@ -118,3 +118,36 @@ export const removeTeamFromUser = (teamId, member) => {
     return update(ref(db), updates)
         .catch((e) => console.log('Error updating details', e.message));
 }
+
+export const getTeamsByUser = (handle) => {
+    return get(ref(db, `users/${handle}/teamsMember`))
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                return [];
+            }
+
+            const teamsMember = snapshot.val();
+
+            return Promise.all(
+                Object.keys(teamsMember).map((key) => {
+                    return get(ref(db, `teams/${key}`)).then((snapshot) => {
+                        const team = snapshot.val();
+
+                        if (team !== null) {
+                            return {
+                                id: snapshot.key,
+                                name: team.name,
+                                createdOn: team.createdOn,
+                                owner: team.owner,
+                                members: team.members ? Object.keys(team.members) : [],
+                                channels: team.channels ? Object.keys(team.channels) : [],
+                                photoURL: team.photoURL,
+                                description: team.description,
+                            };
+                        }
+                    });
+                })
+            );
+        })
+        .catch((e) => console.log('Error in getting teams', e.message));
+};

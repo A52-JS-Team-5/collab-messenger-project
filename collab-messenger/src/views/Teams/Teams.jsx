@@ -5,8 +5,9 @@ import EmptyList from "../../components/EmptyList/EmptyList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { onValue, ref } from "firebase/database";
+import { get, onValue, ref } from "firebase/database";
 import { db } from "../../config/firebase-config";
+import { getTeamsByUser } from "../../services/teams.services";
 
 const Teams = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -16,9 +17,18 @@ const Teams = () => {
 
     useEffect(() => {
         if (userData?.handle) {
-            const userRef = ref(db, `users/${userData.handle}/teamsMember`);
+            getTeamsByUser(userData.handle)
+                .then((teamsData) => {
+                    setTeams(teamsData);
+                    setIsLoading(false);
+                })
+                .catch((e) => {
+                    console.log('Error getting teams', e.message);
+                    setIsLoading(false);
+                    toast('An error occurred while trying to get the teams you are part of.');
+                });
 
-            // Listen for changes in teamsMember
+            const userRef = ref(db, `users/${userData.handle}/teamsMember`);
             const teamsMemberListener = onValue(userRef, (snapshot) => {
                 if (!snapshot.exists()) {
                     setTeams([]);
@@ -27,24 +37,14 @@ const Teams = () => {
                 }
 
                 const teamsMember = snapshot.val();
-                const updatedTeams = [];
 
-                // Create an array of promises for fetching team data
                 const promises = Object.keys(teamsMember).map((key) => {
                     const teamRef = ref(db, `teams/${key}`);
-
-                    // Listen for changes in individual teams
-                    const teamListener = onValue(teamRef, (teamSnapshot) => {
+                    return get(teamRef).then((teamSnapshot) => {
                         const team = teamSnapshot.val();
 
-                        if (team === null) {
-                            // Update existing team data
-                            const updatedTeamIndex = updatedTeams.findIndex(t => t.id === key);
-                            if (updatedTeamIndex !== -1) {
-                                updatedTeams.splice(updatedTeamIndex, 1, { id: key, message: 'Team is Deleted' });
-                            }
-                        } else {
-                            const updatedTeam = {
+                        if (team !== null) {
+                            return {
                                 id: key,
                                 name: team.name,
                                 createdOn: team.createdOn,
@@ -54,37 +54,49 @@ const Teams = () => {
                                 photoURL: team.photoURL,
                                 description: team.description,
                             };
-
-                            // Update or add the team in the list
-                            const existingTeamIndex = updatedTeams.findIndex(t => t.id === key);
-                            if (existingTeamIndex !== -1) {
-                                updatedTeams.splice(existingTeamIndex, 1, updatedTeam);
-                            } else {
-                                updatedTeams.push(updatedTeam);
-                            }
                         }
-
-                        // Update state with the latest teams
-                        setTeams(updatedTeams);
-                        setIsLoading(false);
                     });
-
-                    return teamListener;
                 });
 
                 // Wait for all promises to resolve
-                return Promise.all(promises)
-                    .catch(() => {
+                Promise.all(promises)
+                    .then((teamDetails) => {
+                        setTeams(teamDetails);
                         setIsLoading(false);
-                        toast('An error occurred while trying to get the teams you are part of.')
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching team details:', error);
+                        setIsLoading(false);
+                        toast('An error occurred while trying to get the teams details.');
                     });
             });
 
-            // Return the listener so it can be used to unsubscribe if needed
-            return teamsMemberListener;
-        }
+            const teamsToMonitor = Object.keys(userData?.teamsMember);
+            const teamsChangedListeners = [];
 
-    }, [userData?.handle]);
+            // Attach onValue listener to each specific team
+            teamsToMonitor.forEach((teamId) => {
+                const teamRef = ref(db, `teams/${teamId}`);
+                const teamChangedListener = onValue(teamRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        setTeams((prevTeams) =>
+                            prevTeams.map((prevTeam) =>
+                                prevTeam.id === teamId ? { ...prevTeam, ...snapshot.val() } : prevTeam
+                            )
+                        );
+                    }
+                });
+
+                teamsChangedListeners.push(teamChangedListener);
+            });
+
+            return () => {
+                teamsMemberListener();
+                teamsChangedListeners.forEach((listener) => listener());
+
+            };
+        }
+    }, [userData?.handle, userData?.teamsMember]);
 
     return (
         <div className='mt-4'>
@@ -92,25 +104,22 @@ const Teams = () => {
                 <h2 className='font-bold'>Your Teams</h2>
                 <CreateTeam />
             </div>
-            {!isLoading &&
-                <div className='mt-4 flex flex-row justify-between h-[79vh] items-start overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
+            <div className='mt-4 flex flex-row justify-between h-[79vh] items-start overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
                 [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1'>
-                    {teams.length > 0 ? (
-                        <div className='grid grid-cols-5 max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-4 w-full'>
-                            {teams.map(team => {
-                                return (
-                                    <div className='flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
-                                        <img src={team?.photoURL} className='w-20 h-20 object-cover rounded-full' />
-                                        <div className='font-bold'>{team?.name}</div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    ) : (
-                        <EmptyList />
-                    )}
-                </div>
-            }
+                {!isLoading && teams.length > 0 && (
+                    <div className='grid grid-cols-5 max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-4 w-full'>
+                        {teams.map(team => {
+                            return (
+                                <div className='flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
+                                    <img src={team?.photoURL} className='w-20 h-20 object-cover rounded-full' />
+                                    <div className='font-bold'>{team?.name}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+                {!isLoading && teams.length === 0 && <EmptyList />}
+            </div>
         </div>
     )
 }
