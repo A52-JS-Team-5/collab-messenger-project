@@ -1,4 +1,13 @@
-import { ref, get, push, update, query, remove } from 'firebase/database';
+import {
+  ref,
+  get,
+  push,
+  update,
+  query,
+  remove,
+  orderByChild,
+  equalTo,
+} from 'firebase/database';
 import { db } from '../config/firebase-config';
 import { ZERO } from '../common/constants';
 import {
@@ -182,4 +191,11 @@ export const makeChannelPublic = (id) => {
   return update(ref(db, `channels/${id}`), {
     isPublic: true,
   }).catch((e) => console.log(`Error in making channel public: ${e.message}`));
+};
+
+// this doesn't work because in channels we don't have team name
+export const getChannelByName = (name) => {
+  return get(
+    query(ref(db, 'channels'), orderByChild('name'), equalTo(name))
+  ).catch((e) => console.log(`Error in getting channel: ${e.message}`));
 };
