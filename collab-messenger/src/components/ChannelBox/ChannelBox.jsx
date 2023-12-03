@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { db } from "../../config/firebase-config";
 import { ref, onValue } from "firebase/database";
-import Avatar from "../Avatar/Avatar";
 import PropTypes from 'prop-types';
 
 export default function ChannelBox({ channelId }) {
@@ -51,10 +50,8 @@ export default function ChannelBox({ channelId }) {
   }, [channelId, loggedUser.userData?.handle, lastMessage]);
 
   return (
-    <div onClick={() => navigate(`${channelId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
-      <Avatar user={channelTitle} />
+    <div onClick={() => navigate(`${channelId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer pb-2">
       <div className="min-w-0 flex-1">
-
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-medium">
