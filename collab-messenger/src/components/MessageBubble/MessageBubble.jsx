@@ -73,7 +73,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
       {isEditInputShown === true ? (
         <div className='flex space-between'>
           <input type="text" value={`${messageInput}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md" />
-          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-mint" onClick={setNewMessageContent}>Save</button>
+          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-lightBlue" onClick={setNewMessageContent}>Save</button>
         </div>
       ) : (
         isMessageGif === true ? (
@@ -104,7 +104,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
           ) : (
             <div className='flex flex-row'>
               {editMessageOption && (<div className="flex self-center pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={handleOpenEditOption}><i className="fa-solid fa-pen-to-square"></i></div>)}
-              <div className="chat-bubble rounded-2xl bg-grey text-black">{message.content}</div>
+              <div className="px-4 py-2 my-1 rounded-xl bg-grey text-black">{message.content}</div>
               {editMessageOption !== true && <MessageReactions
                 areEmojisVisible={areEmojisVisible} 
                 setAreEmojisVisible={setAreEmojisVisible} 
