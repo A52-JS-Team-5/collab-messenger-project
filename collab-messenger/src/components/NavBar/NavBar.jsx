@@ -79,7 +79,7 @@ export default function NavBar({ onLogout }) {
                 <li><Link to='/faq' onClick={handleLinkClick}>FAQs</Link></li>
                 {user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
                 {user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
-                {user === null && <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>}
+                {user !== null && <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>}
                 {user !== null && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout}>Logout</Link></li>}
               </ul>
             </div>
