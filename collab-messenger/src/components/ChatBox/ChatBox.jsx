@@ -20,7 +20,6 @@ export default function ChatBox({ chatId }) {
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
   const [chatTitle, setChatTitle] = useState('');
   const [areMessagesRead, setAreMessagesRead] = useState(true);
-  const loggedUserHandle = loggedUser.userData?.handle;
 
   useEffect(() => {
     getChatById(chatId)
@@ -29,7 +28,7 @@ export default function ChatBox({ chatId }) {
         if(data.isGroup === true) {
           setChatTitle(data.title);
         } else {
-          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUserHandle));
+          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
         }
 
         setLastMessage(data.lastMessage);
@@ -51,18 +50,20 @@ export default function ChatBox({ chatId }) {
         setLastMessage(updatedChatData.lastMessage);
       }
       if (updatedChatData?.participantsReadMsg){
-        const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUserHandle];
+        const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
         setAreMessagesRead(userLastReadMessage === updatedChatData.lastMessage);
       }
       if (updatedChatData?.title) {
         setChatTitle(updatedChatData.title);
+      } else {
+        setChatTitle(Object.keys(updatedChatData.participants).find(user => user !== loggedUser.userData?.handle))
       }
     });
 
     return () => {
       chatListener();
     };
-  }, [chatId, loggedUserHandle, lastMessage]);
+  }, [chatId, loggedUser.userData?.handle, lastMessage]);
 
   return (
     <div id='chatBox-wrapper' onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
@@ -70,7 +71,7 @@ export default function ChatBox({ chatId }) {
         <GroupChatAvatar />
       ) : (
         <>
-          <Avatar user={chatTitle} isGroup={chatData?.isGroup} />
+          <Avatar user={chatTitle} />
           <StatusBubble view={'ChatBox'} userHandle={chatTitle} />
         </>
       )}
