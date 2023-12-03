@@ -36,7 +36,7 @@ export default function LeaveChatModal({ chatId }) {
   return (
     <div>
       <div className="rounded-full w-8 h-8 bg-lightBlue hover:cursor-pointer" title="Leave Chat" onClick={handleToggle}>
-        <i className="fa-solid fa-right-from-bracket mt-2"></i>
+        <i className="fa-solid fa-right-from-bracket mt-2 text-blue"></i>
       </div>
       <div className={modalClass}>
         <div className="modal-box bg-light-gray">
