@@ -14,6 +14,8 @@ import UploadFile from '../UploadFile/UploadFile';
 import StatusBubble from '../StatusBubble/StatusBubble';
 import ChatInformation from '../ChatInformation/ChatInformation';
 import GroupChatAvatar from '../GroupChatAvatar/GroupChatAvatar';
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 export default function ChatDetails() {
   const loggedUser = useContext(AppContext);
@@ -21,6 +23,7 @@ export default function ChatDetails() {
   const { chatId } = useParams();
   const [isGifSearchVisible, setIsGifSearchVisible] = useState(false);
   const [isChatInfoVisible, setIsChatInfoVisible] = useState(false);
+  const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
   const layout = isChatInfoVisible === true ? 'basis-9/12' : 'basis-12/12';
   const [chatData, setChatData] = useState({
     title: '',
@@ -57,6 +60,13 @@ export default function ChatDetails() {
     setMessage({
       ...message,
       content: `${gif}`,
+    });
+  };
+
+  const addEmoji = (emoji) => {
+    setMessage({
+      ...message,
+      content: message['content'] + `${emoji}`,
     });
   };
   
@@ -112,13 +122,13 @@ export default function ChatDetails() {
         }
         
         if (updatedChatData?.participantsReadMsg) {
-          const loggedUserLastReadMessage = updatedChatData.participantsReadMsg[loggedUserHandle];
+          const loggedUserLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
           const isLatestMessage = loggedUserLastReadMessage === updatedChatData.lastMessage;
 
           if (!isLatestMessage){
             const updateUserLastReadMessage = () => {
               const updateMsg = {};
-              updateMsg[`/chats/${chatId}/participantsReadMsg/${loggedUserHandle}`] = updatedChatData.lastMessage;
+              updateMsg[`/chats/${chatId}/participantsReadMsg/${loggedUser.userData?.handle}`] = updatedChatData.lastMessage;
 
               return update(ref(db), updateMsg)
                 .catch((e) =>
@@ -144,12 +154,12 @@ export default function ChatDetails() {
         chatListener();
         messagesListener();
       };
-  }, [chatId, loggedUserHandle]);
+  }, [chatId, loggedUser.userData?.handle]);
 
   return (
     <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3'>
       <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-white`}>
-        <div id="header" className="sticky w-full pt-3 flex sm:px-4 py-3 lg:px-6 justify-between items-center shadow-sm">
+        <div id="header" className="sticky w-full pt-3 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm">
           <div id="header-content" className="flex gap-3 items-center">
             <div id='chat-avatar' className="flex flex-row gap-3">
               {isGroupChat === true ? (
@@ -160,7 +170,7 @@ export default function ChatDetails() {
                   <StatusBubble view={'ChatDetails'} userHandle={chatTitle} />
                 </div>
               )}
-              <div id='chat-title' className="flex place-items-end">{chatTitle}</div> 
+              <div id='chat-title' className="flex place-items-end mb-1">{chatTitle}</div> 
             </div>
           </div>
           <div className='flex justify-end gap-1'>
@@ -175,9 +185,12 @@ export default function ChatDetails() {
             <p className="self-center">Start a conversation</p>
           )}
         </div>
-        <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 lg:gap-4 w-full'>
-          <span id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn btn-sm text-black bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</span>
-          <UploadFile message={message} setMessageFunc={setMessage} />
+        <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 w-full'>
+          <div className='flex gap-1'>
+            <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
+            <UploadFile message={message} setMessageFunc={setMessage} />
+            <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
+          </div>
           <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
           <button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-lightBlue cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>
         </div>
@@ -190,6 +203,15 @@ export default function ChatDetails() {
               wrapperClassName=''
               searchFormClassName='bg-blue text-black w-[270px]'
               listWrapperClassName='w-[270px] border-[0.5px]'
+            />
+          </div>
+        )}
+        {isEmojiPickerVisible === true && (
+          <div className='fixed bottom-24'>
+            <Picker 
+              data={data} 
+              onEmojiSelect={(e) => addEmoji(e.native)} 
+              theme={'light'}
             />
           </div>
         )}
