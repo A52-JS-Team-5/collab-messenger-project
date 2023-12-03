@@ -47,7 +47,7 @@ const Insights = () => {
                     )}
                 </div>
             </div>
-            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[89vh]'>
+            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[87vh]'>
                 <div className='flex flex-col items-center gap-4'>
                     <img src={user?.userData?.photoURL} alt="Avatar" className="h-32 w-32 opacity-90 aspect-square rounded-full" />
                     <div className='flex flex-col'>
