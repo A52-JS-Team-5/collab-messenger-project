@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LeaveChatModal from "../LeaveChatModal/LeaveChatModal";
 import { updateGroupChatTitle } from "../../services/chats.services";
 import { ref, list, getStorage, getDownloadURL } from "firebase/storage";
-import GroupChatDefaultAvatar from '../../assets/GroupChatDefaultAvatar.png'
+import GroupChatAvatar from "../GroupChatAvatar/GroupChatAvatar";
 import AddGroupChatMembers from "../AddGroupChatMembers/AddGroupChatMembers";
 
 export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatData }) {
@@ -68,15 +68,15 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
 
   return (
     <div id="chat-information-wrapper" className="m-5 ">
-      {isGroupChat ? GroupChatDefaultAvatar : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />} 
+      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />} 
       <div className="flex flex-row justify-center">
         {!isGroupChat ? (<div className="m-3 font-bold">{chatTitle}</div>) : (showTitle && <div className="m-3 font-bold">{chatTitle}</div>)}
         {isGroupChat && (
           <div>
-            {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
-            {!showTitle && <div className='flex space-between'>
+            {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
+            {!showTitle && <div>
               <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md m-3" />
-              <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-lightBlue" onClick={setNewContent}>Save</button>
+              <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh]" onClick={setNewContent}>Save</button>
             </div>}
           </div>
         )}
@@ -116,7 +116,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
               uploadedFiles.map(file => (
                 <div key={file.url} className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite">
                   <i className="fa-regular fa-file text-blue mr-2"></i>
-                  <a target="_blank" rel="noreferrer" download href={file.url}>{file.fileName}</a>
+                  <a target="_blank" rel="noreferrer" download href={file.url}>{file.fileName.length > 15 ? file.fileName.slice(0, 15) + '...' : file.fileName}</a>
                 </div>
               ))
             )}
