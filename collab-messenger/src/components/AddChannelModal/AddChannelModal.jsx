@@ -27,7 +27,7 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
 
     // add a check to see if there is already a channel with the same name
 
-    createChannel(teamChannelTitle, teamParticipants)
+    createChannel(teamId, teamChannelTitle, teamParticipants)
       .then((channelId) => {
         addChannel(teamParticipants, channelId, teamId, teamOwner)
         return channelId;
