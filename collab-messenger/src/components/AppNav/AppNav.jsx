@@ -81,7 +81,7 @@ export default function AppNav({ onLogout }) {
     return (
         <div className="flex flex-row gap-2 self-stretch w-full">
             <div className='flex flex-row justify-end gap-2 w-full'>
-                <img src={iconLogo} className='max-h-12 cursor-pointer lg:hidden sm:max-lg:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
+                <img src={iconLogo} className='max-h-12 cursor-pointer xl:hidden sm:max-xl:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
                 <div className='flex flex-row gap-2 justify-center w-full'>
                     <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
                         onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl' placeholder="What are you searching for today?" />
