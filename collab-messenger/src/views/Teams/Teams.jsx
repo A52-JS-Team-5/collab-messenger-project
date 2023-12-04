@@ -76,30 +76,32 @@ const Teams = () => {
                     });
             });
 
-            const teamsToMonitor = Object.keys(userData?.teamsMember);
-            const teamsChangedListeners = [];
+            if (userData?.teamsMember) {
+                const teamsToMonitor = Object.keys(userData?.teamsMember);
+                const teamsChangedListeners = [];
 
-            // Attach onValue listener to each specific team
-            teamsToMonitor.forEach((teamId) => {
-                const teamRef = ref(db, `teams/${teamId}`);
-                const teamChangedListener = onValue(teamRef, (snapshot) => {
-                    if (snapshot.exists()) {
-                        setTeams((prevTeams) =>
-                            prevTeams.map((prevTeam) =>
-                                prevTeam.id === teamId ? { ...prevTeam, ...snapshot.val() } : prevTeam
-                            )
-                        );
-                    }
+                // Attach onValue listener to each specific team
+                teamsToMonitor.forEach((teamId) => {
+                    const teamRef = ref(db, `teams/${teamId}`);
+                    const teamChangedListener = onValue(teamRef, (snapshot) => {
+                        if (snapshot.exists()) {
+                            setTeams((prevTeams) =>
+                                prevTeams.map((prevTeam) =>
+                                    prevTeam.id === teamId ? { ...prevTeam, ...snapshot.val() } : prevTeam
+                                )
+                            );
+                        }
+                    });
+
+                    teamsChangedListeners.push(teamChangedListener);
                 });
 
-                teamsChangedListeners.push(teamChangedListener);
-            });
+                return () => {
+                    teamsMemberListener();
+                    teamsChangedListeners.forEach((listener) => listener());
 
-            return () => {
-                teamsMemberListener();
-                teamsChangedListeners.forEach((listener) => listener());
-
-            };
+                };
+            }
         }
     }, [userData?.handle, userData?.teamsMember]);
 
