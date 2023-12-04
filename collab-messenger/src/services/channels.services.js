@@ -30,7 +30,7 @@ export const getChannelsCount = () => {
     .catch((e) => console.log(`Error getting channels count: ${e.message}`));
 };
 
-export const createChannel = (title, participants) => {
+export const createChannel = (teamId, title, participants) => {
   const channelsRef = ref(db, 'channels');
 
   const newChannel = {
@@ -41,6 +41,7 @@ export const createChannel = (title, participants) => {
     isPublic: false,
     lastMessage: '',
     participantsReadMsg: {},
+    team: teamId
   };
 
   participants.forEach((participant) => {
