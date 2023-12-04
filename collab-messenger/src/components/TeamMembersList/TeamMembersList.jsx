@@ -66,9 +66,9 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
 
     return (
         !loading && (
-            <div className='flex flex-col bg-white rounded-md pt-4'>
-                <div className='flex flex-row justify-between items-center pl-4 pr-4'>
-                    <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white' />
+            <div className='flex flex-col bg-white rounded-md pt-4 w-full'>
+                <div className='flex flex-col justify-between items-center pl-4 pr-4 gap-2 min-[540px]:flex-row max-[540px]:items-end'>
+                    <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white max-[540px]:w-full' />
                     {showManageTeam && <AddTeamMembers teamDetails={teamDetails} />}
                 </div>
                 {searchQuery === '' ? (
