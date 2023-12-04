@@ -8,7 +8,7 @@ import { db } from "../../config/firebase-config";
 import { ref, onValue } from "firebase/database";
 import PropTypes from 'prop-types';
 
-export default function ChannelBox({ channelId }) {
+export default function ChannelBox({ channelId, onClick }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
   const [lastMessage, setLastMessage] = useState('');
@@ -16,7 +16,6 @@ export default function ChannelBox({ channelId }) {
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
   const [channelTitle, setChannelTitle] = useState('');
   const [areMessagesRead, setAreMessagesRead] = useState(true);
-  
 
   useEffect(() => {
     getChannelById(channelId)
@@ -49,8 +48,13 @@ export default function ChannelBox({ channelId }) {
     }
   }, [channelId, loggedUser.userData?.handle, lastMessage]);
 
+  const handleClick = () => {
+    onClick();
+    navigate(`${channelId}`);
+  };
+
   return (
-    <div onClick={() => navigate(`${channelId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer pb-2">
+    <div onClick={handleClick} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer pb-2">
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
@@ -59,9 +63,9 @@ export default function ChannelBox({ channelId }) {
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-              <p className="text-xs font-medium text-black">
-                {isLastMsgGif ? 'GIF' : isLastMsgFile ? 'File Sent' : lastMessage}
-              </p>
+            <p className="text-xs font-medium text-black">
+              {isLastMsgGif ? 'GIF' : isLastMsgFile ? 'File Sent' : lastMessage}
+            </p>
           </div>
         </div>
       </div>
@@ -76,4 +80,5 @@ export default function ChannelBox({ channelId }) {
 
 ChannelBox.propTypes = {
   channelId: PropTypes.string,
+  onClick: PropTypes.func
 }
