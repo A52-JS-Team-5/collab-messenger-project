@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import ManageTeam from '../ManageTeam/ManageTeam';
 import TeamMembersList from '../TeamMembersList/TeamMembersList';
 
-const TeamDetails = ({ teamDetails, showManageTeam }) => {
+const TeamDetails = ({ teamDetails, showManageTeam, onClick }) => {
     const [activeTab, setActiveTab] = useState(0); // 0 for Members, 1 for Channels, 2 for Basic Details
 
     const [teamData, setTeamData] = useState(teamDetails);
@@ -14,7 +14,11 @@ const TeamDetails = ({ teamDetails, showManageTeam }) => {
     };
 
     return (
-        <div className='flex flex-col basis-4/5 p-4 rounded-md bg-pureWhite gap-8'>
+        <div className='flex flex-col items-stretch basis-4/5 p-4 rounded-md bg-pureWhite gap-8 max-[1224px]:!basis-full'>
+            <div className='flex flex-row items-center min-[1224px]:hidden'>
+                <i className="fa-solid fa-chevron-left fa-xs"></i>
+                <div className='flex flex-col items-start btn btn-link pl-1 pr-1 pt-0 pb-0 mt-0 mb-0' onClick={onClick}>Return To Team</div>
+            </div>
             <div className='flex flex-row gap-4'>
                 <img src={teamData?.photoURL} className='w-24 h-24 object-cover rounded-md'></img>
                 <div className='flex flex-col gap-0.5 items-start justify-center'>
@@ -41,4 +45,5 @@ export default TeamDetails;
 TeamDetails.propTypes = {
     teamDetails: PropTypes.object,
     showManageTeam: PropTypes.bool,
+    onClick: PropTypes.func
 };
