@@ -26,6 +26,7 @@ import ChatDetails from './components/ChatDetails/ChatDetails';
 import MobileSideMenu from './components/MobileSideMenu/MobileSideMenu';
 import ChannelDetails from './components/ChannelDetails/ChannelDetails'
 import { equalTo, onValue, orderByChild, query, ref } from 'firebase/database';
+import PageNotAccessible from './views/PageNotAccessible/PageNotAccessible';
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -91,7 +92,7 @@ function App() {
   return (
     <AppContext.Provider value={{ ...appState, setContext: setAppState }}>
       {location.pathname.includes('/app') ? (
-        <div className='flex flex-row gap-4 max-h-[96vh] overflow-hidden'>
+        user !== null ? (<div className='flex flex-row gap-4 max-h-[96vh] overflow-hidden'>
           {/* If we're in the website part, we use the flex flex-col className, else - flex flex-row */}
           {!loading && <SideMenu />}
           {/* Conditional rendering based on user, loading, and error */}
@@ -117,7 +118,7 @@ function App() {
             </div>
           )}
           {!loading && !error && <MobileSideMenu />}
-        </div>
+        </div>) : (!loading && <PageNotAccessible/>)
       ) : (
         <div className='flex flex-col'>
           {/* If we're in the website part, we use the flex flex-col className, else - flex flex-row */}
