@@ -53,7 +53,7 @@ const Login = () => {
               user: credential.user,
             }); 
           })
-          .then(() => navigate('/'))
+          .then(() => navigate('/app'))
           .then(() => changeStatus(userData.handle, "Online"))
           .catch(e => {
             console.log(e.message);
