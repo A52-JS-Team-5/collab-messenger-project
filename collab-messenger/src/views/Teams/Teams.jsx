@@ -81,7 +81,7 @@ const Teams = () => {
                 const teamsChangedListeners = [];
 
                 // Attach onValue listener to each specific team
-                teamsToMonitor.forEach((teamId) => {
+                teamsToMonitor.map((teamId) => {
                     const teamRef = ref(db, `teams/${teamId}`);
                     const teamChangedListener = onValue(teamRef, (snapshot) => {
                         if (snapshot.exists()) {
@@ -98,7 +98,7 @@ const Teams = () => {
 
                 return () => {
                     teamsMemberListener();
-                    teamsChangedListeners.forEach((listener) => listener());
+                    teamsChangedListeners.map((listener) => listener());
 
                 };
             }
