@@ -13,7 +13,7 @@ const SideMenu = () => {
     }, [location.pathname]);
 
     return (
-        <div className='flex flex-col max-lg:hidden md:display-flex md:display-flex-col'>
+        <div className='flex flex-col max-xl:hidden xl:display-flex xl:display-flex-col'>
             <img src={iconLogo} className='max-h-14 cursor-pointer' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
             <ul className="menu gap-2 rounded-box justify-center grow">
                 <li>
