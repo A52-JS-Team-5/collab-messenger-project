@@ -40,14 +40,14 @@ const Insights = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className='flex flex-col gap-8 items-center justify-center h-full'>
+                        <div className='flex flex-col gap-8 items-center justify-center h-4/5'>
                             <img src={notificationImg} alt="No Notifications Image" className="max-h-80" />
                             <p>{`It's a bit quiet here. No updates or notifications yet.`}</p>
                         </div>
                     )}
                 </div>
             </div>
-            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[87vh]'>
+            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[89vh]'>
                 <div className='flex flex-col items-center gap-4'>
                     <img src={user?.userData?.photoURL} alt="Avatar" className="h-32 w-32 opacity-90 aspect-square rounded-full" />
                     <div className='flex flex-col'>
@@ -70,13 +70,13 @@ const Insights = () => {
                             </div>
                             <p>Teams</p>
                         </div>
-                        {/*This is a placeholder until we have the channels implementation
                         <div className="flex flex-col gap-2 p-4 rounded-md bg-white w-full items-center max-2xl:flex-row">
-                        <div className="flex flex-col rounded-full bg-green text-black items-center justify-center w-10 h-10 aspect-square">
-                                <h2>0</h2>
+                            <div className="flex flex-col rounded-full bg-green text-black items-center justify-center w-10 h-10 aspect-square">
+                                <h2>{user?.userData?.channels ? Object.keys(user?.userData?.channels).length : 0}</h2>
                             </div>
                             <p>Channels</p>
                         </div>
+                        {/*This is a placeholder until we have the saved items implementation
                         <div className="flex flex-col gap-2 p-4 rounded-md bg-white w-full items-center max-2xl:flex-row">
                             <div className="flex flex-col rounded-full bg-blue text-pureWhite items-center justify-center w-10 h-10 aspect-square">
                                 This is a placeholder until/if we have the saved items implementation
