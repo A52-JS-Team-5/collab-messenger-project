@@ -16,7 +16,8 @@ module.exports = {
       lightBlue: '#D7E4F6',
       blue30: '#B2D5FF',
       pureWhite: '#FFFFFF',
-      green: '#4EC274'
+      green: '#4EC274',
+      darkBlue: '#000C1A',
     },
   },
   // eslint-disable-next-line no-undef
