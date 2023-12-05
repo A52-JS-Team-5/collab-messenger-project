@@ -106,19 +106,19 @@ const AddTeamMembers = ({ teamDetails }) => {
         <div className="add-ream-members-wrapper">
             <button className='btn bg-pink border-none text-pureWhite' onClick={handleToggle}><i className="fa-solid fa-users"></i>Add Members</button>
             <div id="add-team-members-modal" className={modalClass}>
-                <div className="modal-box bg-pureWhite">
+                <div className="modal-box bg-pureWhite dark:bg-darkFront">
                     <div className="flex flex-col gap-2">
                         <div>
                             <label className="label">
                                 <span className="label-text">Members</span>
                             </label>
                             <div className="scrollable-list-container flex flex-col gap-2">
-                                <input type="text" ref={inputRef} onChange={(e) => { handleSearchUsers(e.target.value); }} className="input input-bordered w-full text-black bg-pureWhite" />
+                                <input type="text" ref={inputRef} onChange={(e) => { handleSearchUsers(e.target.value); }} className="input input-bordered w-full text-black bg-pureWhite dark:bg-darkInput dark:text-darkText" />
                                 {/* Display search results */}
                                 {searchResults.length > 0 && (
                                     <ul className="scrollable-list max-h-24	overflow-y-auto">
                                         {searchResults.map((user) => (
-                                            <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2'>
+                                            <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2 dark:hover:bg-darkAccent'>
                                                 <img src={user.photoURL} className='h-8 w-8 rounded-full' />
                                                 <div className='flex flex-col items-start self-stretch'>
                                                     <p className='text-sm'>{user.name}{' '}{user.surname}</p>
