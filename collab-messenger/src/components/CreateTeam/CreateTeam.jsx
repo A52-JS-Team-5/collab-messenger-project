@@ -168,21 +168,21 @@ export default function CreateTeam() {
         <div className="create-team-wrapper">
             <button className='btn bg-pink border-none text-pureWhite' onClick={handleToggle}><i className="fa-solid fa-users"></i>Create New Team</button>
             <div id="create-team-modal" className={modalClass}>
-                <div className="modal-box bg-white">
+                <div className="modal-box bg-white dark:bg-darkFront">
                     {step === 1 && (
                         <div className="flex flex-col gap-2">
                             <div>
                                 <label className="label">
                                     <span className="label-text">Team Name</span>
                                 </label>
-                                <input type="text" onChange={(e) => updateTeamData('name')(e.target.value)} className="input input-bordered w-full text-black bg-white" />
+                                <input type="text" onChange={(e) => updateTeamData('name')(e.target.value)} className="input input-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" />
                                 <span className="err-message text-red">{formErrorMsg.name}</span>
                             </div>
                             <div>
                                 <label className="label">
                                     <span className="label-text">Team Description</span>
                                 </label>
-                                <textarea className="textarea textarea-bordered w-full text-black bg-white" onChange={(e) => updateTeamData('description')(e.target.value)} />
+                                <textarea className="textarea textarea-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" onChange={(e) => updateTeamData('description')(e.target.value)} />
                             </div>
                         </div>
                     )}
