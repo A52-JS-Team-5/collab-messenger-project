@@ -72,8 +72,8 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
 
       {isEditInputShown === true ? (
         <div className='flex space-between'>
-          <input type="text" value={`${messageInput}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md" />
-          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-lightBlue" onClick={setNewMessageContent}>Save</button>
+          <input type="text" value={`${messageInput}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md dark:bg-darkAccent" />
+          <button className="btn btn-ghost btn-md flex self-center text-black hover:bg-lightBlue dark:text-darkText dark:hover:bg-blue" onClick={setNewMessageContent}>Save</button>
         </div>
       ) : (
         isMessageGif === true ? (
@@ -90,7 +90,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
             isMessagePdf !== true ? (
               <img src={message.content} alt='Image File Sent' width={200} />
             ) : (
-              <div className='flex flex-row border w-48 h-20 bg-white items-center rounded-xl'>
+              <div className='flex flex-row border w-48 h-20 bg-white items-center rounded-xl dark:bg-darkAccent'>
                 <i className="fa-regular fa-file fa-xl p-5"></i>
                 <a download target="_blank" rel="noreferrer" href={message.content}>{message.title.length > 10 ? message.title.slice(0, 10) + '...' : message.title}</a>
                 {editMessageOption !== true && <MessageReactions 
@@ -104,7 +104,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
           ) : (
             <div className='flex flex-row'>
               {editMessageOption && (<div className="flex self-center pr-2 pt-0.5 text-xs opacity-50 hover:cursor-pointer pl-2" onClick={handleOpenEditOption}><i className="fa-solid fa-pen-to-square"></i></div>)}
-              <div className="px-4 py-2 my-1 rounded-xl bg-grey text-black">{message.content}</div>
+              <div className="px-4 py-2 my-1 rounded-xl bg-grey text-black dark:bg-lightBlue">{message.content}</div>
               {editMessageOption !== true && <MessageReactions
                 areEmojisVisible={areEmojisVisible} 
                 setAreEmojisVisible={setAreEmojisVisible} 
@@ -119,7 +119,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
         {reactionValues?.length > 0 && 
           <div className={`dropdown dropdown-hover ${messageClass === 'chat-end' ? 'dropdown-left' : 'dropdown-right'} dropdown-end`}>
             <label tabIndex={0}>{reactionValues}{reactionValues.length}</label>
-            <ul tabIndex={0} className="dropdown-content z-[1] menu shadow bg-white rounded-box w-28">
+            <ul tabIndex={0} className="dropdown-content z-[1] menu shadow bg-white dark:bg-darkAccent rounded-box w-28">
               {Object.entries(reactions).map(userReaction => {
                 return (<p key={userReaction[0]}>{`${userReaction[1]}:  ${userReaction[0]}`}</p>)
               })}
