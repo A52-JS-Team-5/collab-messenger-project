@@ -165,7 +165,7 @@ const SingleTeamView = () => {
             {isDesktopOrLaptop && <div className='flex flex-row mt-4 gap-4 h-[87vh]'>
                 {!isLoading && (
                     <div className='flex flex-row mt-4 gap-4 h-full w-full'>
-                        <div className='flex flex-col basis-1/5 p-4 rounded-md bg-pureWhite'>
+                        <div className='flex flex-col basis-1/5 p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText'>
                             <div className='flex flex-col gap-2'>
                                 <div className='flex flex-row items-center'>
                                     <i className="fa-solid fa-chevron-left fa-xs"></i>
@@ -178,16 +178,16 @@ const SingleTeamView = () => {
                                     <div className='flex flex-row items-center justify-between'>
                                         <h2 className='text-xl text-left font-bold'>{teamDetails?.name}</h2>
                                         <div className="dropdown dropdown-end">
-                                            <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30">
+                                            <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30 dark:text-yellow dark:hover:bg-[#35331C] dark:focus:!bg-[#35331C]">
                                                 <i className="fa-solid fa-ellipsis-vertical"></i>
                                             </label>
-                                            <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52">
-                                                <li onClick={handleClickTeamDetails}><a>Team Details</a></li>
-                                                <li onClick={openCreateChannelModal}><a>Add Channel</a></li>
+                                            <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52 dark:bg-darkAccent">
+                                                <li onClick={handleClickTeamDetails}><a className="dark:!text-yellow">Team Details</a></li>
+                                                <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>
                                                 {/*Leave - only for members who are not the owner*/}
-                                                {!showManageTeam && <li onClick={openLeaveModal}><a>Leave Team</a></li>}
+                                                {!showManageTeam && <li onClick={openLeaveModal}><a className="dark:!text-yellow">Leave Team</a></li>}
                                                 {/*Delete - only for team owner*/}
-                                                {showManageTeam && <li onClick={openDeleteTeamModal}><a>Delete Team</a></li>}
+                                                {showManageTeam && <li onClick={openDeleteTeamModal}><a className="dark:!text-yellow">Delete Team</a></li>}
                                             </ul>
                                             {isLeaveModalOpen && (<LeaveTeamModal teamId={teamId} isOpen={isLeaveModalOpen} onClose={closeLeaveModal} />)}
                                             {isDeleteTeamModalOpen && (<DeleteTeamModal teamData={teamDetails} teamId={teamId} isOpen={isDeleteTeamModalOpen} onClose={closeDeleteTeamModal} />)}
@@ -198,7 +198,7 @@ const SingleTeamView = () => {
                             </div>
                             <div className="divider"></div>
                             <div className="flex flex-col gap-1 h-[32vh] overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
-                [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
+                [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:[&::-webkit-scrollbar-thumb]:bg-mint">
                                 {allTeamChannelsOfUser.map(channel => (
                                     <ChannelBox key={channel} channelId={channel} onClick={handleClickChannelBox} />)
                                 )}
@@ -207,7 +207,7 @@ const SingleTeamView = () => {
                         {activeComponent === 0 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4">
                             <EnterChannel />
                         </div>}
-                        {activeComponent === 2 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite">
+                        {activeComponent === 2 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront">
                             <Outlet />
                         </div>}
                         {activeComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} />}
@@ -218,7 +218,7 @@ const SingleTeamView = () => {
             {isTabletOrMobile && <div className='flex flex-row mt-4 gap-4 max-h-[86vh] w-full'>
                 {!isLoading && activeMobileComponent === 0 && (
                     <div className='flex flex-row mt-4 gap-4 h-full w-full'>
-                        <div className='flex flex-col p-4 rounded-md bg-pureWhite w-full'>
+                        <div className='flex flex-col p-4 rounded-md bg-pureWhite w-full dark:bg-darkFront dark:text-darkText'>
                             <div className='flex flex-col gap-2'>
                                 <div className='flex flex-row items-center'>
                                     <i className="fa-solid fa-chevron-left fa-xs"></i>
@@ -231,16 +231,16 @@ const SingleTeamView = () => {
                                     <div className='flex flex-row items-center justify-between'>
                                         <h2 className='text-xl text-left font-bold'>{teamDetails?.name}</h2>
                                         <div className="dropdown dropdown-end">
-                                            <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30">
+                                            <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30 dark:text-yellow dark:hover:bg-[#35331C] dark:focus:!bg-[#35331C]">
                                                 <i className="fa-solid fa-ellipsis-vertical"></i>
                                             </label>
-                                            <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52">
-                                                <li onClick={handleMobileClickTeamDetails}><a>Team Details</a></li>
-                                                <li onClick={openCreateChannelModal}><a>Add Channel</a></li>
+                                            <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52 dark:bg-darkAccent">
+                                                <li onClick={handleMobileClickTeamDetails}><a className="dark:!text-yellow">Team Details</a></li>
+                                                <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>
                                                 {/*Leave - only for members who are not the owner*/}
-                                                {!showManageTeam && <li onClick={openLeaveModal}><a>Leave Team</a></li>}
+                                                {!showManageTeam && <li onClick={openLeaveModal}><a className="dark:!text-yellow">Leave Team</a></li>}
                                                 {/*Delete - only for team owner*/}
-                                                {showManageTeam && <li onClick={openDeleteTeamModal}><a>Delete Team</a></li>}
+                                                {showManageTeam && <li onClick={openDeleteTeamModal}><a className="dark:!text-yellow">Delete Team</a></li>}
                                             </ul>
                                             {isLeaveModalOpen && (<LeaveTeamModal teamId={teamId} isOpen={isLeaveModalOpen} onClose={closeLeaveModal} />)}
                                             {isDeleteTeamModalOpen && (<DeleteTeamModal teamData={teamDetails} teamId={teamId} isOpen={isDeleteTeamModalOpen} onClose={closeDeleteTeamModal} />)}
@@ -259,7 +259,7 @@ const SingleTeamView = () => {
                         </div>
                     </div>
                 )}
-                {!isLoading && activeMobileComponent === 2 && <div className="!basis-full max-xl:basis-4/5 w-full flex flex-col items-start place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite">
+                {!isLoading && activeMobileComponent === 2 && <div className="!basis-full max-xl:basis-4/5 w-full flex flex-col items-start place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText">
                     <div className='flex flex-row items-center xl:hidden'>
                         <i className="fa-solid fa-chevron-left fa-xs"></i>
                         <div className='flex flex-col w-full items-start btn btn-link pl-1 pr-1 pt-0 pb-0 mt-0 mb-0' onClick={handleMobileDefaultClick}>Return To Team</div>
