@@ -9,6 +9,7 @@ import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
 import { changeStatus } from '../../services/users.services';
 import UserProfile from '../../views/UserProfile/UserProfile';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 
 export default function AppNav({ onLogout }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -84,8 +85,8 @@ export default function AppNav({ onLogout }) {
                 <img src={iconLogo} className='max-h-12 cursor-pointer xl:hidden sm:max-xl:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
                 <div className='flex flex-row gap-2 justify-center w-full'>
                     <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
-                        onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl' placeholder="What are you searching for today?" />
-                    <button onClick={handleSearch} className='btn bg-blue text-pureWhite border-none'><i className="fa-solid fa-magnifying-glass"></i></button>
+                        onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl dark:!bg-darkInput' placeholder="What are you searching for today?" />
+                    <button onClick={handleSearch} className='btn bg-blue text-pureWhite border-none hover:bg-darker-blue'><i className="fa-solid fa-magnifying-glass"></i></button>
                 </div>
                 {user !== null && (
                     <div className="dropdown dropdown-end">
@@ -95,17 +96,19 @@ export default function AppNav({ onLogout }) {
                             </div>
                             <div className={`absolute top-8 right-1 w-2 h-2 rounded-full ${statusColors[currentStatus]}`}></div>
                         </label>
-                        <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52">
-                            <li><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent">
-                                <option>Online</option>
-                                <option>Away</option>
-                                <option>Offline</option>
+                        <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
+                            <li className='dark:text-yellow'><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent dark:!bg-darkAccent">
+                                <option className='dark:!text-darkText'>Online</option>
+                                <option className='dark:!text-darkText'>Away</option>
+                                <option className='dark:!text-darkText'>Offline</option>
                             </select>
                             </li>
                             <div className="divider m-0"></div>
-                            <li onClick={openUserProfileModal}><a>See Profile</a></li>
-                            <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}/edit`}>Edit Profile</Link></li>
-                            <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
+                            <li onClick={openUserProfileModal}><a className='dark:text-yellow'>See Profile</a></li>
+                            <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}/edit`} className='dark:text-yellow'>Edit Profile</Link></li>
+                            <li onClick={handleClick}><Link to='/' onClick={onLogout} className='dark:text-yellow'>Logout</Link></li>
+                            <div className="divider m-0 max-xl:display-flex xl:hidden"></div>
+                            <li className='flex flex-row items-start max-xl:display-flex xl:hidden'><ThemeSwitcher /></li>
                         </ul>
                         {isUserProfileModalOpen && <UserProfile userHandle={user?.userData?.handle} isOpen={isUserProfileModalOpen} onClose={closeUserProfileModal} />}
                     </div>
