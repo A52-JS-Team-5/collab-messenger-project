@@ -39,7 +39,7 @@ export default function UsersSort({ users, setUsers }) {
 
   return (
     <div>
-      <select className="select select-secondary bg-white w-full max-w-xs" onChange={handleSortChange} defaultValue='Sort users'>
+      <select className="select select-secondary bg-white w-full max-w-xs dark:bg-darkInput dark:text-darkText" onChange={handleSortChange} defaultValue='Sort users'>
         <option disabled>Sort users</option>
         <option value="handleAsc">Username (A to Z)</option>
         <option value="handleDesc">Username (Z to A)</option>
