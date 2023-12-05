@@ -44,7 +44,7 @@ const RemoveTeamMember = ({ teamId, teamName, memberId }) => {
         <div className="remove-team-member-wrapper">
             <button className="btn btn-square btn-ghost btn-sm text-blue hover:bg-blue30 focus:!bg-blue30" onClick={(e) => handleCancelClick(e)}><i className="fa-solid fa-user-minus"></i></button>
             <div id="remove-team-member-modal" className={modalClass}>
-                <div className="modal-box bg-pureWhite">
+                <div className="modal-box bg-pureWhite dark:bg-darkAccent">
                     <h3 className="font-bold text-lg">Are you sure you want to remove this member?</h3>
                     <p className="py-2">You can always add them back later if needed.</p>
                     <div className="modal-action flex-row">
