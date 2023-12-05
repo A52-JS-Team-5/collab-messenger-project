@@ -66,11 +66,11 @@ export default function ChatsLayout() {
 
   return (
     <div className="mt-5">
-      <div className="flex gap-3 h-[85vh] flex-row justify-start w-full">
-        <div className="basis-80 bg-white rounded-md text-black overflow-auto [&::-webkit-scrollbar]:[width:8px]
-            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md">
-          <div className="sticky top-0 flex bg-white z-50 items-center justify-between p-2">
-            <p className="font-black text-xl pt-2 pl-2">Chats</p>
+      <div className="flex gap-3 h-[85vh] flex-row justify-start w-full dark:text-darkText">
+        <div className="basis-80 bg-pureWhite rounded-md text-black overflow-auto [&::-webkit-scrollbar]:[width:8px]
+            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md dark:[&::-webkit-scrollbar-thumb]:bg-mint dark:bg-darkFront">
+          <div className="sticky top-0 flex z-50 items-center justify-between p-2">
+            <p className="font-black text-xl pt-2 pl-2 dark:text-darkText">Chats</p>
             <div className="flex">
               <div className="pt-2">
                 <StartPrivateChatModal />
