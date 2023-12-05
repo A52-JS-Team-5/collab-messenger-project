@@ -116,7 +116,7 @@ export default function CreateTeam() {
     };
 
     const handleSaveTeam = () => {
-        const membersToAdd = selectedMembers.map((member) => member.handle);
+        const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
 
         updateTeamMembers(newTeamId, membersToAdd)
             .then(() => {
@@ -127,7 +127,7 @@ export default function CreateTeam() {
                     pushNotifications(member, notificationId))))
 
             .then(() => {
-                createChannel('General', membersToAdd)
+                createChannel(newTeamId,'General', membersToAdd)
                 .then((channelId) => {
                     addChannel(membersToAdd, channelId, newTeamId, user.userData.handle);
                 })
@@ -157,7 +157,27 @@ export default function CreateTeam() {
 
     const handleSkip = () => {
         if (newTeamId) {
-            navigate(`/app/teams/${newTeamId}`);
+            const author = [user.userData.handle];
+
+            updateTeamMembers(newTeamId, author)
+            .then(() => {
+                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamData.name}.`, ADDED_TO_TEAM_TYPE, newTeamId)
+            })
+            .then((notificationId) =>
+                    pushNotifications(author, notificationId))
+                
+            .then(() => {
+                createChannel(newTeamId,'General', author)
+                    .then((channelId) => {
+                        addChannel(author, channelId, newTeamId, author);
+                    })
+                    .catch((e) => {
+                        console.log(`An error occurred while trying to create General channel: ${e.message}`);
+                    })
+    
+                navigate(`/app/teams/${newTeamId}`);  
+            })
+
         } else {
             setOpen(false);
             setStep(1);
