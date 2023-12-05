@@ -107,16 +107,16 @@ export default function EditUserProfile() {
   };
 
   return (
-    <div className='flex flex-row gap-4 h-[87vh] w-full mt-4 max-lg:flex-col'>
-      <div role="tablist" className="tabs tabs-bordered flex flex-col gap-4 basis-1/5 rounded-md bg-pureWhite p-8 h-full">
+    <div className='flex flex-row gap-4 h-[87vh] w-full mt-4 max-lg:flex-col dark:text-darkText'>
+      <div role="tablist" className="tabs tabs-bordered flex flex-col gap-4 basis-1/5 rounded-md bg-pureWhite p-8 h-full dark:bg-darkFront">
         <a role="tab" className={`tab w-full ${activeTab === 0 && 'tab-active'}`} onClick={() => handleTabClick(0)}>Basic Details</a>
         <a role="tab" className={`tab w-full ${activeTab === 1 && 'tab-active'}`} onClick={() => handleTabClick(1)}>Profile Picture</a>
         <a role="tab" className={`tab w-full ${activeTab === 2 && 'tab-active'}`} onClick={() => handleTabClick(2)}>Change Password</a>
       </div>
       {!loading && activeTab === 0 && (
         <div className="flex flex-col gap-2 basis-4/5 rounded-md bg-pureWhite p-4 h-full overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
-        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md">
-          <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-2'>
+        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md dark:[&::-webkit-scrollbar-thumb]:bg-mint dark:bg-darkFront">
+          <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-2 dark:border-darkAccent'>
             <div className='flex flex-col items-start gap-2 w-full'>
               <div className='flex flex-col items-start'>
                 <h3 className='font-bold text-lg text-left'>Basic Details</h3>
@@ -128,7 +128,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Name</span>
                     </label>
-                    <input type="text" className="input input-bordered w-full bg-white" defaultValue={currentUser.name} onChange={updateForm('name')} />
+                    <input type="text" className="input input-bordered w-full bg-white dark:bg-darkInput" defaultValue={currentUser.name} onChange={updateForm('name')} />
 
                     {formErrorMsg.name && <span className="err-message text-red">{formErrorMsg.name}</span>}
                   </div>
@@ -138,7 +138,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Surname</span>
                     </label>
-                    <input type="text" className="input input-bordered w-full bg-white" defaultValue={currentUser.surname} onChange={updateForm('surname')} />
+                    <input type="text" className="input input-bordered w-full bg-white dark:bg-darkInput" defaultValue={currentUser.surname} onChange={updateForm('surname')} />
                     {formErrorMsg.surname && <span className="err-message text-red">{formErrorMsg.surname}</span>}
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Email</span>
                     </label>
-                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black" defaultValue={currentUser.email} disabled />
+                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black dark:disabled:bg-darkBase dark:text-darkInput" defaultValue={currentUser.email} disabled />
                   </div>
                 </div>
                 <div className='username-details'>
@@ -155,7 +155,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Username</span>
                     </label>
-                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black" defaultValue={currentUser.handle} disabled />
+                    <input type="text" className="input input-bordered w-full disabled:bg-lightBlue border-none disabled:text-black dark:disabled:bg-darkBase dark:text-darkInput" defaultValue={currentUser.handle} disabled />
                   </div>
                 </div>
                 <div className='phone-details'>
@@ -163,7 +163,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Phone Number</span>
                     </label>
-                    <input type="tel" className="input input-bordered w-full bg-white" placeholder="+359 00 000 0000" defaultValue={currentUser.phoneNumber} onChange={updateForm('phoneNumber')} />
+                    <input type="tel" className="input input-bordered w-full bg-white dark:bg-darkInput" placeholder="+359 00 000 0000" defaultValue={currentUser.phoneNumber} onChange={updateForm('phoneNumber')} />
                     {formErrorMsg.phoneNumber && <span className="err-message text-red">{formErrorMsg.phoneNumber}</span>}
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export default function EditUserProfile() {
                     <label className="label">
                       <span className="label-text">Your Bio</span>
                     </label>
-                    <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white" placeholder="Bio" defaultValue={currentUser.bio} onChange={updateForm('bio')}></textarea>
+                    <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white dark:bg-darkInput" placeholder="Bio" defaultValue={currentUser.bio} onChange={updateForm('bio')}></textarea>
                   </div>
                 </div>
                 <div className='flex flex-row justify-end'>
