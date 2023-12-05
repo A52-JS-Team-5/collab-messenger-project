@@ -75,8 +75,8 @@ export default function ChangeProfilePicture({ handle }) {
   };
 
   return (
-    <div className="flex flex-col gap-4 basis-4/5 rounded-md bg-pureWhite p-4 h-full">
-      <div className='flex flex-col gap-4 rounded-md border-lightBlue border-2 p-8 w-full'>
+    <div className="flex flex-col gap-4 basis-4/5 rounded-md bg-pureWhite p-4 h-full dark:bg-darkFront dark:text-darkText">
+      <div className='flex flex-col gap-4 rounded-md border-lightBlue border-2 p-8 w-full dark:border-darkAccent'>
         <div className='flex flex-col items-start'>
           <h3 className='font-bold text-lg text-left'>Update Profile Photo</h3>
           <p className="text-left">A picture helps people recognize you and lets you know when you are signed in to your account.</p>
@@ -89,7 +89,7 @@ export default function ChangeProfilePicture({ handle }) {
             <label className="label self-stretch">
               <span className="label-text">Pick a Profile Photo</span>
             </label>
-            <input type="file" className="file-input file-input-bordered w-full flex-start self-stretch bg-white file:bg-pink file:border-pink file:text-pureWhite" accept="image/*" id="fileInput" onChange={handlePhotoChange} />
+            <input type="file" className="file-input file-input-bordered w-full border-none flex-start self-stretch bg-white dark:bg-darkAccent file:bg-pink file:border-pink file:text-pureWhite" accept="image/*" id="fileInput" onChange={handlePhotoChange} />
             {fileErrorMsg && <span className="err-message text-red">{fileErrorMsg}</span>}
           </div>
           <div className='flex flex-col self-stretch justify-end'>
