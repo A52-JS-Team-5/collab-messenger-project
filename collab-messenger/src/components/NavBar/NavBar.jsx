@@ -71,19 +71,21 @@ export default function NavBar({ onLogout }) {
           <div className='flex flex-row gap-0.5 justify-end'>
             <input id="drawer" type="checkbox" className="drawer-toggle drawer-checkbox" />
             <div className="drawer-content">
-              <label htmlFor="drawer" className="drawer-button btn btn-primary m-1"><i className="fa-solid fa-bars fa-2xl"></i></label>
+              <label htmlFor="drawer" className="drawer-button btn bg-pink m-1 text-pureWhite"><i className="fa-solid fa-bars fa-2xl"></i></label>
             </div>
             <div className="drawer-side">
               <label htmlFor="drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-              <ul className="menu p-4 w-4/5 min-h-full bg-base-200 text-base-content">
+              <ul className="menu p-4 w-4/5 min-h-full bg-white text-base-content dark:bg-darkFront">
                 {/* Sidebar content here */}
-                <li onClick={handleLinkClick}><Link to='/'>Home</Link></li>
-                <li><Link to='/about' onClick={handleLinkClick}>About</Link></li>
-                <li><Link to='/faq' onClick={handleLinkClick}>FAQs</Link></li>
-                {user.user === null && <li onClick={handleLinkClick}><Link to='/register'>Register</Link></li>}
-                {user.user === null && <li onClick={handleLinkClick}><Link to='/login'>Login</Link></li>}
-                {user.user !== null && <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>}
-                {user.user !== null && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout}>Logout</Link></li>}
+                <li onClick={handleLinkClick}><Link to='/' className="dark:!text-yellow">Home</Link></li>
+                <li><Link to='/about' onClick={handleLinkClick} className="dark:!text-yellow">About</Link></li>
+                <li><Link to='/faq' onClick={handleLinkClick} className="dark:!text-yellow">FAQs</Link></li>
+                {user.user === null && <li onClick={handleLinkClick}><Link to='/register' className="dark:!text-yellow">Register</Link></li>}
+                {user.user === null && <li onClick={handleLinkClick}><Link to='/login' className="dark:!text-yellow">Login</Link></li>}
+                {user.user !== null && <li onClick={handleClick}><Link to={`/app`} className="dark:!text-yellow">Go to App</Link></li>}
+                {user.user !== null && <li onClick={handleLinkClick}><Link to='/' onClick={onLogout} className="dark:!text-yellow">Logout</Link></li>}
+                <div className="divider m-0 max-xl:display-flex xl:hidden"></div>
+                <li className='flex flex-row items-start max-xl:display-flex xl:hidden'><ThemeSwitcher /></li>
               </ul>
             </div>
           </div>
