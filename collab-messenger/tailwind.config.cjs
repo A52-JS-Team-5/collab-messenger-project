@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class',
   theme: {
     colors: {
       'light-gray': '#EFEFF0',
@@ -18,6 +19,12 @@ module.exports = {
       pureWhite: '#FFFFFF',
       green: '#4EC274',
       darkBlue: '#000C1A',
+      darkBase: '#1F1F1F',
+      darkFront: '#292929',
+      darkAccent: '#414141',
+      darkText: '#CACACA',
+      darkInput: '#383838',
+      lightYellow: '#FFEFA8',
     },
   },
   // eslint-disable-next-line no-undef
