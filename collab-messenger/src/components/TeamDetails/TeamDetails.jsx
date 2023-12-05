@@ -14,7 +14,7 @@ const TeamDetails = ({ teamDetails, showManageTeam, onClick }) => {
     };
 
     return (
-        <div className='flex flex-col items-stretch basis-4/5 p-4 rounded-md bg-pureWhite gap-8 max-[1224px]:!basis-full'>
+        <div className='flex flex-col items-stretch basis-4/5 p-4 rounded-md bg-pureWhite gap-8 max-[1224px]:!basis-full dark:bg-darkFront dark:text-darkText'>
             <div className='flex flex-row items-center min-[1224px]:hidden'>
                 <i className="fa-solid fa-chevron-left fa-xs"></i>
                 <div className='flex flex-col items-start btn btn-link pl-1 pr-1 pt-0 pb-0 mt-0 mb-0' onClick={onClick}>Return To Team</div>
