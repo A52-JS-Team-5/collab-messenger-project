@@ -48,10 +48,10 @@ function UserData({ user }) {
 
   return (
     
-    <div className='user-card w-64 rounded-md border border-black items-start'>
+    <div className='user-card w-64 rounded-md justify-left items-start bg-pureWhite dark:bg-darkFront p-4 dark:text-darkText'>
       <div className='user-card-head'>
         <div className='author-description flex flex-col items-start'>
-          <div className='handle hover:cursor-pointer font-extrabold' onClick={() => navigate(`/app/users/${user?.id}`)}>{user?.id}</div>
+          <div className='handle hover:cursor-pointer font-extrabold'>{user?.id}</div>
           <div className='email'>{user?.email}</div>
         </div>
       </div>
