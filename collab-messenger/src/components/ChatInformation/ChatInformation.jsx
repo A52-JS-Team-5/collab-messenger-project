@@ -75,7 +75,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
             {!showTitle && <div>
-              <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md m-3" />
+              <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-pureWhite border-3 input-md m-3" />
               <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh]" onClick={setNewContent}>Save</button>
             </div>}
           </div>
@@ -88,7 +88,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
               <AddGroupChatMembers chatId={chatId} chatParticipants={chatParticipants} />
               <LeaveChatModal chatId={chatId} />
             </div>
-            <div className="collapse collapse-arrow bg-grey mt-4 text-left">
+            <div className="collapse collapse-arrow bg-white dark:bg-darkAccent mt-4 text-left">
               <input type="checkbox" /> 
               <div className="collapse-title text-sm font-medium ">
                 <i className="fa-solid fa-user-group text-pink mr-2"></i> 
@@ -105,7 +105,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
             </div>
           </div>
         )}
-        <div className="collapse collapse-arrow bg-grey mt-2 text-left">
+        <div className="collapse collapse-arrow bg-white dark:bg-darkAccent mt-2 text-left">
           <input type="checkbox" /> 
           <div className="collapse-title text-sm font-medium">
             <i className="fa-solid fa-box-archive text-pink mr-2"></i> 
