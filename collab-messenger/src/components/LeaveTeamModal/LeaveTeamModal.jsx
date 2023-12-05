@@ -35,7 +35,7 @@ const LeaveTeamModal = ({ teamId, isOpen, onClose }) => {
   return (
     <div className="leave-team-wrapper">
       <div id="leave-team-modal" className={modalClass}>
-        <div className="modal-box bg-pureWhite">
+        <div className="modal-box bg-pureWhite dark:bg-darkFront">
           <div className="post-description flex flex-col items-start">
             <h3 className="font-bold text-lg">You are about to leave.</h3>
             <p className="py-2">Are you sure you want to leave this team?</p>
