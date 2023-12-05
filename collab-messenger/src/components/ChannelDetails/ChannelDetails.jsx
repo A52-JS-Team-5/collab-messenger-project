@@ -1,7 +1,7 @@
+import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
-// import { addMessage } from "../../services/messages.services";
 import { addMessageChannel } from "../../services/messages.services";
 import { createChannelMessage } from "../../services/messages.services";
 import { getChannelById } from "../../services/channels.services";
@@ -9,15 +9,16 @@ import { db } from '../../config/firebase-config';
 import { ref, onValue, query, orderByChild, equalTo, update } from 'firebase/database';
 import MessagesList from '../MessagesList/MessagesList';
 import { useParams } from "react-router-dom";
-import Avatar from '../Avatar/Avatar';
 import ReactGiphySearchbox from 'react-giphy-searchbox-techedge';
 import UploadFile from '../UploadFile/UploadFile';
-import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
-export default function ChannelDetails() {
+export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoVisible }) {
   const loggedUser = useContext(AppContext);
   const { channelId } = useParams();
   const [isGifSearchVisible, setIsGifSearchVisible] = useState(false);
+  const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
   const [channelData, setChannelData] = useState({
     title: '',
     messages: {},
@@ -33,11 +34,11 @@ export default function ChannelDetails() {
     title: '',
   });
 
-  const isLink = message.content.includes('chat_uploads');
+  const isLink = message.content.includes('channel_uploads');
   const areThereMessages = allMessages.length > 0;
 
   const updateMessage = (field) => (e) => {
-    if (field === 'content' && message.content.includes('chat_uploads')) {
+    if (field === 'content' && message.content.includes('channel_uploads')) {
       setMessage({
         ...message,
         ['content']: '',
@@ -57,6 +58,13 @@ export default function ChannelDetails() {
     });
   };
 
+  const addEmoji = (emoji) => {
+    setMessage({
+      ...message,
+      content: message['content'] + `${emoji}`,
+    });
+  };
+
   const onReply = (event) => {
     event.preventDefault();
 
@@ -67,7 +75,7 @@ export default function ChannelDetails() {
 
     createChannelMessage(message.content, loggedUser.userData.handle, channelId)
       .then((messageId) => {
-        return addMessageChannel(channelId, messageId, message.content)
+        return addMessageChannel(channelId, messageId, message.content, loggedUser.userData.handle)
       })
       .then(() => {
         setMessage((prevMessage) => ({
@@ -143,30 +151,34 @@ export default function ChannelDetails() {
   }, [channelId, loggedUser.userData?.handle]);
 
   return (
-    <div id='chat-details-wrapper' className="w-full h-[90vh] overflow-y-auto bg-w [&::-webkit-scrollbar]:[width:8px]
-      [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
-      <div id="header" className="sticky w-full flex border-b-[0.5px] sm:px-4 py-3 lg:px-6 justify-between items-center shadow-sm">
-        <div id="header-content" className="flex gap-3 items-center">
-          <div id='chat-avatar' className="flex flex-row gap-3">
-              <Avatar user={channelTitle} />
+    <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
+      <div id='chat-section-layout' className='w-full bg-pureWhite border-b border-1 border-grey'>
+        <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
+          <div id="header-content" className="flex gap-3">
             <div id='chat-title' className="flex place-items-end">{channelTitle}</div> 
           </div>
+          <div className='flex justify-end gap-1'>
+            <button className="btn btn-ghost btn-sm" onClick={() => {setIsChannelInfoVisible(!isChannelInfoVisible)}}><i className="fa-solid fa-ellipsis text-pink"></i></button>
+          </div>
         </div>
-        <LeaveChannelModal channelId={channelId} channelTitle={channelTitle}/>
       </div>
-      <div id='messages-wrapper' className="p-4 h-[70vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
-          [&::-webkit-scrollbar-thumb]:bg-mint [&::-webkit-scrollbar-thumb]:rounded-md p-1">
+
+      <div id='messages-wrapper' className="p-3 h-[64vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
+        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
         {areThereMessages === true ? (
           <MessagesList chatMessages={allMessages} />
         ) : (
           <p className="self-center">Start a conversation</p>
         )}
       </div>
-      <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 lg:gap-4 w-full'>
-        <span id='search-gifs-option' className="hover:cursor-pointer hover:bg-mint btn btn-sm text-black bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</span>
-        <UploadFile message={message} setMessageFunc={setMessage} />
-        <textarea id='add-message-option' className="text-black bg-white font-light py-2 px-4 bg-neutral-100 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
-        {<button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-mint cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>}
+      <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 w-full'>
+        <div className='flex gap-1'>
+          <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
+          <UploadFile message={message} setMessageFunc={setMessage} component={'ChannelDetails'} id={channelId} />
+          <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
+        </div>
+        <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 bg-neutral-100 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
+        {<button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-lightBlue cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>}
       </div>
       {isGifSearchVisible === true && (
         <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
@@ -180,6 +192,20 @@ export default function ChannelDetails() {
           />
         </div>
       )}
+      {isEmojiPickerVisible === true && (
+        <div className='fixed bottom-24'>
+          <Picker 
+            data={data} 
+            onEmojiSelect={(e) => addEmoji(e.native)} 
+            theme={'light'}
+          />
+        </div>
+      )}
     </div>
   )
 }
+
+ChannelDetails.propTypes = {
+  isChannelInfoVisible: PropTypes.bool,
+  setIsChannelInfoVisible: PropTypes.func
+};
