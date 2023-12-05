@@ -26,7 +26,7 @@ const InsightsNotification = ({ notificationId }) => {
         switch (notificationDetails.type) {
             case 'addedToTeam':
                 return (
-                    <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full cursor-pointer" onClick={() => navigate(`/app/teams/${notificationDetails.elemId}`)}>
+                    <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full cursor-pointer dark:bg-darkAccent dark:text-darkText" onClick={() => navigate(`/app/teams/${notificationDetails.elemId}`)}>
                         <div className="gap-4 items-center flex flex-row w-full">
                             <div className="flex flex-col rounded-full bg-[#C2F1D9] text-green items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-plus"></i>
@@ -37,7 +37,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <p className="text-left">Let the collaboration begin!</p>
                             </div>
                         </div>
-                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue" onClick={(e) => handleDelete(e)}>
+                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue dark:hover:!bg-darkFront dark:text-yellow" onClick={(e) => handleDelete(e)}>
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -45,7 +45,7 @@ const InsightsNotification = ({ notificationId }) => {
             case 'deletedTeam':
             case 'removedFromTeam':
                 return (
-                    <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full">
+                    <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full dark:bg-darkAccent dark:text-darkText">
                         <div className="gap-4 items-center flex flex-row w-full">
                             <div className="flex flex-col rounded-full bg-[#E3DDEB] text-[#573385] items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-minus"></i>
@@ -56,7 +56,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <p className="text-left">You can still access other teams and channels.</p>
                             </div>
                         </div>
-                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue" onClick={(e) => handleDelete(e)}>
+                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue dark:hover:!bg-darkFront dark:text-yellow" onClick={(e) => handleDelete(e)}>
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -74,7 +74,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <p className="text-left">Join the conversation in this new channel!</p>
                             </div>
                         </div>
-                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue" onClick={(e) => handleDelete(e)}>
+                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue dark:hover:!bg-darkFront dark:text-yellow" onClick={(e) => handleDelete(e)}>
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -92,7 +92,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <p className="text-left">Explore other channels to stay engaged.</p>
                             </div>
                         </div>
-                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue" onClick={(e) => handleDelete(e)}>
+                        <button className="btn btn-ghost btn-square hover:!bg-pureWhite text-blue dark:hover:!bg-darkFront dark:text-yellow" onClick={(e) => handleDelete(e)}>
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     </div>
