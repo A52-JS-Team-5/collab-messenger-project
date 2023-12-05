@@ -62,7 +62,7 @@ const ManageTeam = ({ teamDetails }) => {
     }
 
     return (
-        <div className="flex flex-col gap-10 items-start p-4 rounded-md bg-white">
+        <div className="flex flex-col gap-10 items-start p-4 rounded-md bg-white dark:bg-darkFront">
             <div className="flex flex-col items-start w-full gap-2">
                 <div className="flex flex-col items-start">
                     <h2 className='font-bold text-lg'>Team Details</h2>
@@ -71,14 +71,14 @@ const ManageTeam = ({ teamDetails }) => {
                 <div className="flex flex-col gap-4 items-start w-full">
                     <div className="flex flex-row gap-4 items-center w-full">
                         <div className="form-control w-full">
-                            <input type='text' className="input input-bordered w-full bg-white" defaultValue={teamDetails.name} onChange={(e) => updateTeamName(e)} />
+                            <input type='text' className="input input-bordered w-full bg-white dark:bg-darkInput" defaultValue={teamDetails.name} onChange={(e) => updateTeamName(e)} />
                             {error && <span className="err-message text-red">{error}</span>}
                         </div>
                         {isTeamNameUpdated && <button onClick={onTeamNameEdit} className="btn btn-square bg-pink text-pureWhite border-none"><i className="fa-regular fa-floppy-disk"></i></button>}
                     </div>
                     <div className="flex flex-row gap-4 items-end w-full">
                         <div className="form-control w-full">
-                            <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white" placeholder="Description" defaultValue={teamDetails.description} onChange={(e) => updateTeamDescription(e)}></textarea>
+                            <textarea className="textarea textarea-bordered h-24 textarea-md w-full bg-white dark:bg-darkInput" placeholder="Description" defaultValue={teamDetails.description} onChange={(e) => updateTeamDescription(e)}></textarea>
                         </div>
                         {isTeamDescriptionUpdated && <button onClick={onTeamDescriptionEdit} className="btn btn-square bg-pink text-pureWhite border-none"><i className="fa-regular fa-floppy-disk"></i></button>}
                     </div>
