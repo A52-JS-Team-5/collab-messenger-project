@@ -54,19 +54,19 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
   return (
     <div className="start-chat-view">
       <div className={modalClass}>
-        <div className="modal-box bg-light-gray">
-          <div className="post-description flex flex-col gap-2 bg-light-gray">
-            <h3 className="font-semibold leading-7 text-gray-900">Create A Channel</h3>
+        <div className="modal-box bg-pureWhite dark:bg-darkFront">
+          <div className="post-description flex flex-col gap-2">
+            <h3 className="font-semibold leading-7 text-gray-900 dark:text-darkText">Create A Channel</h3>
             <div>
               <label className="label">
-                <span className="label-text text-black bg-transparent">Channel Title</span>
+                <span className="label-text text-black bg-transparent dark:text-darkText">Channel Title</span>
               </label>
-              <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white" />
+              <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText" />
             </div>
           </div>
           <div className="modal-action flex-row">
             <button className="btn btn-outline text-pink bg-transparent" onClick={onClose}>Cancel</button>
-            <button type="button" onClick={handleTeamChannelCreation} className="bg-pink text-white">Create Channel</button>
+            <button type="button" onClick={handleTeamChannelCreation} className="btn border-none bg-pink text-white">Create Channel</button>
           </div>
         </div>
       </div>
