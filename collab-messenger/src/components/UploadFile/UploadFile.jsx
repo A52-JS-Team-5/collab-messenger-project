@@ -1,47 +1,76 @@
 import { useContext } from "react";
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import AppContext from "../../context/AuthContext";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { addMessage, createFileUploadMessage } from '../../services/messages.services';
+import { addMessage, createFileUploadMessage, createFileUploadMessageForChannels, addMessageChannel } from '../../services/messages.services';
 import { updateChatFiles } from "../../services/chats.services";
+import { updateChannelFiles } from "../../services/channels.services";
 
-export default function UploadFile({ message, setMessageFunc }) {
+export default function UploadFile({ message, setMessageFunc, component, id }) {
   const loggedUser = useContext(AppContext);
   const storage = getStorage();
-  const { chatId } = useParams();
 
   const handleFileUpload = (file) => {
-
-    const storageRef = ref(storage, `chat_uploads/${chatId}/${file.name}`);
-    uploadBytes(storageRef, file)
-      .then(() => {
-        return getDownloadURL(storageRef);
-      })
-      .then((downloadURL) => {
-        createFileUploadMessage(downloadURL, loggedUser.userData.handle, chatId, file.name, file.type)
-          .then((messageId) => {
-            return addMessage(loggedUser.userData.handle, chatId, messageId, downloadURL)
-          })
-          .catch((error) => {
-            toast('Cannot create message. Please try again.')
-            console.log('Error in creating message', error.message);
+    if(component === 'ChannelDetails') {
+      const storageRef = ref(storage, `channel_uploads/${id}/${file.name}`);
+      uploadBytes(storageRef, file)
+        .then(() => {
+          return getDownloadURL(storageRef);
         })
-
-        return downloadURL;
-      })
-      .then((downloadURL) => {
-        updateChatFiles(chatId, downloadURL);
-        setMessageFunc({
-          ...message,
-          ['content']: downloadURL,
+        .then((downloadURL) => {
+          createFileUploadMessageForChannels(downloadURL, loggedUser.userData.handle, id, file.name, file.type)
+            .then((messageId) => {
+              return addMessageChannel(id, messageId, downloadURL, loggedUser.userData.handle)
+            }) 
+            .catch((error) => {
+              toast('Cannot create message. Please try again.')
+              console.log('Error in creating message', error.message);
+          })
+  
+          return downloadURL;
+        })
+        .then((downloadURL) => {
+          updateChannelFiles(id, downloadURL);
+          setMessageFunc({
+            ...message,
+            ['content']: downloadURL,
+          });
+        })
+        .catch((error) => {
+          console.log(error.message);
         });
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    } else {
+      const storageRef = ref(storage, `chat_uploads/${id}/${file.name}`);
+      uploadBytes(storageRef, file)
+        .then(() => {
+          return getDownloadURL(storageRef);
+        })
+        .then((downloadURL) => {
+          createFileUploadMessage(downloadURL, loggedUser.userData.handle, id, file.name, file.type)
+            .then((messageId) => {
+              return addMessage(loggedUser.userData.handle, id, messageId, downloadURL)
+            })
+            .catch((error) => {
+              toast('Cannot create message. Please try again.')
+              console.log('Error in creating message', error.message);
+          })
+  
+          return downloadURL;
+        })
+        .then((downloadURL) => {
+          updateChatFiles(id, downloadURL);
+          setMessageFunc({
+            ...message,
+            ['content']: downloadURL,
+          });
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
+    
   };
 
   return (
@@ -56,5 +85,7 @@ export default function UploadFile({ message, setMessageFunc }) {
 
 UploadFile.propTypes = {
   message: PropTypes.object,
-  setMessageFunc: PropTypes.func
+  setMessageFunc: PropTypes.func,
+  component: PropTypes.string,
+  id: PropTypes.string
 }
