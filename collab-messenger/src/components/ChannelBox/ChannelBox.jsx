@@ -54,7 +54,7 @@ export default function ChannelBox({ channelId, onClick }) {
   };
 
   return (
-    <div onClick={handleClick} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer pb-2">
+    <div onClick={handleClick} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer pb-2 dark:text-darkText dark:hover:bg-darkAccent dark:bg-darkFront">
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
