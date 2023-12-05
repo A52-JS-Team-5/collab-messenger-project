@@ -10,10 +10,11 @@ import TeamDetails from "../../components/TeamDetails/TeamDetails";
 import LeaveTeamModal from "../../components/LeaveTeamModal/LeaveTeamModal";
 import DeleteTeamModal from "../../components/DeleteTeamModal/DeleteTeamModal";
 import ChannelBox from "../../components/ChannelBox/ChannelBox";
-import { Outlet } from "react-router-dom";
 import AddChannelModal from "../../components/AddChannelModal/AddChannelModal";
 import { useMediaQuery } from 'react-responsive';
 import EnterChannel from "../../components/EnterChannel/EnterChannel";
+import ChannelDetails from "../../components/ChannelDetails/ChannelDetails";
+import ChannelInformation from "../../components/ChannelInformation/ChannelInformation";
 
 const SingleTeamView = () => {
 
@@ -25,6 +26,8 @@ const SingleTeamView = () => {
     const [showManageTeam, setShowManageTeam] = useState(false);
     const [activeComponent, setActiveComponent] = useState(0); // 0 for Default, 1 for TeamDetails, 2 for ChannelView
     const [allTeamChannelsOfUser, setAllTeamChannelsOfUser] = useState([]);
+    const [isChannelInfoVisible, setIsChannelInfoVisible] = useState(false);
+    const channelLayout = isChannelInfoVisible === true ? 'basis-3/5' : 'basis-4/5';
 
     useEffect(() => {
         const teamRef = ref(db, `teams/${teamId}`);
@@ -94,6 +97,7 @@ const SingleTeamView = () => {
     }, [channelId]);
 
     const handleClickTeamDetails = () => {
+        setIsChannelInfoVisible(false);
         setActiveComponent(1);
         handleClick();
         navigate(`/app/teams/${teamId}`);
@@ -162,7 +166,7 @@ const SingleTeamView = () => {
 
     return (
         <>
-            {isDesktopOrLaptop && <div className='flex flex-row mt-4 gap-4 h-[87vh]'>
+            {isDesktopOrLaptop && <div className='flex flex-row gap-4 h-[87vh]'>
                 {!isLoading && (
                     <div className='flex flex-row mt-4 gap-4 h-full w-full'>
                         <div className='flex flex-col basis-1/5 p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText'>
@@ -207,10 +211,15 @@ const SingleTeamView = () => {
                         {activeComponent === 0 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4">
                             <EnterChannel />
                         </div>}
-                        {activeComponent === 2 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront">
-                            <Outlet />
+                        {activeComponent === 2 && <div className={`${channelLayout} w-full flex items-center place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront`}>
+                            <ChannelDetails isChannelInfoVisible={isChannelInfoVisible} setIsChannelInfoVisible={setIsChannelInfoVisible} />
                         </div>}
                         {activeComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} />}
+                        {isChannelInfoVisible === true && (
+                            <div id='chatInformation-section-layout' className={`basis-1/5 bg-pureWhite w-full rounded-md`}>
+                                <ChannelInformation />
+                            </div>
+                        )}
                     </div>
                 )}
             </div >}
@@ -264,8 +273,13 @@ const SingleTeamView = () => {
                         <i className="fa-solid fa-chevron-left fa-xs"></i>
                         <div className='flex flex-col w-full items-start btn btn-link pl-1 pr-1 pt-0 pb-0 mt-0 mb-0' onClick={handleMobileDefaultClick}>Return To Team</div>
                     </div>
-                    <Outlet />
+                    <ChannelDetails isChannelInfoVisible={isChannelInfoVisible} setIsChannelInfoVisible={setIsChannelInfoVisible} />
                 </div>}
+                {isChannelInfoVisible === true && (
+                    <div id='chatInformation-section-layout' className={`basis-1/5 bg-pureWhite w-full rounded-md`}>
+                        <ChannelInformation />
+                    </div>
+                )}
                 {!isLoading && activeMobileComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} onClick={handleMobileDefaultClick} />}
             </div >}
         </>
