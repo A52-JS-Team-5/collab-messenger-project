@@ -37,13 +37,13 @@ export default function LeaveChannelModal({ channelId, channelTitle}) {
     <div className="edit-post-view">
       {channelTitle !== 'General' && <button className="btn btn-ghost" onClick={handleToggle}><i className="fa-solid fa-right-from-bracket"></i></button>}
       <div id="edit-post-modal" className={modalClass}>
-        <div className="modal-box bg-light-gray">
+        <div className="modal-box bg-pureWhite dark:bg-darkFront dark:text-darkText">
           <div className="post-description flex flex-col gap-2">
             <h3>Are you sure you want to leave this channel?</h3>
           </div>
           <div className="modal-action flex-row">
-            <button className="btn btn-outline text-blue hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={onLeave} className="btn text-black bg-blue hover:bg-lightBlue">Leave Channel</button>
+            <button className="btn btn-outline text-pink hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
+            <button type="button" onClick={onLeave} className="btn text-pureWhite border:none bg-pink hover:bg-lightBlue">Leave Channel</button>
           </div>
         </div>
       </div>
