@@ -57,7 +57,7 @@ export default function StartGroupChatModal() {
 
   return (
     <div className="start-chat-view">
-      <button className="btn btn-ghost btn-sm font-black" onClick={handleToggle}>+<i className="fa-solid fa-user fa-sm"></i></button>
+      <button className="btn btn-ghost btn-sm font-black text-blue dark:text-yellow" onClick={handleToggle}>+<i className="fa-solid fa-user fa-sm"></i></button>
       <div className={modalClass}>
         <div className="modal-box bg-light-gray">
           <div className="post-description flex flex-col gap-2 bg-light-gray">
