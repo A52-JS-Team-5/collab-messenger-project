@@ -157,8 +157,8 @@ export default function ChatDetails() {
   }, [chatId, loggedUser.userData?.handle]);
 
   return (
-    <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3'>
-      <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-white`}>
+    <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 h-full'>
+      <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-pureWhite dark:bg-darkFront`}>
         <div id="header" className="sticky w-full pt-3 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm">
           <div id="header-content" className="flex gap-3 items-center">
             <div id='chat-avatar' className="flex flex-row gap-3">
@@ -174,11 +174,11 @@ export default function ChatDetails() {
             </div>
           </div>
           <div className='flex justify-end gap-1'>
-            <button className="btn btn-ghost btn-sm" onClick={() => setIsChatInfoVisible(!isChatInfoVisible)}><i className="fa-solid fa-ellipsis text-pink"></i></button>
+            <button className="btn btn-ghost btn-sm" onClick={() => setIsChatInfoVisible(!isChatInfoVisible)}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
           </div>
         </div>
         <div id='messages-wrapper' className="p-4 h-[68vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
-            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
+            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:[&::-webkit-scrollbar-thumb]:bg-mint">
           {areThereMessages === true ? (
             <MessagesList chatMessages={allMessages} />
           ) : (
@@ -192,22 +192,22 @@ export default function ChatDetails() {
             <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
           </div>
           <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
-          <button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-lightBlue cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>
+          <button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-blue cursor-pointer hover:bg-darker-blue text-pureWhite transition"><i className="fa-regular fa-paper-plane"></i></button>
         </div>
         {isGifSearchVisible === true && (
-          <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
+          <div id='giphy-searchbox-wrapper' className='fixed bottom-32'>
             <ReactGiphySearchbox
               apiKey="Iy7WxBnblvFgo3jx4SFOIte0fBIDKY0X" 
               onSelect={gif => addGif(gif.images.fixed_height.url)}
               rating
-              wrapperClassName=''
-              searchFormClassName='bg-blue text-black w-[270px]'
-              listWrapperClassName='w-[270px] border-[0.5px]'
+              wrapperClassName='bg-white !w-[280px] p-2 rounded-md'
+              searchFormClassName='bg-!blue'
+              listWrapperClassName='[&::-webkit-scrollbar]:[width:8px] [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md'
             />
           </div>
         )}
         {isEmojiPickerVisible === true && (
-          <div className='fixed bottom-24'>
+          <div className='fixed bottom-32'>
             <Picker 
               data={data} 
               onEmojiSelect={(e) => addEmoji(e.native)} 
@@ -217,7 +217,7 @@ export default function ChatDetails() {
         )}
       </div>
       {isChatInfoVisible === true && (
-        <div id='chatInformation-section-layout' className={`basis-3/12 bg-white w-full rounded-md`}>
+        <div id='chatInformation-section-layout' className={`basis-3/12 bg-pureWhite w-full rounded-md dark:bg-darkFront`}>
           <ChatInformation isGroupChat={isGroupChat} chatTitle={chatTitle} chatId={chatId} chatData={chatData} />
         </div>
       )}
