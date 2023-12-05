@@ -6,6 +6,7 @@ import './NavBar.css';
 import icon from '/icon.png'
 import AppContext from '../../context/AuthContext';
 import { DEFAULT_USER_PHOTO } from '../../common/constants';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 
 export default function NavBar({ onLogout }) {
   const navigate = useNavigate();
@@ -36,18 +37,19 @@ export default function NavBar({ onLogout }) {
 
   return (
     <nav className='sticky top-4 z-[50]'>
-      <div id='navbar' className="navbar rounded-xl flex flex-row shadow-lg">
+      <div id='navbar' className="navbar rounded-xl flex flex-row shadow-lg dark:!bg-darkFront dark:!border-none">
         <div className="basis-1/4">
           <img src={icon} className='max-h-14' id='icon' alt="Chatter Logo" onClick={() => { navigate("/") }} />
         </div>
         <div className='basis-full justify-end hidden 2xl:flex'>
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
-              <li><Link to='/'>Home</Link></li>
-              <li><Link to='/about'>About</Link></li>
-              <li><Link to='/faq'>FAQs</Link></li>
-              {user.user === null && <li><Link to='/register'>Register</Link></li>}
-              {user.user === null && <li><Link to='/login'>Login</Link></li>}
+              <li><Link to='/' className='dark:!text-yellow'>Home</Link></li>
+              <li><Link to='/about' className='dark:!text-yellow'>About</Link></li>
+              <li><Link to='/faq' className='dark:!text-yellow'>FAQs</Link></li>
+              {user.user === null && <li><Link to='/register' className='dark:!text-yellow'>Register</Link></li>}
+              {user.user === null && <li><Link to='/login' className='dark:!text-yellow'>Login</Link></li>}
+              <li><ThemeSwitcher /></li>
             </ul>
           </div>
           {user.user !== null && (
@@ -57,9 +59,9 @@ export default function NavBar({ onLogout }) {
                   <img src={photoURL} />
                 </div>
               </label>
-              <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52">
-                <li onClick={handleClick}><Link to={`/app`}>Go to App</Link></li>
-                <li onClick={handleClick}><Link to='/' onClick={onLogout} >Logout</Link></li>
+              <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
+                <li onClick={handleClick}><Link to={`/app`} className='dark:!text-yellow'>Go to App</Link></li>
+                <li onClick={handleClick}><Link to='/' onClick={onLogout} className='dark:!text-yellow'>Logout</Link></li>
               </ul>
             </div>
           )}
