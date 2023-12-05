@@ -43,7 +43,7 @@ const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
   return (
     <div className="delete-team-wrapper">
       <div id="delete-team-modal" className={modalClass}>
-        <div className="modal-box bg-pureWhite">
+        <div className="modal-box bg-pureWhite dark:bg-darkFront">
           <div className="post-description flex flex-col items-start">
             <h3 className="font-bold text-lg">Are you sure you want to delete this team?</h3>
             <p className="py-2">All related channels and files will be deleted.</p>
