@@ -13,7 +13,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
   const [reactions, setReactions] = useState(message?.reactions || {});
   const [reactionValues, setReactionValues] = useState([]);
   const isMessageGif = message.content.includes('giphy');   
-  const isMessageLink = message.content.includes('chat_uploads');
+  const isMessageLink = message.content.includes('chat_uploads') || message.content.includes('channel_uploads');
   const isMessagePdf = message.content.includes('pdf');
   const timeOptions = { 
     year: 'numeric', 
