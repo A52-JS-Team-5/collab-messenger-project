@@ -188,7 +188,7 @@ export default function ChatDetails() {
         <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 w-full'>
           <div className='flex gap-1'>
             <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
-            <UploadFile message={message} setMessageFunc={setMessage} />
+            <UploadFile message={message} setMessageFunc={setMessage} component={'ChatDetails'} id={chatId} />
             <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
           </div>
           <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
