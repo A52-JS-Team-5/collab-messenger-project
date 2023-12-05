@@ -46,6 +46,7 @@ export const createChannel = (teamId, title, participants) => {
 
   participants.forEach((participant) => {
     newChannel.participants[`${participant}`] = true;
+    newChannel.participantsReadMsg[`${participant}`] = '';
   });
 
   return push(channelsRef, newChannel)
@@ -200,3 +201,47 @@ export const getChannelByName = (name) => {
     query(ref(db, 'channels'), orderByChild('name'), equalTo(name))
   ).catch((e) => console.log(`Error in getting channel: ${e.message}`));
 };
+
+export const deleteChannel = (channelData) => {
+
+  return Promise.all([
+    Object.keys(channelData.participants).forEach(user => {
+      return remove(ref(db, `/users/${user}/channels/${channelData.id}`))
+    }),
+    Object.keys(channelData.messages).forEach(message => {
+      return remove(ref(db, `/messages/${message}`))
+    }),
+    remove(ref(db, `/teams/${channelData.team}/channels/${channelData.id}`)),
+    remove(ref(db, `/channels/${channelData.id}`)),
+  ])
+    .catch((e) => console.log('Error in leaving chat', e.message));
+};
+
+export const updateChannelFiles = (channelId, fileUrl) => {
+  const updateChannel = {};
+  updateChannel[`/channels/${channelId}/uploadedFiles/url`] = fileUrl;
+
+  return update(ref(db), updateChannel).catch((e) =>
+    console.log(`Error updating channel: `, e.message)
+  );
+};
+
+export const updateChannelTitle = (channelId, newTitle) => {
+  const updates = {};
+  updates[`/channels/${channelId}/title`] = newTitle;
+
+  return update(ref(db), updates)
+    .catch((e) => console.log('Error changing channel title: ', e.message));
+}
+
+export const updateChannelParticipants = (channelId, participants) => {
+  const updates = {};
+
+  participants.forEach((participant) => {
+    updates[`/channels/${channelId}/participants/${participant.value}`] = true;
+    updates[`/users/${participant.value}/channels/${channelId}`] = true;
+  });
+
+  return update(ref(db), updates)
+    .catch((e) => console.log('Error adding channel participants: ', e.message));
+}
