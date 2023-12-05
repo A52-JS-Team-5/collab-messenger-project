@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { leaveChannel } from "../../services/channels.services";
 
-export default function LeaveChannelModal({ channelId, channelTitle}) {
+export default function LeaveChannelModal({ channelId }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
   const [open, setOpen] = useState(false);
@@ -23,6 +23,7 @@ export default function LeaveChannelModal({ channelId, channelTitle}) {
 
     leaveChannel(channelId, loggedUser.userData.handle)
       .then(() => {
+        toast('You left the channel successfully.')
         navigate(`/app/teams/`);
       })
       .catch(e => {
@@ -34,16 +35,18 @@ export default function LeaveChannelModal({ channelId, channelTitle}) {
   }
 
   return (
-    <div className="edit-post-view">
-      {channelTitle !== 'General' && <button className="btn btn-ghost" onClick={handleToggle}><i className="fa-solid fa-right-from-bracket"></i></button>}
-      <div id="edit-post-modal" className={modalClass}>
-        <div className="modal-box bg-pureWhite dark:bg-darkFront dark:text-darkText">
+    <div>
+      <div className="rounded-full w-8 h-8 bg-lightBlue hover:cursor-pointer" title="Leave Channel" onClick={handleToggle}>
+        <i className="fa-solid fa-right-from-bracket mt-2 text-blue"></i>
+      </div>
+      <div className={modalClass}>
+        <div className="modal-box bg-light-gray">
           <div className="post-description flex flex-col gap-2">
             <h3>Are you sure you want to leave this channel?</h3>
           </div>
           <div className="modal-action flex-row">
-            <button className="btn btn-outline text-pink hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={onLeave} className="btn text-pureWhite border:none bg-pink hover:bg-lightBlue">Leave Channel</button>
+            <button className="btn btn-outline text-blue hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
+            <button type="button" onClick={onLeave} className="btn text-black bg-blue hover:bg-lightBlue">Leave Channel</button>
           </div>
         </div>
       </div>
@@ -53,5 +56,4 @@ export default function LeaveChannelModal({ channelId, channelTitle}) {
 
 LeaveChannelModal.propTypes = {
   channelId: PropTypes.string,
-  channelTitle: PropTypes.string,
 };
