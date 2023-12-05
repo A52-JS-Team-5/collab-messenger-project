@@ -66,7 +66,7 @@ export default function ChatBox({ chatId }) {
   }, [chatId, loggedUser.userData?.handle, lastMessage]);
 
   return (
-    <div id='chatBox-wrapper' onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer">
+    <div id='chatBox-wrapper' onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer dark:text-darkText dark:hover:bg-darkAccent">
       {chatData?.isGroup === true ? (
         <GroupChatAvatar />
       ) : (
@@ -83,7 +83,7 @@ export default function ChatBox({ chatId }) {
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-              <p className="text-xs font-medium text-black"> 
+              <p className="text-xs font-medium text-black dark:text-darkText"> 
                 {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage.length > 25 ? lastMessage.slice(0, 25) + ' ...' : lastMessage))}
               </p>
           </div>
