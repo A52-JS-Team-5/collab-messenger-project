@@ -39,7 +39,7 @@ export default function SearchResults() {
 
   return (
     <>
-      <div className='flex flex-col px-36 max-xl:px-6 py-2'>
+      <div className='flex flex-col px-36 max-xl:px-6 py-2 dark:text-darkText'>
         <div className="hero my-7">
           <div className="hero-content text-center">
             <div className="max-w-md">
