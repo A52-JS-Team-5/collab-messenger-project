@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import ManageTeam from '../ManageTeam/ManageTeam';
 import TeamMembersList from '../TeamMembersList/TeamMembersList';
+import ChannelsList from '../ChannelsList/ChannelsList';
 
 const TeamDetails = ({ teamDetails, showManageTeam, onClick }) => {
     const [activeTab, setActiveTab] = useState(0); // 0 for Members, 1 for Channels, 2 for Basic Details
@@ -33,7 +34,7 @@ const TeamDetails = ({ teamDetails, showManageTeam, onClick }) => {
                     {showManageTeam && <a role="tab" className={`tab max-sm:block ${activeTab === 2 && 'tab-active'}`} onClick={() => handleTabClick(2)}>Basic Details</a>}
                 </div>
                 {activeTab === 0 && <TeamMembersList teamDetails={teamData} showManageTeam={showManageTeam} />}
-                {activeTab === 1 && <p>Channels</p>}
+                {activeTab === 1 && <ChannelsList teamDetails={teamData} />}
                 {activeTab === 2 && showManageTeam && <ManageTeam teamDetails={teamData} />}
             </div>
         </div>
