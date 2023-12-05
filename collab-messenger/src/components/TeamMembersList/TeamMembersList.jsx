@@ -66,9 +66,9 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
 
     return (
         !loading && (
-            <div className='flex flex-col bg-white rounded-md pt-4 w-full'>
+            <div className='flex flex-col bg-white rounded-md pt-4 w-full dark:bg-darkAccent'>
                 <div className='flex flex-col justify-between items-center pl-4 pr-4 gap-2 min-[540px]:flex-row max-[540px]:items-end'>
-                    <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white max-[540px]:w-full' />
+                    <input type="text" placeholder="Search members" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className='input input-bordered text-black bg-white max-[540px]:w-full dark:bg-darkInput' />
                     {showManageTeam && <AddTeamMembers teamDetails={teamDetails} />}
                 </div>
                 {searchQuery === '' ? (
@@ -83,7 +83,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                     {memberDetails
                                         .filter((member) => member.handle === teamData.owner)
                                         .map((member) => (
-                                            <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
+                                            <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkBase'>
                                                 <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
                                                     <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
                                                     <div className='flex flex-col items-start'>
@@ -112,7 +112,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                                     {memberDetails
                                         .filter((member) => member.handle !== teamData.owner) // Exclude owner from the list
                                         .map((member) => (
-                                            <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
+                                            <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkBase'>
                                                 <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
                                                     <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
                                                     <div className='flex flex-col items-start'>
@@ -134,7 +134,7 @@ const TeamMembersList = ({ teamDetails, showManageTeam }) => {
                             {/* Simple list of filtered members */}
                             <ul className='pl-4 pr-4 mt-'>
                                 {filteredMembers.map((member) => (
-                                    <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
+                                    <li key={member.id} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkBase'>
                                         <div className='flex flex-row gap-2' onClick={() => handleOpenUserProfileModal(member.handle)}>
                                             <img src={member.photoURL} className='h-8 w-8 rounded-full' alt={`User ${member.name}`} />
                                             <div className='flex flex-col items-start'>
