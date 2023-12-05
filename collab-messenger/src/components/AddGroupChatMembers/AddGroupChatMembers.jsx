@@ -42,12 +42,12 @@ export default function AddGroupChatMembers({ chatId, chatParticipants }) {
         <i className="fa-regular fa-square-plus mt-2 text-blue"></i>
       </div>
       <div className={modalClass}>
-        <div className="modal-box bg-light-gray">
-          <div className="post-description flex flex-col gap-2 bg-light-gray">
+        <div className="modal-box bg-pureWhite dark:bg-darkFront">
+          <div className="post-description flex flex-col gap-2">
             <h3 className="font-semibold leading-7 text-gray-900">Include More Participants In Your Chat</h3>
             <div className="z-[100]">
               <label className="label">
-                <span className="label-text text-black bg-transparent">Users</span>
+                <span className="label-text text-black bg-transparent dark:text-darkText">Users</span>
               </label>
               <div className="mt-2">
                 {users.length !== 0 && (
@@ -80,7 +80,7 @@ export default function AddGroupChatMembers({ chatId, chatParticipants }) {
           </div>
           <div className="modal-action flex-row">
             <button className="btn btn-outline text-pink bg-transparent" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={handleAddingMoreParticipants} className="bg-pink text-white">Add Participants</button>
+            <button type="button" onClick={handleAddingMoreParticipants} className="btn bg-pink border-none text-white">Add Participants</button>
           </div>
         </div>
       </div>
