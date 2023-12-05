@@ -47,17 +47,17 @@ export default function ChangePassword() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className='flex flex-col justify-between basis-4/5 rounded-md bg-pureWhite p-4 h-full gap-2'>
-      <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-4 max-lg:flex-col'>
+    <div className='flex flex-col justify-between basis-4/5 rounded-md bg-pureWhite p-4 h-full gap-2 dark:bg-darkFront dark:text-darkText'>
+      <div className='flex flex-row justify-between rounded-md border-lightBlue border-2 p-8 w-full gap-4 max-lg:flex-col dark:border-darkAccent'>
         <div className='flex flex-col items-start'>
           <h3 className='font-bold text-lg text-left'>Password and Authentication</h3>
           <p className="text-left">A secure password helps protect your account.</p>
         </div>
         <button className="btn border-none bg-pink text-pureWhite" onClick={() => document.getElementById('password_modal').showModal()}>Change Password</button>
         <dialog id="password_modal" className="modal flex-col justify-center">
-          <div className="modal-box flex flex-col gap-4 justify-center bg-pureWhite w-[60vw]">
+          <div className="modal-box flex flex-col gap-4 justify-center bg-pureWhite w-[60vw] dark:bg-darkFront dark:text-darkText">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle hover:bg-lightBlue border-none text-blue bg-pureWhite absolute right-2 top-2">✕</button>
+              <button className="btn btn-sm btn-circle hover:bg-lightBlue border-none text-blue bg-pureWhite absolute right-2 top-2 dark:bg-darkAccent">✕</button>
             </form>
             <div className='flex flex-col'>
               <h3 className="font-bold text-lg text-left">Change Password</h3>
@@ -69,7 +69,7 @@ export default function ChangePassword() {
               </label>
               <input type={
                 showPassword ? "text" : "password"
-              } className="input input-bordered w-full bg-pureWhite" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+              } className="input input-bordered w-full bg-pureWhite dark:bg-darkFront dark:text-darkText" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
               {error && <span className="err-message text-red">{error}</span>}
             </div>
             <div className="form-control w-full">
@@ -78,7 +78,7 @@ export default function ChangePassword() {
               </label>
               <input type={
                 showPassword ? "text" : "password"
-              } className="input input-bordered w-full bg-pureWhite" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+              } className="input input-bordered w-full bg-pureWhite dark:bg-darkFront dark:text-darkText" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
               {error && <span className="err-message text-red">{error}</span>}
             </div>
             <div className="form-control">
