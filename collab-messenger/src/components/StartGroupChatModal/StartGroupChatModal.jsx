@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { addGroupChat, createGroupChat } from '../../services/chats.services';
 import { getAllUsers } from "../../services/users.services";
 import cn from "classnames";
@@ -7,6 +7,7 @@ import ReactSelect from "react-select";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { MIN_GROUP_CHAT_MEMBERS } from "../../common/constants";
+import AppContext from '../../context/AuthContext';
 
 export default function StartGroupChatModal() {
   const [open, setOpen] = useState(false);
@@ -14,6 +15,7 @@ export default function StartGroupChatModal() {
   const handleToggle = () => setOpen((prev) => !prev);
   const [groupChatTitle, setGroupChatTitle] = useState('');
   const [groupChatParticipants, setGroupChatParticipants] = useState([]);
+  const loggedUser = useContext(AppContext);
 
   const modalClass = cn({
     "modal modal-bottom sm:modal-middle": true,
@@ -31,13 +33,15 @@ export default function StartGroupChatModal() {
     }
 
     if(groupChatParticipants.length < MIN_GROUP_CHAT_MEMBERS) {
-      toast('You must add at least 3 users in the group chat!');
+      toast('You must add at least 2 users in the group chat!');
       return;
     }
 
-    createGroupChat(groupChatTitle, groupChatParticipants)
+    const finalChatParticipants = [...groupChatParticipants, { value: loggedUser.userData?.handle }];
+    
+    createGroupChat(groupChatTitle, finalChatParticipants)
       .then((chatId) => {
-        addGroupChat(chatId, groupChatParticipants)
+        addGroupChat(chatId, finalChatParticipants)
         return chatId;
       })
       .then((chatId) => {
@@ -58,7 +62,6 @@ export default function StartGroupChatModal() {
       .catch(e => console.log(e.message))
   }, [])
 
-
   return (
     <div className="start-chat-view">
       <button className="btn btn-ghost btn-sm font-black text-blue dark:text-yellow" onClick={handleToggle}>+<i className="fa-solid fa-user-group fa-sm"></i></button>
@@ -78,7 +81,7 @@ export default function StartGroupChatModal() {
                 <span className="label-text text-black bg-transparent">Participants</span>
               </label>
               <div className="mt-2">
-                {users.length !== 0 && <ReactSelect styles={{
+              {users.length !== 0 && <ReactSelect styles={{
                   menuPortal: (base) => ({
                     ...base,
                     zIndex: 9999
@@ -88,9 +91,15 @@ export default function StartGroupChatModal() {
                     backgroundColor: state.isSelected ? 'pink' : 'white',
                     color: 'black',
                    }),
-                }} classNames={{
-                  control: () => "text-sm"
-                }} onChange={(selectedOptions) => {setGroupChatParticipants(selectedOptions)}} isMulti menuPortalTarget={document.body} options={users.map((user) => ({value: user.id, label: user.handle}))} />}
+                  }} classNames={{
+                    control: () => "text-sm"
+                  }} onChange={(selectedOptions) => {setGroupChatParticipants(selectedOptions)}} 
+                  isMulti 
+                  menuPortalTarget={document.body} 
+                  options={users
+                    .filter(user => user.handle !== loggedUser.userData.handle)
+                    .map((user) => ({value: user.id, label: user.handle}))} />
+                }
               </div>
             </div>
           </div>
