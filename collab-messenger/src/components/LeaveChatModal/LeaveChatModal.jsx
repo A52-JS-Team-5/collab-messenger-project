@@ -39,13 +39,13 @@ export default function LeaveChatModal({ chatId }) {
         <i className="fa-solid fa-right-from-bracket mt-2 text-blue"></i>
       </div>
       <div className={modalClass}>
-        <div className="modal-box bg-light-gray">
+        <div className="modal-box bg-pureWhite dark:bg-darkFront">
           <div className="post-description flex flex-col gap-2">
             <h3>Are you sure you want to leave this chat?</h3>
           </div>
           <div className="modal-action flex-row">
-            <button className="btn btn-outline text-blue hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
-            <button type="button" onClick={handleChatLeaving} className="btn text-black bg-blue hover:bg-lightBlue">Leave Chat</button>
+            <button className="btn btn-outline text-pink hover:bg-lightBlue" onClick={handleToggle}>Cancel</button>
+            <button type="button" onClick={handleChatLeaving} className="btn text-pureWhite bg-pink hover:bg-lightBlue">Leave Chat</button>
           </div>
         </div>
       </div>
