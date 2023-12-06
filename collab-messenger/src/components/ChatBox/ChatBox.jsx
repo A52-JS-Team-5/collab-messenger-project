@@ -11,7 +11,7 @@ import { ref, onValue } from 'firebase/database';
 import StatusBubble from '../StatusBubble/StatusBubble';
 import GroupChatAvatar from '../GroupChatAvatar/GroupChatAvatar';
 
-export default function ChatBox({ chatId }) {
+export default function ChatBox({ chatId, onClick }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
   const [chatData, setChatData] = useState({})
@@ -25,7 +25,7 @@ export default function ChatBox({ chatId }) {
     getChatById(chatId)
       .then((data) => {
         setChatData(data);
-        if(data.isGroup === true) {
+        if (data.isGroup === true) {
           setChatTitle(data.title);
         } else {
           setChatTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
@@ -39,17 +39,17 @@ export default function ChatBox({ chatId }) {
         toast('Error in getting chat data. Please try again');
         console.log(e.message);
       })
-  
+
     const chatRef = ref(db, `chats/${chatId}`);
     const chatListener = onValue(chatRef, (snapshot) => {
       const updatedChatData = snapshot.val();
       if (updatedChatData) {
         setChatData(updatedChatData);
       }
-      if (updatedChatData?.lastMessage){
+      if (updatedChatData?.lastMessage) {
         setLastMessage(updatedChatData.lastMessage);
       }
-      if (updatedChatData?.participantsReadMsg){
+      if (updatedChatData?.participantsReadMsg) {
         const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
         setAreMessagesRead(userLastReadMessage === updatedChatData.lastMessage);
       }
@@ -65,8 +65,13 @@ export default function ChatBox({ chatId }) {
     };
   }, [chatId, loggedUser.userData?.handle, lastMessage]);
 
+  const handleClick = () => {
+    onClick();
+    navigate(`${chatId}`);
+  };
+
   return (
-    <div id='chatBox-wrapper' onClick={() => navigate(`${chatId}`)} className="w-full relative flex items-center space-x-3 p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer dark:text-darkText dark:hover:bg-darkAccent">
+    <div id='chatBox-wrapper' onClick={handleClick} className="w-full relative flex items-center space-x-3 p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer dark:text-darkText dark:hover:bg-darkAccent">
       {chatData?.isGroup === true ? (
         <GroupChatAvatar />
       ) : (
@@ -83,9 +88,9 @@ export default function ChatBox({ chatId }) {
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-              <p className="text-xs font-medium text-black dark:text-darkText"> 
-                {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage.length > 25 ? lastMessage.slice(0, 25) + ' ...' : lastMessage))}
-              </p>
+            <p className="text-xs font-medium text-black dark:text-darkText">
+              {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage.length > 25 ? lastMessage.slice(0, 25) + ' ...' : lastMessage))}
+            </p>
           </div>
         </div>
       </div>
@@ -103,4 +108,5 @@ export default function ChatBox({ chatId }) {
 
 ChatBox.propTypes = {
   chatId: PropTypes.string,
+  onClick: PropTypes.func,
 }
