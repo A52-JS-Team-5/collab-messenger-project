@@ -1,21 +1,91 @@
-import { useState } from "react";
+import { useState, useContext, useRef } from "react";
 import cn from 'classnames'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { addChannel, createChannel } from "../../services/channels.services";
+import { searchUsers } from '../../services/users.services';
 import PropTypes from "prop-types";
+import AppContext from '../../context/AuthContext';
 import { createNotification, pushNotifications } from "../../services/notifications.services";
-import { CREATED_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE } from "../../common/constants";
-
+import { CREATED_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH } from "../../common/constants";
 export default function AddChannelModal({ teamId, teamParticipants, teamOwner, isOpen, onClose, teamName }) {
+  const user = useContext(AppContext);
   const [teamChannelTitle, setTeamChannelTitle] = useState('');
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [channelType, setChannelType] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const inputRef = useRef();
 
   const modalClass = cn({
     "modal modal-bottom sm:modal-middle": true,
     "modal-open": isOpen,
   });
 
+  const [channelData, setChannelData] = useState({
+    title: '',
+    members: {},
+});
+
   const navigate = useNavigate();
+
+  const handleSelectChange = (e) => {
+    setChannelType(e.target.value);
+  }
+
+//   const updateChannelData = (field) => (value) => {
+//     setChannelData({
+//         ...channelData,
+//         [field]: value,
+//     });
+// };
+
+  const handleSearchUsers = (query) => {
+    if (query.trim() !== "") {
+        searchUsers(query)
+            .then((filteredUsers) => {
+                // const currentUserHandle = user.userData.handle;
+                const selectedUsers = filteredUsers.filter(user => !channelData.members[user.id]);
+                setSearchResults(selectedUsers);
+            })
+            .catch((error) => {
+                console.error(error.message);
+            });
+    } else {
+        setSearchResults([]);
+    }
+  };
+
+  const handleAddMember = (userId) => {
+    const userToAdd = searchResults.find((user) => user.id === userId);
+
+    if (userToAdd) {
+        setChannelData({
+            ...channelData,
+            members: {
+                ...channelData.members,
+                [userToAdd.handle]: userToAdd.name,
+            },
+        });
+
+        setSelectedMembers([...selectedMembers, userToAdd]);
+        inputRef.current.value = '';
+        handleSearchUsers('');
+    }
+  };
+
+  const handleRemoveMember = (handle) => {
+    const updatedMembers = { ...channelData.members };
+    delete updatedMembers[handle];
+
+    const updatedSelectedMembers = selectedMembers.filter((member) => member.handle !== handle);
+
+    setChannelData({
+        ...channelData,
+        members: updatedMembers,
+    });
+
+    setSelectedMembers(updatedSelectedMembers);
+  };
 
   const handleTeamChannelCreation = (e) => {
     e.preventDefault();
@@ -23,32 +93,54 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
     if(!teamChannelTitle) {
       toast('You must include a title for the channel!');
       return;
+    } else if (teamChannelTitle.length < MIN_CHANNEL_NAME_LENGTH || teamChannelTitle > MAX_CHANNEL_NAME_LENGTH) {
+      toast(`Channel title must be between ${MIN_CHANNEL_NAME_LENGTH} and ${MAX_CHANNEL_NAME_LENGTH} characters.`);
+      return;
     }
 
     // add a check to see if there is already a channel with the same name
 
-    createChannel(teamId, teamChannelTitle, teamParticipants)
-      .then((channelId) => {
-        addChannel(teamParticipants, channelId, teamId, teamOwner)
-        return channelId;
-      })
-      .then((channelId) => {
-        navigate(`/app/teams/${teamId}/${channelId}`);
-      })
-      .then(() => {
-        // the notifications don't work properly
-        return createNotification(`${CREATED_CHANNEL_NOTIFICATION}: ${teamName}`, CREATED_CHANNEL_TYPE)
-      })
-      .then((notificationId) => {
-        Promise.all(teamParticipants.map((member) => {
-          pushNotifications(member, notificationId)
-        }))
-      })
-      .catch((e) => {
-        console.log(`Error creating a new channel: ${e.message}`);
-      })
+    if (channelType === 'Private') {
+      const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
+      createChannel(teamId, teamChannelTitle, membersToAdd)
+        .then((channelId) => {
+          addChannel(teamParticipants, channelId, teamId, teamOwner)
+          return channelId;
+        })
+        .then((channelId) => {
+          navigate(`/app/teams/${teamId}/${channelId}`);
+        })
+        .catch((e) => {
+          console.log(`Error creating a new channel: ${e.message}`);
+        })
+        
+        onClose();
 
-      onClose();
+    } else {
+      createChannel(teamId, teamChannelTitle, teamParticipants)
+        .then((channelId) => {
+          addChannel(teamParticipants, channelId, teamId, teamOwner)
+          return channelId;
+        })
+        .then((channelId) => {
+          navigate(`/app/teams/${teamId}/${channelId}`);
+        })
+        .then(() => {
+          // the notifications don't work properly
+          return createNotification(`${CREATED_CHANNEL_NOTIFICATION}: ${teamName}`, CREATED_CHANNEL_TYPE)
+        })
+        .then((notificationId) => {
+          Promise.all(teamParticipants.map((member) => {
+            pushNotifications(member, notificationId)
+          }))
+        })
+        .catch((e) => {
+          console.log(`Error creating a new channel: ${e.message}`);
+        })
+  
+        onClose();
+    }
+
   }
 
   return (
@@ -62,6 +154,55 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 <span className="label-text text-black bg-transparent dark:text-darkText">Channel Title</span>
               </label>
               <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText" />
+              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange}>
+                <option disabled selected>Select Channel Type</option>
+                <option>Public</option>
+                <option>Private</option>
+              </select>
+              {channelType === 'Private' ? (
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <label className="label">
+                        <span className="label-text">Members</span>
+                    </label>
+                    <div className="scrollable-list-container flex flex-col gap-2">
+                      <input type="text" ref={inputRef} onChange={(e) => {
+                          handleSearchUsers(e.target.value);
+                      }}
+                          className="input input-bordered w-full text-black bg-white"
+                      />
+                      {/* Display search results */}
+                      {searchResults.length > 0 && (
+                          <ul className="scrollable-list max-h-24	overflow-y-auto">
+                              {searchResults.map((user) => (
+                                  <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2'>
+                                      <img src={user.photoURL} className='h-8 w-8 rounded-full' />
+                                      <div className='flex flex-col items-start'>
+                                          <p className='text-sm'>{user.name}{' '}{user.surname}</p>
+                                          <p className='text-xs'>{`@${user.id}`}</p>
+                                      </div>
+                                  </li>
+                              ))}
+                          </ul>
+                      )}
+                    </div>
+                  </div>
+                    {/* Display selected members */}
+                    {selectedMembers.length > 0 && (
+                    <div className="selected-members">
+                        <ul className='flex flex-wrap gap-2'>
+                            {selectedMembers.map((member) => (
+                                <li key={member.id} className='badge badge-outline gap-2 p-4'>
+                                    <img src={member.photoURL} className='h-4 w-4 rounded-full' />
+                                    {member.name}{' '}{member.surname}
+                                    <i className="fa-solid fa-x cursor-pointer" onClick={() => handleRemoveMember(member.handle)}></i>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    )}
+                  </div>
+              ) : (null) }
             </div>
           </div>
           <div className="modal-action flex-row">
