@@ -96,7 +96,7 @@ export default function AppNav({ onLogout }) {
                             </div>
                             <div className={`absolute top-8 right-1 w-2 h-2 rounded-full ${statusColors[currentStatus]}`}></div>
                         </label>
-                        <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
+                        <ul tabIndex="0" className="dropdown-content z-[1000] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
                             <li className='dark:text-yellow'><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent dark:!bg-darkAccent">
                                 <option className='dark:!text-darkText'>Online</option>
                                 <option className='dark:!text-darkText'>Away</option>
