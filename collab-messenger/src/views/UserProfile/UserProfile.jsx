@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { getUserByHandle } from '../../services/users.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { db } from '../../config/firebase-config';
@@ -12,22 +11,14 @@ const UserProfile = ({ userHandle, isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getUserByHandle(userHandle)
-      .then((userData) => {
-        setUserDetails(userData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        toast('Cannot load user profile. Please try again later.');
-        console.error('Error fetching user data: ', error);
-        setLoading(false);
-      });
-
     const userRef = ref(db, `users/${userHandle}`);
+    
     const userListener = onValue(userRef, (snapshot) => {
-      const updatedUserData = snapshot.val();
-      if (updatedUserData) {
-        setUserDetails(updatedUserData);
+      if (snapshot.exists()) {
+        setUserDetails(snapshot.val());
+        setLoading(false);
+      } else {
+        toast('Cannot load user profile. Please try again later.');
       }
     })
 
