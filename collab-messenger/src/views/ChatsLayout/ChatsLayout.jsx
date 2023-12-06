@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { getLoggedUserChats, sortByDateDesc } from "../../services/chats.services";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import ChatBox from "../../components/ChatBox/ChatBox";
 import AppContext from "../../context/AuthContext";
 import StartGroupChatModal from "../../components/StartGroupChatModal/StartGroupChatModal";
@@ -10,11 +10,13 @@ import StartPrivateChatModal from "../../components/StartPrivateChatModal/StartP
 import { db } from "../../config/firebase-config";
 import { ref, onValue } from 'firebase/database';
 import EmptyList from "../../components/EmptyList/EmptyList";
+import { useMediaQuery } from 'react-responsive';
 
 export default function ChatsLayout() {
   const [allLoggedUserChats, setAllLoggedUserChats] = useState([]);
   const loggedUser = useContext(AppContext);
   const [userChatIds, setUserChatIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getLoggedUserChats(loggedUser.userData?.handle)
@@ -24,10 +26,10 @@ export default function ChatsLayout() {
         setUserChatIds(sortedChats.map(chat => chat.id));
       })
       .catch(e => {
-        toast('Error in getting chats. Please try again.')
-        console.log(e.message)
+        toast('Error in getting chats. Please try again.');
+        console.log(e.message);
       })
-  
+
   }, [loggedUser.userData?.handle]);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function ChatsLayout() {
       const updatedChatData = snapshot.val();
 
       if (updatedChatData) {
-        const userChats = Object.entries(updatedChatData).filter(([ , chat]) => {
+        const userChats = Object.entries(updatedChatData).filter(([, chat]) => {
           return chat.participants && chat.participants[loggedUser.userData?.handle];
         });
 
@@ -53,8 +55,9 @@ export default function ChatsLayout() {
               participantsReadMsg: chat.participantsReadMsg || {}
             };
           });
-          
+
           setAllLoggedUserChats(sortByDateDesc(chats));
+          setIsLoading(false);
         }
       }
     });
@@ -64,39 +67,104 @@ export default function ChatsLayout() {
     }
   }, [userChatIds, loggedUser.userData?.handle]);
 
+  // Responsiveness
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+
+  // Mobile states and functions
+  const [activeMobileComponent, setActiveMobileComponent] = useState(0); // useLocation for Chats, 1 For Single Chat
+
+  const handleChatLink = () => {
+    setActiveMobileComponent(1);
+  }
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/app/chats') {
+      setActiveMobileComponent(location.pathname);
+    }
+  }, [location.pathname]);
+
+  const { chatId } = useParams();
+  useEffect(() => {
+    if (chatId) {
+      setActiveMobileComponent(1);
+    }
+  }, [chatId]);
+
   return (
-    <div className="mt-5">
-      <div className="flex gap-3 h-[85vh] flex-row justify-start w-full dark:text-darkText">
-        <div className="basis-80 bg-pureWhite rounded-md text-black overflow-auto [&::-webkit-scrollbar]:[width:8px]
+    <>
+      {isDesktopOrLaptop && <div className="mt-5">
+        <div className="flex gap-3 h-[85vh] flex-row justify-start w-full dark:text-darkText">
+          <div className="basis-1/5 bg-pureWhite rounded-md text-black overflow-auto [&::-webkit-scrollbar]:[width:8px]
             [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md dark:[&::-webkit-scrollbar-thumb]:bg-mint dark:bg-darkFront">
-          <div className="sticky top-0 flex z-50 items-center justify-between p-2">
-            <p className="font-black text-xl pt-2 pl-2 dark:text-darkText">Chats</p>
-            <div className="flex">
-              <div className="pt-2">
-                <StartPrivateChatModal />
-              </div>
-              <div className="pt-2">
-                <StartGroupChatModal />
+            <div className="sticky top-0 flex z-50 items-center justify-between p-2">
+              <p className="font-black text-xl pt-2 pl-2 dark:text-darkText">Chats</p>
+              <div className="flex">
+                <div className="pt-2">
+                  <StartPrivateChatModal />
+                </div>
+                <div className="pt-2">
+                  <StartGroupChatModal />
+                </div>
               </div>
             </div>
+            <div className="divider m-1"></div>
+            {allLoggedUserChats.length > 0 && (
+              <div className="flex flex-col gap-1">
+                {allLoggedUserChats.map(chat => (
+                  <ChatBox key={chat.id} chatId={chat.id} onClick={handleChatLink} />)
+                )}
+              </div>
+            )}
           </div>
-          <div className="divider m-1"></div>
-          {allLoggedUserChats.length > 0 && (
-            <div className="flex flex-col gap-1">
-              {allLoggedUserChats.map(chat => (
-                <ChatBox key={chat.id} chatId={chat.id}/>)
-              )}
+          {!isLoading && <div className="basis-4/5 w-full rounded-md flex items-center place-content-evenly overflow-auto">
+            {allLoggedUserChats.length > 0 ? (
+              <Outlet />
+            ) : (
+              <EmptyList />
+            )}
+          </div>}
+        </div>
+      </div>}
+      {isTabletOrMobile && <div className="mt-4">
+        <div className="flex gap-3 h-[81vh] md:h-[87vh] flex-row justify-start w-full dark:text-darkText">
+          {activeMobileComponent === '/app/chats' && <div className="w-full bg-pureWhite rounded-md text-black overflow-auto [&::-webkit-scrollbar]:[width:8px]
+            [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md dark:[&::-webkit-scrollbar-thumb]:bg-mint dark:bg-darkFront">
+            <div className="sticky top-0 flex z-50 items-center justify-between p-2">
+              <p className="font-black text-xl pt-2 pl-2 dark:text-darkText">Chats</p>
+              <div className="flex">
+                <div className="pt-2">
+                  <StartPrivateChatModal />
+                </div>
+                <div className="pt-2">
+                  <StartGroupChatModal />
+                </div>
+              </div>
             </div>
-          )}
+            <div className="divider m-1"></div>
+            {allLoggedUserChats.length > 0 && (
+              <div className="flex flex-col gap-1">
+                {allLoggedUserChats.map(chat => (
+                  <ChatBox key={chat.id} chatId={chat.id} onClick={handleChatLink} />)
+                )}
+              </div>
+            )}
+          </div>}
+          {activeMobileComponent === 1 && !isLoading && <div className="w-full rounded-md flex items-center pb-4 pt-2">
+            {allLoggedUserChats.length > 0 ? (
+              <div className="w-full h-full flex flex-col items-start">
+                <Outlet />
+              </div>
+            ) : (
+              <EmptyList />
+            )}
+          </div>}
         </div>
-        <div className="w-full rounded-md flex items-center place-content-evenly overflow-auto">
-          {allLoggedUserChats.length > 0  ? (
-            <Outlet />
-          ) : (
-            <EmptyList />
-          )}
-        </div>
-      </div>
-    </div>
+      </div>}
+    </>
   )
 }
