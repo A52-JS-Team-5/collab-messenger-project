@@ -13,6 +13,7 @@ import ReactGiphySearchbox from 'react-giphy-searchbox-techedge';
 import UploadFile from '../UploadFile/UploadFile';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { useMediaQuery } from 'react-responsive';
 
 export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoVisible }) {
   const loggedUser = useContext(AppContext);
@@ -104,104 +105,167 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
         console.log(e.message);
       });
 
-      const channelRef = ref(db, `channels/${channelId}`);
-      const channelListener = onValue(channelRef, (snapshot) => {
-        const updatedChannelData = snapshot.val();
-        if (updatedChannelData) {
-          setChannelData(updatedChannelData);
+    const channelRef = ref(db, `channels/${channelId}`);
+    const channelListener = onValue(channelRef, (snapshot) => {
+      const updatedChannelData = snapshot.val();
+      if (updatedChannelData) {
+        setChannelData(updatedChannelData);
 
-          if (updatedChannelData.messages) {
-            setAllMessages(Object.keys(updatedChannelData.messages));
+        if (updatedChannelData.messages) {
+          setAllMessages(Object.keys(updatedChannelData.messages));
+        }
+      }
+
+      if (updatedChannelData?.participantsReadMsg) {
+        const loggedUserLastReadMessage = updatedChannelData.participantsReadMsg[loggedUser.userData.handle];
+        const isLatestMessage = loggedUserLastReadMessage === updatedChannelData.isLatestMessage;
+
+        if (!isLatestMessage) {
+          const updateUserLastReadMessage = () => {
+            const updateMsg = {};
+            updateMsg[`/channels/${channelId}/participantsReadMsg/${loggedUser.userData.handle}`] = updatedChannelData.lastMessage;
+
+            return update(ref(db), updateMsg)
+              .catch((e) =>
+                console.log(`Error adding last read message to logged user data: ${e.message}`)
+              );
           }
+          updateUserLastReadMessage();
         }
+      }
+    });
 
-        if (updatedChannelData?.participantsReadMsg) {
-          const loggedUserLastReadMessage = updatedChannelData.participantsReadMsg[loggedUser.userData.handle];
-          const isLatestMessage = loggedUserLastReadMessage === updatedChannelData.isLatestMessage;
+    const channelsRef = ref(db, 'messages');
+    const channelMessagesQuery = query(channelsRef, orderByChild('channelId'), equalTo(channelId));
 
-          if (!isLatestMessage) {
-            const updateUserLastReadMessage = () => {
-              const updateMsg = {};
-              updateMsg[`/channels/${channelId}/participantsReadMsg/${loggedUser.userData.handle}`] = updatedChannelData.lastMessage;
+    const messagesListener = onValue(channelMessagesQuery, (snapshot) => {
+      const updatedMessages = snapshot.val();
+      if (updatedMessages) {
+        setAllMessages(Object.keys(updatedMessages));
+      }
+    })
 
-              return update(ref(db), updateMsg)
-                .catch((e) =>
-                  console.log(`Error adding last read message to logged user data: ${e.message}`)
-                );
-            }
-            updateUserLastReadMessage();
-          }
-        }
-      });
-
-      const channelsRef = ref(db, 'messages');
-      const channelMessagesQuery = query(channelsRef, orderByChild('channelId'), equalTo(channelId));
-
-      const messagesListener = onValue(channelMessagesQuery, (snapshot) => {
-        const updatedMessages = snapshot.val();
-        if(updatedMessages) {
-          setAllMessages(Object.keys(updatedMessages));
-        }
-      })
-
-      return () => {
-        channelListener();
-        messagesListener();
-      };
+    return () => {
+      channelListener();
+      messagesListener();
+    };
   }, [channelId, loggedUser.userData?.handle]);
 
-  return (
-    <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
-      <div id='chat-section-layout' className='w-full bg-pureWhite border-b border-1 border-grey'>
-        <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
-          <div id="header-content" className="flex gap-3">
-            <div id='chat-title' className="flex place-items-end">{channelTitle}</div> 
-          </div>
-          <div className='flex justify-end gap-1'>
-            <button className="btn btn-ghost btn-sm" onClick={() => {setIsChannelInfoVisible(!isChannelInfoVisible)}}><i className="fa-solid fa-ellipsis text-pink"></i></button>
-          </div>
-        </div>
-      </div>
+  // Responsiveness
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
 
-      <div id='messages-wrapper' className="p-3 h-[64vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
+  return (
+    <>
+      {isDesktopOrLaptop &&
+        <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
+          <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput dark:text-darkText'>
+            <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
+              <div id="header-content" className="flex gap-3">
+                <div id='chat-title' className="flex place-items-end">{channelTitle}</div>
+              </div>
+              <div className='flex justify-end gap-1'>
+                <button className="btn btn-ghost btn-sm" onClick={() => { setIsChannelInfoVisible(!isChannelInfoVisible) }}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div id='messages-wrapper' className="p-3 h-[71vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
+        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:text-darkText">
+            {areThereMessages === true ? (
+              <MessagesList chatMessages={allMessages} />
+            ) : (
+              <p className="self-center">Start a conversation</p>
+            )}
+          </div>
+          <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t border-1 border-grey dark:border-darkInput flex items-center gap-2 w-full'>
+            <div className='flex gap-1'>
+              <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
+              <UploadFile message={message} setMessageFunc={setMessage} component={'ChannelDetails'} id={channelId} />
+              <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
+            </div>
+            <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 bg-neutral-100 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
+            {<button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-blue cursor-pointer hover:bg-darker-blue transition text-pureWhite"><i className="fa-regular fa-paper-plane"></i></button>}
+          </div>
+          {isGifSearchVisible === true && (
+            <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
+              <ReactGiphySearchbox
+                apiKey="Iy7WxBnblvFgo3jx4SFOIte0fBIDKY0X"
+                onSelect={gif => addGif(gif.images.fixed_height.url)}
+                rating
+                wrapperClassName=''
+                searchFormClassName='bg-blue text-black w-[270px]'
+                listWrapperClassName='w-[270px] border-[0.5px]'
+              />
+            </div>
+          )}
+          {isEmojiPickerVisible === true && (
+            <div className='fixed bottom-24'>
+              <Picker
+                data={data}
+                onEmojiSelect={(e) => addEmoji(e.native)}
+                theme={'light'}
+              />
+            </div>
+          )}
+        </div>}
+      {isTabletOrMobile &&
+        <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
+          <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput'>
+            <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] justify-between items-center">
+              <div id="header-content" className="flex gap-3">
+                <div id='chat-title' className="flex place-items-end">{channelTitle}</div>
+              </div>
+              <div className='flex justify-end gap-1'>
+                <button className="btn btn-ghost btn-sm" onClick={() => { setIsChannelInfoVisible(!isChannelInfoVisible) }}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div id='messages-wrapper' className="p-3 h-[55.7vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
         [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1">
-        {areThereMessages === true ? (
-          <MessagesList chatMessages={allMessages} />
-        ) : (
-          <p className="self-center">Start a conversation</p>
-        )}
-      </div>
-      <div id='chat-options' className='sticky py-2 px-4 bg-transparent border-t flex items-center gap-2 w-full'>
-        <div className='flex gap-1'>
-          <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
-          <UploadFile message={message} setMessageFunc={setMessage} component={'ChannelDetails'} id={channelId} />
-          <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
-        </div>
-        <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 bg-neutral-100 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
-        {<button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-lightBlue cursor-pointer hover:bg-sky-600 transition"><i className="fa-regular fa-paper-plane"></i></button>}
-      </div>
-      {isGifSearchVisible === true && (
-        <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
-          <ReactGiphySearchbox
-            apiKey="Iy7WxBnblvFgo3jx4SFOIte0fBIDKY0X" 
-            onSelect={gif => addGif(gif.images.fixed_height.url)}
-            rating
-            wrapperClassName=''
-            searchFormClassName='bg-blue text-black w-[270px]'
-            listWrapperClassName='w-[270px] border-[0.5px]'
-          />
-        </div>
-      )}
-      {isEmojiPickerVisible === true && (
-        <div className='fixed bottom-24'>
-          <Picker 
-            data={data} 
-            onEmojiSelect={(e) => addEmoji(e.native)} 
-            theme={'light'}
-          />
-        </div>
-      )}
-    </div>
+            {areThereMessages === true ? (
+              <MessagesList chatMessages={allMessages} />
+            ) : (
+              <p className="self-center">Start a conversation</p>
+            )}
+          </div>
+          <div id='chat-options' className='sticky pt-2 bg-transparent border-t border-1 border-grey dark:border-darkInput flex flex-col items-center gap-2 w-full'>
+            <div className='flex gap-1 w-full'>
+              <button id='search-gifs-option' className="hover:cursor-pointer hover:bg-grey btn-xs text-blue bg-transparent flex items-center w-fit " onClick={() => setIsGifSearchVisible(!isGifSearchVisible)}>GIF</button>
+              <UploadFile message={message} setMessageFunc={setMessage} component={'ChannelDetails'} id={channelId} />
+              <button className='hover:cursor-pointer hover:bg-grey btn-xs text-black bg-transparent flex items-center w-fit' onClick={() => setIsEmojiPickerVisible(!isEmojiPickerVisible)}><i className="fa-solid fa-face-smile text-blue"></i></button>
+            </div>
+            <div className='flex flex-row gap-2 w-full'>
+              <textarea id='add-message-option' className="text-black bg-grey font-light py-2 px-4 w-full h-10 rounded-full focus:outline-none" placeholder="Type a message" value={isLink ? '' : message.content} onChange={updateMessage('content')}></textarea>
+              <button id='send-message-option' onClick={onReply} className="p-2w-full rounded-full bg-blue cursor-pointer hover:bg-darker-blue text-pureWhite transition"><i className="fa-regular fa-paper-plane"></i></button>
+            </div>
+          </div>
+          {isGifSearchVisible === true && (
+            <div id='giphy-searchbox-wrapper' className='fixed bottom-24'>
+              <ReactGiphySearchbox
+                apiKey="Iy7WxBnblvFgo3jx4SFOIte0fBIDKY0X"
+                onSelect={gif => addGif(gif.images.fixed_height.url)}
+                rating
+                wrapperClassName=''
+                searchFormClassName='bg-blue text-black w-[270px]'
+                listWrapperClassName='w-[270px] border-[0.5px]'
+              />
+            </div>
+          )}
+          {isEmojiPickerVisible === true && (
+            <div className='fixed bottom-24'>
+              <Picker
+                data={data}
+                onEmojiSelect={(e) => addEmoji(e.native)}
+                theme={'light'}
+              />
+            </div>
+          )}
+        </div>}
+    </>
   )
 }
 
