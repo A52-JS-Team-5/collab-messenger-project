@@ -21,11 +21,11 @@ const MobileSideMenu = () => {
                     <i className="fa-solid fa-house"></i>
                     <span className="sr-only">Insights</span>
                 </button>
-                <button onClick={() => handleLinkClick('/app/chats')} type="button" className={`${activeLink === '/app/chats' && 'bg-blue text-white dark:bg-darkFront'} inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group text-blue dark:text-yellow`}>
+                <button onClick={() => handleLinkClick('/app/chats')} type="button" className={`${activeLink.includes('/app/chats') && 'bg-blue text-white dark:bg-darkFront'} inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group text-blue dark:text-yellow`}>
                     <i className="fa-solid fa-message"></i>
                     <span className="sr-only">Chats</span>
                 </button>
-                <button onClick={() => handleLinkClick('/app/teams')} type="button" className={`${activeLink === '/app/teams' && 'bg-blue text-white dark:bg-darkFront'} inline-flex flex-col items-center justify-center px-5 rounded-e-full hover:bg-gray-50 group text-blue dark:text-yellow`}>
+                <button onClick={() => handleLinkClick('/app/teams')} type="button" className={`${activeLink.includes('/app/teams') && 'bg-blue text-white dark:bg-darkFront'} inline-flex flex-col items-center justify-center px-5 rounded-e-full hover:bg-gray-50 group text-blue dark:text-yellow`}>
                     <i className="fa-solid fa-users"></i>
                     <span className="sr-only">Teams</span>
                 </button>
