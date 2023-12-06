@@ -74,14 +74,14 @@ export default function ChangeTeamPhoto({ teamDetails }) {
                     <p className="text-left">A picture helps people recognize the team.</p>
                 </div>
                 <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
-                    <div className='flex flex-col self-stretch justify-top aspect-square'>
+                    <div className='flex flex-col self-stretch w-24 justify-top'>
                         <img src={photoURL} alt="Team Photo" className="object-cover rounded-md w-24 h-24 aspect-square" />
                     </div>
                     <div className="flex flex-col justify-center w-full">
                         <label className="label self-stretch">
                             <span className="label-text">Pick a Team Picture</span>
                         </label>
-                        <input type="file" className="file-input file-input-bordered border-none w-full flex-start self-stretch bg-white file:bg-pink file:border-pink file:text-pureWhite dark:bg-darkInput" accept="image/*" id="fileInput" onChange={handlePhotoChange} />
+                        <input type="file" className="file-input file-input-bordered border-none w-full flex-start bg-pureWhite file:bg-pink file:border-pink file:text-pureWhite dark:bg-darkInput" accept="image/*" id="fileInput" onChange={handlePhotoChange} />
                         {fileErrorMsg && <span className="err-message text-red">{fileErrorMsg}</span>}
                     </div>
                     <div className='flex flex-col self-stretch justify-end'>
