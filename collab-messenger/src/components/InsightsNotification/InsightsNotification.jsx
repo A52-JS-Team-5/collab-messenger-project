@@ -28,7 +28,7 @@ const InsightsNotification = ({ notificationId }) => {
                 return (
                     <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full cursor-pointer dark:bg-darkAccent dark:text-darkText" onClick={() => navigate(`/app/teams/${notificationDetails.elemId}`)}>
                         <div className="gap-4 items-center flex flex-row w-full">
-                            <div className="flex flex-col rounded-full bg-[#C2F1D9] text-green items-center justify-center w-10 h-10 aspect-square">
+                            <div className="hidden md:flex flex-col rounded-full bg-[#C2F1D9] text-green items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
@@ -47,7 +47,7 @@ const InsightsNotification = ({ notificationId }) => {
                 return (
                     <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full dark:bg-darkAccent dark:text-darkText">
                         <div className="gap-4 items-center flex flex-row w-full">
-                            <div className="flex flex-col rounded-full bg-[#E3DDEB] text-[#573385] items-center justify-center w-10 h-10 aspect-square">
+                            <div className="hidden md:flex flex-col rounded-full bg-[#E3DDEB] text-[#573385] items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-minus"></i>
                             </div>
                             <div className="flex flex-col">
@@ -65,7 +65,7 @@ const InsightsNotification = ({ notificationId }) => {
                 return (
                     <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full" onClick={() => navigate(notificationDetails.link)}>
                         <div className="gap-4 items-center flex flex-row w-full">
-                            <div className="flex flex-col rounded-full bg-lightBlue text-blue items-center justify-center w-10 h-10 aspect-square">
+                            <div className="hidden md:flex flex-col rounded-full bg-lightBlue text-blue items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
@@ -83,7 +83,7 @@ const InsightsNotification = ({ notificationId }) => {
                 return (
                     <div className="gap-4 items-center flex flex-row p-4 rounded-md bg-white w-full">
                         <div className="gap-4 items-center flex flex-row w-full">
-                            <div className="flex flex-col rounded-full bg-[#FDE5DB] text-[#E8825D] items-center justify-center w-10 h-10 aspect-square">
+                            <div className="hidden md:flex flex-col rounded-full bg-[#FDE5DB] text-[#E8825D] items-center justify-center w-10 h-10 aspect-square">
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
