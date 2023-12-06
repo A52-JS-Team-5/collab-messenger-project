@@ -62,7 +62,8 @@ const ManageTeam = ({ teamDetails }) => {
     }
 
     return (
-        <div className="flex flex-col gap-10 items-start p-4 rounded-md bg-white dark:bg-darkFront">
+        <div className="h-[42vh] lg:h-full flex flex-col gap-10 items-start p-4 rounded-md bg-white dark:bg-darkFront overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
+        [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:[&::-webkit-scrollbar-thumb]:bg-mint">
             <div className="flex flex-col items-start w-full gap-2">
                 <div className="flex flex-col items-start">
                     <h2 className='font-bold text-lg'>Team Details</h2>
