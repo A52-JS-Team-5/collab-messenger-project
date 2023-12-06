@@ -216,7 +216,7 @@ export default function CreateTeam() {
                                     <input type="text" ref={inputRef} onChange={(e) => {
                                         handleSearchUsers(e.target.value);
                                     }}
-                                        className="input input-bordered w-full text-black bg-white"
+                                        className="input input-bordered w-full text-black bg-white dark:bg-darkInput"
                                     />
                                     {/* Display search results */}
                                     {searchResults.length > 0 && (
