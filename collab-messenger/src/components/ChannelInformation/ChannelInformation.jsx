@@ -11,6 +11,7 @@ import { getChannelById } from "../../services/channels.services";
 import { getUploadedFilesInChannel } from "../../common/helpers";
 import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
 import AddChannelMembers from "../AddChannelMembers/AddChannelMembers";
+import UserProfile from "../../views/UserProfile/UserProfile";
 
 export default function ChannelInformation() {
   const { channelId } = useParams();
@@ -25,7 +26,7 @@ export default function ChannelInformation() {
   const channelTitle = channelData.title;
   const channelParticipants = Object.keys(channelData?.participants);
   const [showTitle, setShowTitle] = useState(true);
-  
+
   useEffect(() => {
     getChannelById(channelId)
       .then((data) => {
@@ -36,17 +37,17 @@ export default function ChannelInformation() {
         console.log(e.message);
       });
 
-      const channelRef = ref(db, `channels/${channelId}`);
-      const channelListener = onValue(channelRef, (snapshot) => {
-        const updatedChannelData = snapshot.val();
-        if (updatedChannelData) {
-          setChannelData(updatedChannelData);
-        }
-      });
+    const channelRef = ref(db, `channels/${channelId}`);
+    const channelListener = onValue(channelRef, (snapshot) => {
+      const updatedChannelData = snapshot.val();
+      if (updatedChannelData) {
+        setChannelData(updatedChannelData);
+      }
+    });
 
-      return () => {
-        channelListener();
-      };
+    return () => {
+      channelListener();
+    };
   }, [channelId]);
 
   useEffect(() => {
@@ -80,6 +81,19 @@ export default function ChannelInformation() {
     }
   };
 
+  // State for the currently opened user profile modal
+  const [openUserProfileModal, setOpenUserProfileModal] = useState('');
+
+  // Function to open user profile modal for a specific user
+  const handleOpenUserProfileModal = (userHandle) => {
+    setOpenUserProfileModal(userHandle);
+  };
+
+  // Function to close user profile modal
+  const handleCloseUserProfileModal = () => {
+    setOpenUserProfileModal(false);
+  };
+
   return (
     <div id="channel-information-wrapper" className="m-5 ">
       <div className="flex flex-row justify-center">
@@ -103,28 +117,31 @@ export default function ChannelInformation() {
             <LeaveChannelModal channelId={channelId} />
           </div>
         )}
-        <div className="collapse collapse-arrow bg-grey mt-4 text-left">
-          <input type="checkbox" /> 
+        <div className="collapse collapse-arrow bg-grey mt-4 text-left dark:bg-darkAccent">
+          <input type="checkbox" />
           <div className="collapse-title text-sm font-medium ">
-            <i className="fa-solid fa-user-group text-pink mr-2"></i> 
+            <i className="fa-solid fa-user-group text-pink mr-2"></i>
             Participants
           </div>
-          <div className="collapse-content text-sm"> 
+          <div className="collapse-content text-sm">
             {channelParticipants.map(user => (
-              <div key={user} className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite" >
-                <Avatar user={user} />
-                <p>{user}</p>
+              <div key={user} >
+                <div className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite cursor-pointer" onClick={() => handleOpenUserProfileModal(user)}>
+                  <Avatar user={user} />
+                  <p>{user}</p>
+                </div>
+                {openUserProfileModal === user && <UserProfile userHandle={user} isOpen={true} onClose={handleCloseUserProfileModal} />}
               </div>)
             )}
           </div>
         </div>
-        <div className="collapse collapse-arrow bg-grey mt-2 text-left">
-          <input type="checkbox" /> 
+        <div className="collapse collapse-arrow bg-grey mt-2 text-left dark:bg-darkAccent">
+          <input type="checkbox" />
           <div className="collapse-title text-sm font-medium">
-            <i className="fa-solid fa-box-archive text-pink mr-2"></i> 
+            <i className="fa-solid fa-box-archive text-pink mr-2"></i>
             Shared Files
           </div>
-          <div className="collapse-content text-sm"> 
+          <div className="collapse-content text-sm">
             {uploadedFiles.length > 0 && (
               uploadedFiles.map(file => (
                 <div key={file.url} className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite">
