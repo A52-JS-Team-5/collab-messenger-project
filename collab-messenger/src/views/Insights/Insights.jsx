@@ -16,7 +16,7 @@ const Insights = () => {
 
     return (
         <div className='mt-4 flex flex-row gap-4 h-[88vh] mt-4 w-full'>
-            <div className='flex flex-col gap-4 w-full h-[87vh]'>
+            <div className='flex flex-col gap-4 w-full h-[81vh] xl:h-[88vh]'>
                 <div className="flex flex-row justify-between rounded-md bg-pureWhite items-center h-1/5 dark:bg-darkFront dark:text-pureWhite">
                     <div className='flex flex-col gap-2 items-start max-xl:p-4 xl:p-6 max-lg:basis-5/5 lg:basis-3/5'>
                         <h2 className='text-xl font-bold text-left'>{`👋 Hey, ${user?.userData?.name}! Thrilled to have you on board.`}</h2>
@@ -26,11 +26,10 @@ const Insights = () => {
                         <img src={insightsWelcome} alt="Insights Background" className="h-96 opacity-90" />
                     </div>
                 </div>
-                <div className='flex flex-col rounded-md bg-pureWhite gap-2 max-xl:p-4 xl:p-6 h-4/5 dark:bg-darkFront dark:text-darkText'>
+                <div className='flex flex-col rounded-md bg-pureWhite gap-2 max-xl:p-4 xl:p-6 dark:bg-darkFront dark:text-darkText overflow-hidden h-4/5'>
                     <h2 className='text-sm font-bold text-left'>Teams & Channels News</h2>
                     {user?.userData?.notifications && Object.keys(user?.userData?.notifications).length > 0 ? (
                         <div className='flex flex-col gap-2 overflow-y-auto [&::-webkit-scrollbar]:[width:8px] [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:[&::-webkit-scrollbar-thumb]:bg-mint'>
-
                             <div className='flex flex-col gap-2'>
                                 {Object.keys(user?.userData?.notifications).reverse().map(notification => (
                                     <div className='flex flex-col w-full' key={notification}>
@@ -40,14 +39,14 @@ const Insights = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className='flex flex-col gap-8 items-center justify-center h-4/5'>
+                        <div className='flex flex-col gap-8 items-center justify-center h-full'>
                             <img src={notificationImg} alt="No Notifications Image" className="max-h-80" />
                             <p>{`It's a bit quiet here. No updates or notifications yet.`}</p>
                         </div>
                     )}
                 </div>
             </div>
-            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[89vh] dark:bg-darkFront dark:text-darkText'>
+            <div className='flex flex-col basis-1/4 rounded-md bg-pureWhite max-xl:p-4 xl:p-6 justify-between max-xl:basis-2/5 max-sm:hidden h-[81vh] xl:h-[88vh] dark:bg-darkFront dark:text-darkText'>
                 <div className='flex flex-col items-center gap-4'>
                     <img src={user?.userData?.photoURL} alt="Avatar" className="h-32 w-32 opacity-90 aspect-square rounded-full" />
                     <div className='flex flex-col'>
