@@ -83,7 +83,7 @@ export default function ChangeProfilePicture({ handle }) {
         </div>
         <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
           <div className='flex flex-col self-stretch w-24 justify-top'>
-            <img src={photoURL} alt="Profile Photo" className="object-cover rounded-md" />
+            <img src={photoURL} alt="Profile Photo" className="object-cover rounded-md w-24 h-24 aspect-square" />
           </div>
           <div className="flex flex-col justify-center w-full">
             <label className="label self-stretch">
