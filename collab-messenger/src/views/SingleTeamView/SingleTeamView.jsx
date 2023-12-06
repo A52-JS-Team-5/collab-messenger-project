@@ -1,11 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { getTeamById } from "../../services/teams.services";
 import { useNavigate, useParams } from "react-router-dom";
 import AppContext from "../../context/AuthContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../config/firebase-config";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 import TeamDetails from "../../components/TeamDetails/TeamDetails";
 import LeaveTeamModal from "../../components/LeaveTeamModal/LeaveTeamModal";
 import DeleteTeamModal from "../../components/DeleteTeamModal/DeleteTeamModal";
@@ -15,6 +12,7 @@ import { useMediaQuery } from 'react-responsive';
 import EnterChannel from "../../components/EnterChannel/EnterChannel";
 import ChannelDetails from "../../components/ChannelDetails/ChannelDetails";
 import ChannelInformation from "../../components/ChannelInformation/ChannelInformation";
+import PageNotFound from "../PageNotFound/PageNotFound";
 
 const SingleTeamView = () => {
 
@@ -28,49 +26,44 @@ const SingleTeamView = () => {
     const [allTeamChannelsOfUser, setAllTeamChannelsOfUser] = useState([]);
     const [isChannelInfoVisible, setIsChannelInfoVisible] = useState(false);
     const channelLayout = isChannelInfoVisible === true ? 'basis-3/5' : 'basis-4/5';
+    const [noData, setNoData] = useState(false);
 
     useEffect(() => {
         const teamRef = ref(db, `teams/${teamId}`);
 
-        getTeamById(teamId)
-            .then((teamData) => {
-                setTeamDetails(teamData);
-                setIsLoading(false);
-
-                // add logic for filtering channels that the user is in with team channels
-                const userChannels = (teamData.channels || []).filter((channel) =>
-                    Object.keys(user.userData?.channels || {}).includes(channel)
-                );
-                setAllTeamChannelsOfUser(userChannels);
-
-                // Check if the current user is the owner
-                if (teamData.owner === user?.userData?.handle) {
-                    setShowManageTeam(true);
-                }
-            })
-            .catch((error) => {
-                setIsLoading(false);
-                console.log('Error fetching details', error.message);
-                toast('An error occurred while trying to get the team details.')
-            });
-
-        // Listen for changes in team details
         const teamListener = onValue(teamRef, (snapshot) => {
             const updatedTeamData = snapshot.val();
 
-            if (updatedTeamData) {
-                const teamDetails = {
-                    name: updatedTeamData.name,
-                    createdOn: updatedTeamData.createdOn,
-                    description: updatedTeamData.description,
-                    id: teamId,
-                    owner: updatedTeamData.owner,
-                    members: updatedTeamData.members ? Object.keys(updatedTeamData.members) : [],
-                    channels: updatedTeamData.channels ? Object.keys(updatedTeamData.channels) : [],
-                    photoURL: updatedTeamData.photoURL,
-                };
-                setTeamDetails(teamDetails);
+            if (updatedTeamData === null) {
+                setIsLoading(false);
+                setNoData(true);
+                return;
             }
+
+            const teamDetails = {
+                name: updatedTeamData.name,
+                createdOn: updatedTeamData.createdOn,
+                description: updatedTeamData.description,
+                id: teamId,
+                owner: updatedTeamData.owner,
+                members: updatedTeamData.members ? Object.keys(updatedTeamData.members) : [],
+                channels: updatedTeamData.channels ? Object.keys(updatedTeamData.channels) : [],
+                photoURL: updatedTeamData.photoURL,
+            };
+            setTeamDetails(teamDetails);
+
+            // add logic for filtering channels that the user is in with team channels
+            const userChannels = (teamDetails.channels || []).filter((channel) =>
+                Object.keys(user.userData?.channels || {}).includes(channel)
+            );
+            setAllTeamChannelsOfUser(userChannels);
+
+            // Check if the current user is the owner
+            if (teamDetails.owner === user?.userData?.handle) {
+                setShowManageTeam(true);
+            }
+
+            setIsLoading(false);
         });
 
         return () => {
@@ -147,7 +140,7 @@ const SingleTeamView = () => {
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
 
     // Mobile functions and states
-    const [activeMobileComponent, setActiveMobileComponent] = useState(''); // 0 for Default View, 1 for TeamDetails, 2 for Channel
+    const [activeMobileComponent, setActiveMobileComponent] = useState(0); // 0 for Default View, 1 for TeamDetails, 2 for Channel
 
     const handleMobileClickTeamDetails = () => {
         setActiveMobileComponent(1);
@@ -164,9 +157,16 @@ const SingleTeamView = () => {
         navigate(`/app/teams/${teamId}`);
     }
 
+    const handleReturnToChannel = () => {
+        setActiveMobileComponent(2);
+        setIsMobileChannelInfoVisible(false);
+    }
+
+    const [isMobileChannelInfoVisible, setIsMobileChannelInfoVisible] = useState(false);
+
     return (
         <>
-            {isDesktopOrLaptop && <div className='flex flex-row gap-4 h-[87vh]'>
+            {isDesktopOrLaptop && !noData && <div className='flex flex-row mt-4 gap-4 h-[87vh]'>
                 {!isLoading && (
                     <div className='flex flex-row mt-4 gap-4 h-full w-full'>
                         <div className='flex flex-col basis-1/5 p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText'>
@@ -208,15 +208,15 @@ const SingleTeamView = () => {
                                 )}
                             </div>
                         </div>
-                        {activeComponent === 0 && <div className="basis-4/5 w-full flex items-center place-content-evenly overflow-auto p-4">
+                        {activeComponent === 0 && <div className="basis-4/5 w-full flex items-center overflow-auto p-4">
                             <EnterChannel />
                         </div>}
-                        {activeComponent === 2 && <div className={`${channelLayout} w-full flex items-center place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront`}>
+                        {activeComponent === 2 && <div className={`${channelLayout} w-full flex items-center overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront`}>
                             <ChannelDetails isChannelInfoVisible={isChannelInfoVisible} setIsChannelInfoVisible={setIsChannelInfoVisible} />
                         </div>}
                         {activeComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} />}
                         {isChannelInfoVisible === true && (
-                            <div id='chatInformation-section-layout' className={`basis-1/5 bg-pureWhite w-full rounded-md`}>
+                            <div id='chatInformation-section-layout' className={`basis-1/5 bg-pureWhite w-full rounded-md dark:bg-darkFront dark:text-darkText`}>
                                 <ChannelInformation />
                             </div>
                         )}
@@ -224,9 +224,9 @@ const SingleTeamView = () => {
                 )}
             </div >}
             {/*Mobile and Tablet Views and Logic*/}
-            {isTabletOrMobile && <div className='flex flex-row mt-4 gap-4 max-h-[86vh] w-full'>
+            {isTabletOrMobile && !noData && <div className='flex flex-row mt-4 gap-4 h-[81vh] w-full'>
                 {!isLoading && activeMobileComponent === 0 && (
-                    <div className='flex flex-row mt-4 gap-4 h-full w-full'>
+                    <div className='flex flex-row gap-4 h-full w-full'>
                         <div className='flex flex-col p-4 rounded-md bg-pureWhite w-full dark:bg-darkFront dark:text-darkText'>
                             <div className='flex flex-col gap-2'>
                                 <div className='flex flex-row items-center'>
@@ -268,20 +268,24 @@ const SingleTeamView = () => {
                         </div>
                     </div>
                 )}
-                {!isLoading && activeMobileComponent === 2 && <div className="!basis-full max-xl:basis-4/5 w-full flex flex-col items-start place-content-evenly overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText">
+                {!isLoading && activeMobileComponent === 2 && !isMobileChannelInfoVisible && <div className="!basis-full max-xl:basis-4/5 w-full flex flex-col items-start overflow-auto p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText">
                     <div className='flex flex-row items-center xl:hidden'>
                         <i className="fa-solid fa-chevron-left fa-xs"></i>
                         <div className='flex flex-col w-full items-start btn btn-link pl-1 pr-1 pt-0 pb-0 mt-0 mb-0' onClick={handleMobileDefaultClick}>Return To Team</div>
                     </div>
-                    <ChannelDetails isChannelInfoVisible={isChannelInfoVisible} setIsChannelInfoVisible={setIsChannelInfoVisible} />
+                    <ChannelDetails isChannelInfoVisible={isMobileChannelInfoVisible} setIsChannelInfoVisible={setIsMobileChannelInfoVisible} />
                 </div>}
-                {isChannelInfoVisible === true && (
-                    <div id='chatInformation-section-layout' className={`basis-1/5 bg-pureWhite w-full rounded-md`}>
+                {isMobileChannelInfoVisible === true && (
+                    <div id='chatInformation-section-layout' className={`bg-pureWhite w-full rounded-md dark:bg-darkFront dark:text-darkText`}>
+                        <div className='flex flex-start'>
+                            <button className='btn btn-ghost' onClick={handleReturnToChannel}><i className="fa-solid fa-arrow-left"></i></button>
+                        </div>
                         <ChannelInformation />
                     </div>
                 )}
                 {!isLoading && activeMobileComponent === 1 && <TeamDetails teamDetails={teamDetails} showManageTeam={showManageTeam} onClick={handleMobileDefaultClick} />}
             </div >}
+            {noData && <PageNotFound />}
         </>
     )
 }
