@@ -195,8 +195,8 @@ const SingleTeamView = () => {
                                             </ul>
                                             {isLeaveModalOpen && (<LeaveTeamModal teamId={teamId} isOpen={isLeaveModalOpen} onClose={closeLeaveModal} />)}
                                             {isDeleteTeamModalOpen && (<DeleteTeamModal teamData={teamDetails} teamId={teamId} isOpen={isDeleteTeamModalOpen} onClose={closeDeleteTeamModal} />)}
-                                            {isCreateChannelModalOpen && (<AddChannelModal teamId={teamId} teamParticipants={teamDetails.members} teamOwner={teamDetails.owner} isOpen={isCreateChannelModalOpen} onClose={closeCreateChannelModal} teamName={teamDetails.name} />)}
                                         </div>
+                                        {isCreateChannelModalOpen && (<AddChannelModal teamId={teamId} teamParticipants={teamDetails.members} teamOwner={teamDetails.owner} isOpen={isCreateChannelModalOpen} onClose={closeCreateChannelModal} teamName={teamDetails.name} />)}
                                     </div>
                                 </div>
                             </div>
