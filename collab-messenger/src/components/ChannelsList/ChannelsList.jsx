@@ -56,7 +56,7 @@ export default function ChannelsList({ teamDetails }) {
 
   return (
     <div className='flex flex-col gap-2'>
-      <div className="flex flex-col bg-white rounded-md p-4">
+      <div className="flex flex-col bg-white rounded-md p-4 dark:bg-darkAccent dark:text-darkText">
         <div className='flex flex-col items-end mb-3'>
           <button onClick={openCreateChannelModal} className='btn bg-pink border-none text-pureWhite w-fit justify-center'><i className="fa-solid fa-users"></i>Add Channel</button>
           {isCreateChannelModalOpen && (
@@ -64,7 +64,7 @@ export default function ChannelsList({ teamDetails }) {
           )}
         </div>
         {allChannels.map(channel => (
-          <li key={channel.id} className='flex flex-row justify-between gap-2 p-2 mt-1 rounded-md items-center cursor-pointer hover:bg-pureWhite'>
+          <li key={channel.id} className='flex flex-row justify-between gap-2 p-2 mt-1 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkFront'>
             <div className='flex flex-row gap-2 items-center justify-between w-full'>
               <div className='flex flex-row w-full'>
                 <p className='place-self-center ' onClick={() => navigate(`/app/teams/${channel.team}/${channel.id}`)}>{channel.title}</p>
