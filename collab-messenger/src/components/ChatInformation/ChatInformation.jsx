@@ -1,15 +1,14 @@
 import PropTypes from "prop-types";
 import Avatar from "../Avatar/Avatar";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import LeaveChatModal from "../LeaveChatModal/LeaveChatModal";
 import { updateGroupChatTitle } from "../../services/chats.services";
 import { ref, list, getStorage, getDownloadURL } from "firebase/storage";
 import GroupChatAvatar from "../GroupChatAvatar/GroupChatAvatar";
 import AddGroupChatMembers from "../AddGroupChatMembers/AddGroupChatMembers";
+import UserProfile from "../../views/UserProfile/UserProfile";
 
 export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatData }) {
-  const navigate = useNavigate();
   const [form, setForm] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const chatParticipants = Object.keys(chatData.participants);
@@ -28,7 +27,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
           return getDownloadURL(ref(storage, item._location.path_))
             .then((url) => ({
               fileName: item._location.path_.split('/').pop(),
-              'url': url 
+              'url': url
             }))
             .catch(e => console.log('Error getting download URL for file: ', e.message))
         })
@@ -66,11 +65,25 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
     }
   };
 
+  // State for the currently opened user profile modal
+  const [openUserProfileModal, setOpenUserProfileModal] = useState('');
+
+  // Function to open user profile modal for a specific user
+  const handleOpenUserProfileModal = (userHandle) => {
+    setOpenUserProfileModal(userHandle);
+  };
+
+  // Function to close user profile modal
+  const handleCloseUserProfileModal = () => {
+    setOpenUserProfileModal(false);
+  };
+
   return (
-    <div id="chat-information-wrapper" className="m-5 ">
-      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />} 
+    <div id="chat-information-wrapper" className="m-5">
+      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />}
       <div className="flex flex-row justify-center">
-        {!isGroupChat ? (<div className="m-3 font-bold">{chatTitle}</div>) : (showTitle && <div className="m-3 font-bold">{chatTitle}</div>)}
+        {!isGroupChat ? (<button className="btn btn-active btn-link" onClick={() => handleOpenUserProfileModal(chatTitle)}>{chatTitle}</button>) : (showTitle && <div className="m-3 font-bold">{chatTitle}</div>)}
+        {openUserProfileModal === chatTitle && <UserProfile userHandle={chatTitle} isOpen={true} onClose={handleCloseUserProfileModal} />}
         {isGroupChat && (
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
@@ -89,16 +102,19 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
               <LeaveChatModal chatId={chatId} />
             </div>
             <div className="collapse collapse-arrow bg-white dark:bg-darkAccent mt-4 text-left">
-              <input type="checkbox" /> 
+              <input type="checkbox" />
               <div className="collapse-title text-sm font-medium ">
-                <i className="fa-solid fa-user-group text-pink mr-2"></i> 
+                <i className="fa-solid fa-user-group text-pink mr-2"></i>
                 Participants
               </div>
-              <div className="collapse-content text-sm"> 
+              <div className="collapse-content text-sm">
                 {chatParticipants.map(user => (
-                  <div key={user} className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite" onClick={() => {navigate(`/app/users/${user})`)}}>
-                    <Avatar user={user} />
-                    <p>{user}</p>
+                  <div key={user} >
+                    <div className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkFront" onClick={() => handleOpenUserProfileModal(user)}>
+                      <Avatar user={user} />
+                      <p>{user}</p>
+                    </div>
+                    {openUserProfileModal === user && <UserProfile userHandle={user} isOpen={true} onClose={handleCloseUserProfileModal} />}
                   </div>)
                 )}
               </div>
@@ -106,12 +122,12 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
           </div>
         )}
         <div className="collapse collapse-arrow bg-white dark:bg-darkAccent mt-2 text-left">
-          <input type="checkbox" /> 
+          <input type="checkbox" />
           <div className="collapse-title text-sm font-medium">
-            <i className="fa-solid fa-box-archive text-pink mr-2"></i> 
+            <i className="fa-solid fa-box-archive text-pink mr-2"></i>
             Shared Files
           </div>
-          <div className="collapse-content text-sm"> 
+          <div className="collapse-content text-sm">
             {uploadedFiles.length > 0 && (
               uploadedFiles.map(file => (
                 <div key={file.url} className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite">
