@@ -4,7 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { logoutUser } from './services/auth.services';
-import { changeStatus, getUserData } from './services/users.services';
+import { changeStatus } from './services/users.services';
 import { auth, db } from './config/firebase-config';
 import Home from './views/Home/Home';
 import About from './views/About/About';
@@ -27,6 +27,7 @@ import MobileSideMenu from './components/MobileSideMenu/MobileSideMenu';
 import ChannelDetails from './components/ChannelDetails/ChannelDetails'
 import { equalTo, onValue, orderByChild, query, ref } from 'firebase/database';
 import PageNotAccessible from './views/PageNotAccessible/PageNotAccessible';
+import { toast } from 'react-toastify';
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
@@ -58,25 +59,11 @@ function App() {
   useEffect(() => {
     if (user === null) return;
 
-    getUserData(user.uid)
-      .then(snapshot => {
-        if (!snapshot.exists()) {
-          throw new Error('Something went wrong!');
-        }
-
-        setAppState(prevState => ({
-          ...prevState,
-          userData: snapshot.val()[Object.keys(snapshot.val())[0]],
-        }));
-      })
-      .catch(e => {
-        alert(e.message);
-      })
-
     const userQuery = query(ref(db, 'users'), orderByChild('uid'), equalTo(user.uid));
     const userListener = onValue(userQuery, (snapshot) => {
       if (!snapshot.exists()) {
-        throw new Error('Something went wrong!');
+        toast('Something went wrong!');
+        return;
       }
 
       setAppState(prevState => ({
@@ -118,7 +105,7 @@ function App() {
             </div>
           )}
           {!loading && !error && <MobileSideMenu />}
-        </div>) : (!loading && <PageNotAccessible/>)
+        </div>) : (!loading && <PageNotAccessible />)
       ) : (
         <div className='flex flex-col'>
           {/* If we're in the website part, we use the flex flex-col className, else - flex flex-row */}
