@@ -62,7 +62,7 @@ const Register = () => {
       errors.phoneNumber = 'Phone number is required.'
     } else if (!isPhoneNumberValid(values.phoneNumber) || values['phoneNumber'].length < 10) {
       errors.phoneNumber = 'Phone number must only contain digits and be 10 characters long.'
-    } 
+    }
 
     setFormErrorMsg(errors);
     return errors;
@@ -95,29 +95,29 @@ const Register = () => {
         return registerUser(form.email, form.password);
       })
       .then(credential => {
-      // The handle is unique, so create a user record in the database
+        // The handle is unique, so create a user record in the database
         return createUserHandle(form.handle, credential.user.uid, credential.user.email, form.name, form.surname, form.phoneNumber)
           .then(() => {
             toast('Profile created successfully!');
             setContext({
               user: credential.user,
             });
-            });
-          })
-          .then(() => navigate('/'))
-          .catch(e => console.log(e.message))
+          });
+      })
+      .then(() => navigate('/app'))
+      .catch(e => console.log(e.message))
       .catch(e => console.log(e.message))
   };
 
   return (
     <>
-      <div className="hero min-h-[90vh] px-40 max-2xl:px-6">
-        <div className="hero-content flex-col lg:flex-row pt-10 gap-16 max-2xl:gap-8">
-          <div className='signup-wrapper min-w-[50%] card rounded rounded-3xl bg-beige shadow-xl w-[500px] dark:bg-darkFront dark:text-darkText'>
+      <div className="flex px-40 max-2xl:px-6 items-center justify-center min-w-fit min-h-[88vh]">
+        <div className="flex flex-col lg:flex-row gap-16 max-2xl:gap-8 items-center justify-center min-w-fit min-h-[88vh]">
+          <div className='signup-wrapper min-w-[50%] card rounded rounded-3xl bg-beige shadow-xl dark:bg-darkFront dark:text-darkText'>
             <h2 className="self-center text-3xl text-black pb-8 font-bold dark:text-darkText">Create account</h2>
             <div className='form-control flex flex-wrap flex-auto'>
-              <div className="flex space-x-3">
-                <div className="">
+              <div className="flex gap-4 flex-col md:flex-row">
+                <div>
                   <label className="label" htmlFor='name'>
                     <span className="label-text text-black pl-3 dark:text-darkText">Name</span>
                   </label>
@@ -133,7 +133,7 @@ const Register = () => {
                 </div>
               </div>
               <label className="label" htmlFor='email'>
-                <span className="label-text text-black pl-3 dark:text-darkText" >Email</span>
+                <span className="label-text text-black pl-3 dark:text-darkText">Email</span>
               </label>
               <input type='email' id="email" placeholder="Enter Your Email" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.email} onChange={updateForm('email')} autoComplete='email' />
               <span className="err-message text-red">{formErrorMsg.email}</span>
@@ -153,9 +153,9 @@ const Register = () => {
               <input type='text' id="tel-number" placeholder="Enter Your Phone #" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.phoneNumber} onChange={updateForm('phoneNumber')} />
               <span className="err-message text-red">{formErrorMsg.phoneNumber}</span>
               <br />
-              <div className="text-left pb-6 pl-3 flex space-x-32">
-                <p>Already have an account?</p>
-                <Link to='/login'>Sign in instead</Link>
+              <div className="pb-6 flex gap-2 justify-between">
+                <p className="text-left">Already have an account?</p>
+                <Link to='/login' className="text-right">Sign in instead</Link>
               </div>
               <button className="btn bg-pink text-pureWhite border-none self-center w-1/2" onClick={onRegister}>Sign Up</button>
             </div>
