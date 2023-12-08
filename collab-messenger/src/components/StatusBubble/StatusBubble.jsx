@@ -13,8 +13,8 @@ export default function StatusBubble({ view, userHandle }) {
   };
 
   const positionOfStatus = {
-    'ChatDetails': 'left-14 top-10',
-    'ChatDetails-Mobile': 'left-[86px] top-9',
+    'ChatDetails': 'left-[32px] bottom-[4px]',
+    'ChatDetails-Mobile': 'left-[32px] bottom-[4px]',
     'ChatBox': 'left-8 top-10'
   }
 
