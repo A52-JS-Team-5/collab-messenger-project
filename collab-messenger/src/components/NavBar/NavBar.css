@@ -4,10 +4,6 @@
   align-items: center;
 }
 
-#iconLogo:hover {
-  cursor: pointer;
-}
-
 #navbar {
   border: 1px solid #eaeaea;
   background-color: #fdfdfd;
