@@ -14,6 +14,8 @@ const Teams = () => {
     const [teams, setTeams] = useState([]);
     const navigate = useNavigate();
     const [teamsMember, setTeamsMember] = useState([]);
+    const [userTeamsChannels, setUserTeamsChannels] = useState([]);
+    const [unreadTeamChannels, setUnreadTeamChannels] = useState([]);
 
     useEffect(() => {
         if (userData?.handle) {
@@ -58,6 +60,7 @@ const Teams = () => {
                 Promise.all(promises)
                     .then((teamDetails) => {
                         setTeams(teamDetails.filter(team => team !== 'Team does not exist!'));
+                        setUserTeamsChannels(teamDetails.map(team => team.channels));
                         setIsLoading(false);
                     })
                     .catch((error) => {
@@ -101,6 +104,28 @@ const Teams = () => {
         }
     }, [teamsMember]);
 
+    useEffect(() => {
+        const channelsRef = ref(db, 'channels');
+            const channelsListener = onValue(channelsRef, (snapshot) => {
+                const updatedChannelData = snapshot.val();
+                
+                if (updatedChannelData) {
+                    Object.entries(updatedChannelData).forEach(([channelId, channel]) => {
+                        const isChannelNotRead = userTeamsChannels.some(el => el.includes(channelId)) && channel.participants[userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[userData?.handle];
+                        if (isChannelNotRead === true) {
+                            setUnreadTeamChannels(prev => [...prev, channelId]);
+                        } else {
+                            setUnreadTeamChannels(prev => [...prev]);
+                        }
+                    });
+                }
+            });
+           
+            return () => {
+                channelsListener();
+            }
+    }, [userData?.handle, userTeamsChannels])
+
     return (
         <div className='mt-4'>
             <div className='p-4 flex flex-row justify-between items-center bg-pureWhite rounded-lg dark:bg-darkFront dark:text-darkText'>
@@ -114,6 +139,15 @@ const Teams = () => {
                         {teams.map(team => {
                             return (
                                 <div className='flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer dark:bg-darkFront dark:text-darkText' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
+                                    {unreadTeamChannels.length > 0 && team?.channels.some(c => unreadTeamChannels.includes(c)) ? (
+                                        <div className='absolute pl-52 pb-28'>
+                                            <div className='w-2 h-2 rounded-full bg-pink'></div>
+                                        </div>
+                                    ) : (
+                                        <div className='absolute pl-52'>
+                                            <div className='w-2 h-2 rounded-full bg-transparent'></div>
+                                        </div>
+                                    )}
                                     <img src={team?.photoURL} className='w-20 h-20 object-cover rounded-full' />
                                     <div className='font-bold truncate w-48'>{team?.name}</div>
                                 </div>
