@@ -88,8 +88,8 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
             {!showTitle && <div>
-              <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-pureWhite border-3 input-md m-3" />
-              <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh]" onClick={setNewContent}>Save</button>
+              <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-pureWhite border-3 dark:text-pureWhite dark:bg-darkInput input-md m-3" />
+              <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh] dark:text-pureWhite dark:bg-darkInput" onClick={setNewContent}>Save</button>
             </div>}
           </div>
         )}
