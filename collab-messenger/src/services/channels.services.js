@@ -123,7 +123,9 @@ export const userChannelsDocument = (snapshots) => {
         : [],
       messages: channel.messages ? Object.keys(channel.messages) : [],
       lastMessage: channel.lastMessage,
-      participantsReadMsg: channel.participantsReadMsg,
+      participantsReadMsg: channel.participantsReadMsg
+      ? channel.participantsReadMsg
+      : {},
     };
   });
 };
