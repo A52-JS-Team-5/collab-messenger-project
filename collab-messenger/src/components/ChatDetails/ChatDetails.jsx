@@ -17,6 +17,7 @@ import GroupChatAvatar from '../GroupChatAvatar/GroupChatAvatar';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useMediaQuery } from 'react-responsive';
+import { getUserByHandle } from '../../services/users.services';
 
 export default function ChatDetails() {
   const loggedUser = useContext(AppContext);
@@ -157,6 +158,18 @@ export default function ChatDetails() {
     };
   }, [chatId, loggedUser.userData?.handle]);
 
+  // Show user other participant's name and surname
+  const [participantTitle, setParticipantTitle] = useState('');
+  useEffect(() => {
+    if (!isGroupChat && chatTitle) {
+      getUserByHandle(chatTitle)
+        .then(user => {
+          setParticipantTitle(`${user.name} ${user.surname}`)
+        })
+        .catch(error => console.log(error))
+    }
+  }, [chatTitle, isGroupChat])
+
   // Responsiveness
   const isDesktopOrLaptop = useMediaQuery({
     query: '(min-width: 1224px)'
@@ -181,18 +194,24 @@ export default function ChatDetails() {
       {isDesktopOrLaptop && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 h-full'>
         <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-pureWhite dark:bg-darkFront`}>
           <div id="header" className="sticky w-full pt-3 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput">
-            <div id="header-content" className="flex gap-3 items-center">
-              <div id='chat-avatar' className="flex flex-row gap-3">
+            <div id="header-content" className="flex flex-row gap-3 justify-center">
+              <div id='chat-avatar'>
                 {isGroupChat === true ? (
                   <GroupChatAvatar />
                 ) : (
-                  <div>
+                  <div className='w-10 relative avatar'>
                     <Avatar user={chatTitle} isGroup={chatData?.isGroup} />
                     <StatusBubble view={'ChatDetails'} userHandle={chatTitle} />
                   </div>
                 )}
-                <div id='chat-title' className="flex place-items-end mb-1">{chatTitle}</div>
               </div>
+              {!isGroupChat && <div className='flex flex-col'>
+                <div id='chat-title' className="flex place-items-end text-md font-semibold">{participantTitle}</div>
+                <div id='chat-title' className="flex place-items-end text-xs">@{chatTitle}</div>
+              </div>}
+              {isGroupChat && <div className='flex flex-col justify-center h-[46.5px]'>
+                < div id='chat-title' className="flex place-items-end text-md font-semibold">{chatTitle}</div>
+              </div>}
             </div>
             <div className='flex justify-end gap-1'>
               <button className="btn btn-ghost btn-sm" onClick={() => setIsChatInfoVisible(!isChatInfoVisible)}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
@@ -243,23 +262,29 @@ export default function ChatDetails() {
           </div>
         )}
       </div>}
-      {isTabletOrMobile && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 h-[80vh]'>
+      {isTabletOrMobile && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 max-h-fit'>
         {activeMobileComponent === 0 && <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-pureWhite dark:bg-darkFront p-2`}>
-          <div id="header" className="sticky w-full pt-2 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput">
-            <div id="header-content" className="flex gap-2 items-center">
+          <div id="header" className="sticky w-full pt-2 flex flex-row sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput">
+            <div id="header-content" className="flex gap-2 flex-row justify-center">
               <div className='flex flex-start'>
                 <button className='btn btn-ghost' onClick={() => navigate('/app/chats')}><i className="fa-solid fa-arrow-left"></i></button>
               </div>
-              <div id='chat-avatar' className="flex flex-row gap-3">
+              <div id='chat-avatar' className="flex flex-row gap-3 justify-center items-center">
                 {isGroupChat === true ? (
                   <GroupChatAvatar />
                 ) : (
-                  <div className='w-10'>
-                    <Avatar user={chatTitle} isGroup={chatData?.isGroup} />
+                  <div className='w-10 relative avatar'>
+                    <Avatar user={chatTitle} />
                     <StatusBubble view={'ChatDetails-Mobile'} userHandle={chatTitle} />
                   </div>
                 )}
-                <div id='chat-title' className="flex place-items-end mb-1">{chatTitle}</div>
+                {!isGroupChat && <div className='flex flex-col'>
+                  < div id='chat-title' className="flex place-items-end text-md font-semibold">{participantTitle}</div>
+                  <div id='chat-title' className="flex place-items-end text-xs">@{chatTitle}</div>
+                </div>}
+                {isGroupChat && <div className='flex flex-col justify-center h-[46.5px]'>
+                  < div id='chat-title' className="flex place-items-end text-md font-semibold">{chatTitle}</div>
+                </div>}
               </div>
             </div>
             <div className='flex justify-end gap-1'>
@@ -315,7 +340,8 @@ export default function ChatDetails() {
             <ChatInformation isGroupChat={isGroupChat} chatTitle={chatTitle} chatId={chatId} chatData={chatData} />
           </div>
         )}
-      </div>}
+      </div>
+      }
     </>
   )
 }
