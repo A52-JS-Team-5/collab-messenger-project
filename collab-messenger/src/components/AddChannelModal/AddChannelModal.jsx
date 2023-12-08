@@ -154,8 +154,8 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 <span className="label-text text-black bg-transparent dark:text-darkText">Channel Title</span>
               </label>
               <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText" />
-              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange}>
-                <option disabled selected>Select Channel Type</option>
+              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange} defaultValue='default'>
+                <option disabled value='default'>Select Channel Type</option>
                 <option>Public</option>
                 <option>Private</option>
               </select>
