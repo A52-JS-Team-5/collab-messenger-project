@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './NavBar.css';
-import icon from '/icon.png'
 import AppContext from '../../context/AuthContext';
 import { DEFAULT_USER_PHOTO } from '../../common/constants';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
+import iconLogo from '../../assets/app-icon/app-icon.svg';
+import logoType from '../../assets/app-icon/chatter-logotype.svg';
+import logoTypeDark from '../../assets/app-icon/chatter-logotype-dark.svg';
 
 export default function NavBar({ onLogout }) {
   const navigate = useNavigate();
@@ -38,8 +40,10 @@ export default function NavBar({ onLogout }) {
   return (
     <nav className='sticky top-4 z-[50]'>
       <div id='navbar' className="navbar rounded-xl flex flex-row shadow-lg dark:!bg-darkFront dark:!border-none">
-        <div className="basis-1/4">
-          <img src={icon} className='max-h-14' id='icon' alt="Chatter Logo" onClick={() => { navigate("/") }} />
+        <div className="basis-1/4 gap-2">
+          <img src={iconLogo} className='max-h-10 cursor-pointer' id='iconLogo' alt="Chatter Logo" onClick={() => { navigate("/") }} />
+          <img src={logoType} className='max-h-5 cursor-pointer relative dark:hidden' id='logoType' alt="Chatter Logotype" onClick={() => { navigate("/") }} />
+          <img src={logoTypeDark} className='max-h-5 cursor-pointer relative hidden dark:block' id='logoType' alt="Chatter Logotype" onClick={() => { navigate("/") }} />
         </div>
         <div className='basis-full justify-end hidden 2xl:flex'>
           <div className="flex-none">
