@@ -3,9 +3,10 @@ import cn from "classnames";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { deleteTeam, removeTeamFromUser } from "../../services/teams.services";
+import { deleteTeam, removeTeamFromOwner, removeTeamFromUser } from "../../services/teams.services";
 import { createNotification, pushNotifications } from "../../services/notifications.services";
 import { DELETED_TEAM_NOTIFICATION, DELETED_TEAM_TYPE } from "../../common/constants";
+import { deleteChannel, getChannelById } from "../../services/channels.services";
 
 const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -22,9 +23,39 @@ const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
       .then(() => {
         navigate(`/app/teams`);
 
-        return Promise.all(teamData.members.map((member) =>
-          removeTeamFromUser(teamId, member))
-        )
+        const getChannelDataPromises = teamData.channels.map((channelId) => {
+          return getChannelById(channelId)
+            .then((data) => ({
+              id: channelId,
+              title: data.title,
+              createdOn: data.createdOn,
+              isPublic: data.isPublic,
+              participants: data.participants,
+              messages: data.messages,
+              lastMessage: data.lastMessage,
+              participantsReadMsg: data.participantsReadMsg,
+              team: data.team,
+            }))
+            .catch((e) => console.log(e));
+        });
+
+        Promise.all(getChannelDataPromises)
+          .then((channelDataArray) => {
+            const deleteChannelPromises = channelDataArray.map((channelData) =>
+              deleteChannel(channelData)
+            );
+
+            return Promise.all(deleteChannelPromises);
+          })
+      })
+      .then(() => {
+        const removeTeamFromUsersPromises = teamData.members.map((member) => {
+          return removeTeamFromUser(teamId, member);
+        });
+
+        const removeTeamFromOwnerPromise = removeTeamFromOwner(teamId, teamData.owner);
+
+        return Promise.all([removeTeamFromUsersPromises, removeTeamFromOwnerPromise]);
       })
       .then(() => {
         return createNotification(`${DELETED_TEAM_NOTIFICATION}: ${teamData.name}.`, DELETED_TEAM_TYPE)
@@ -36,8 +67,9 @@ const DeleteTeamModal = ({ teamData, teamId, isOpen, onClose }) => {
         toast('Error in deleting team. Please try again later.')
         console.log('Error deleting team: ', e.message);
       })
-
-    onClose();
+      .finally(() => {
+        onClose();
+      });
   }
 
   return (
