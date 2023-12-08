@@ -65,6 +65,11 @@ const AddTeamMembers = ({ teamDetails }) => {
     const handleSaveTeam = () => {
         const membersToAdd = selectedMembers.map((member) => member.handle);
 
+        if (membersToAdd.length === 0) {
+            toast('Please add at least one member to continue.');
+            return;
+        }
+
         updateTeamMembers(teamDetails.id, membersToAdd)
             .then(() => {
                 toast('Member(s) added successfully.');
@@ -145,7 +150,6 @@ const AddTeamMembers = ({ teamDetails }) => {
                             </div>
                         )}
                     </div>
-
                     <div className="modal-action flex-row">
                         <button className="btn btn-outline border-pink text-pink" onClick={handleCancel}>Cancel</button>
                         <button type="button" onClick={handleSaveTeam} className="btn bg-pink border-none text-pureWhite">Save</button>
