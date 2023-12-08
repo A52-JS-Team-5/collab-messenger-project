@@ -22,6 +22,15 @@ const InsightsNotification = ({ notificationId }) => {
         deleteNotification(user.userData.handle, notificationDetails.id);
     }
 
+    const timeOptions = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+    };
+
     const renderNotificationContent = () => {
         switch (notificationDetails.type) {
             case 'addedToTeam':
@@ -32,7 +41,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleDateString()}</p>
+                                <time className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleString('en-GB', timeOptions)}</time>
                                 <h3 className='font-bold text-lg text-left'>{notificationDetails.message}</h3>
                                 <p className="text-left">Let the collaboration begin!</p>
                             </div>
@@ -51,7 +60,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <i className="fa-solid fa-user-minus"></i>
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleDateString()}</p>
+                                <time className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleString('en-GB', timeOptions)}</time>
                                 <h3 className='font-bold text-lg text-left'>{notificationDetails.message}</h3>
                                 <p className="text-left">You can still access other teams and channels.</p>
                             </div>
@@ -69,7 +78,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleDateString()}</p>
+                                <time className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleString('en-GB', timeOptions)}</time>
                                 <h3 className='font-bold text-lg text-left'>{notificationDetails.message}</h3>
                                 <p className="text-left">Join the conversation in this new channel!</p>
                             </div>
@@ -87,7 +96,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <i className="fa-solid fa-user-plus"></i>
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleDateString()}</p>
+                                <time className="text-left text-xs mb-1">{new Date(notificationDetails.timestamp).toLocaleString('en-GB', timeOptions)}</time>
                                 <h3 className='font-bold text-lg text-left'>{notificationDetails.message}</h3>
                                 <p className="text-left">Explore other channels to stay engaged.</p>
                             </div>
