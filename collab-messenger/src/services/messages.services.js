@@ -138,3 +138,36 @@ export const editMessage = (messageId, updates) => {
     console.log('Error editing comment: ', e.message);
   });
 };
+
+export const saveMessage = (handle, msgId) => {
+  const updateItems = {};
+  updateItems[`/messages/${msgId}/savedBy/${handle}`] = true;
+  updateItems[`/users/${handle}/savedMessages/${msgId}`] = true;
+
+  return update(ref(db), updateItems)
+    .catch((e) => console.log('Error in saving message', e.message));
+};
+
+export const unsaveMessage = (handle, msgId) => {
+  const updateItems = {};
+  updateItems[`/messages/${msgId}/savedBy/${handle}`] = null;
+  updateItems[`/users/${handle}/savedMessages/${msgId}`] = null;
+
+  return update(ref(db), updateItems)
+    .catch((e) => console.log('Error in unsaving message', e.message));
+};
+
+export const getSavedMessageById = (messageId) => {
+  return get(ref(db, `messages/${messageId}`))
+    .then((snapshot) => {
+      if (!snapshot.exists()) {
+        return null;
+      }
+
+      return { ...snapshot.val(), id: messageId };
+    })
+    .catch((error) => {
+      console.error('Error fetching message: ', error);
+      return null;
+    });
+};
