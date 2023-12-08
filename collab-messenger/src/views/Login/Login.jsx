@@ -67,9 +67,9 @@ const Login = () => {
   };
 
   return (
-    <div className="hero min-h-[90vh] px-40 max-2xl:px-2 dark:text-darkText">
-      <div className="hero-content flex-col lg:flex-row-reverse pt-20 pb-20 gap-16 max-2xl:gap-8">
-        <div className='card rounded rounded-3xl bg-beige shadow-xl min-w-[50%] dark:bg-darkFront'>
+    <div className="max-2xl:px-2 dark:text-darkText flex flex-row items-center justify-center min-w-fit min-h-[88vh]">
+      <div className="flex-col lg:flex-row-reverse gap-16 max-2xl:gap-8">
+        <div className='card rounded rounded-3xl bg-beige shadow-xl min-w-[70vw] lg:min-w-[40vw] xl:min-w-[26vw] max-w-[26vw] dark:bg-darkFront'>
           <div className='form-control flex flex-wrap flex-auto'>
             <h3 className="text-3xl self-center text-black pb-8 font-bold dark:text-darkText">Sign In</h3>
             <label className="label" htmlFor='username'>
@@ -83,9 +83,9 @@ const Login = () => {
             <input type='password' id='password' placeholder="Type your password" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.password} onChange={updateForm('password')} />
             <span className="err-message text-red">{formErrorMsg.password}</span>
             <br />
-            <div className="text-left pb-6 pl-3 flex space-x-24">
-              <p>New to Chatter?</p>
-              <Link to='/login'>Create an account</Link>
+            <div className="pb-6 flex justify-between">
+              <p className='text-left '>New to Chatter?</p>
+              <Link to='/register' className='text-right'>Create an account</Link>
             </div>
             <button className="btn bg-pink self-center border-none text-pureWhite w-1/2" onClick={handleLogin}>Sign In</button>
           </div>
