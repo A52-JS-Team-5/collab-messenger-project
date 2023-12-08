@@ -119,6 +119,14 @@ export const removeTeamFromUser = (teamId, member) => {
         .catch((e) => console.log('Error updating details', e.message));
 }
 
+export const removeTeamFromOwner = (teamId, member) => {
+    const updates = {};
+    updates[`/users/${member}/teamsOwner/${teamId}`] = null;
+
+    return update(ref(db), updates)
+        .catch((e) => console.log('Error updating details', e.message));
+}
+
 export const getTeamsByUser = (handle) => {
     return get(ref(db, `users/${handle}/teamsMember`))
         .then((snapshot) => {
