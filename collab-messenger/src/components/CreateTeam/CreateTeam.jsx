@@ -67,10 +67,10 @@ export default function CreateTeam() {
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     toast(`Team name is already taken. Please choose a different name.`);
-                    throw new Error(`Team name is already taken.`);
+                    //throw new Error(`Team name is already taken.`);
+                } else {
+                    return createTeam(teamData.name, teamData.description, user.userData.handle, [], []);
                 }
-
-                return createTeam(teamData.name, teamData.description, user.userData.handle, [], []);
             })
             .then((teamId) => {
                 addTeam(user.userData.handle, teamId);
@@ -127,10 +127,10 @@ export default function CreateTeam() {
                     pushNotifications(member, notificationId))))
 
             .then(() => {
-                createChannel(newTeamId,'General', membersToAdd)
-                .then((channelId) => {
-                    addChannel(membersToAdd, channelId, newTeamId, user.userData.handle);
-                })
+                createChannel(newTeamId, 'General', membersToAdd)
+                    .then((channelId) => {
+                        addChannel(membersToAdd, channelId, newTeamId, user.userData.handle);
+                    })
                 navigate(`/app/teams/${newTeamId}`);
             })
             .catch((error) => {
@@ -160,23 +160,23 @@ export default function CreateTeam() {
             const author = [user.userData.handle];
 
             updateTeamMembers(newTeamId, author)
-            .then(() => {
-                return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamData.name}.`, ADDED_TO_TEAM_TYPE, newTeamId)
-            })
-            .then((notificationId) =>
+                .then(() => {
+                    return createNotification(`${ADDED_TO_TEAM_NOTIFICATION}: ${teamData.name}.`, ADDED_TO_TEAM_TYPE, newTeamId)
+                })
+                .then((notificationId) =>
                     pushNotifications(author, notificationId))
-                
-            .then(() => {
-                createChannel(newTeamId,'General', author)
-                    .then((channelId) => {
-                        addChannel(author, channelId, newTeamId, author);
-                    })
-                    .catch((e) => {
-                        console.log(`An error occurred while trying to create General channel: ${e.message}`);
-                    })
-    
-                navigate(`/app/teams/${newTeamId}`);  
-            })
+
+                .then(() => {
+                    createChannel(newTeamId, 'General', author)
+                        .then((channelId) => {
+                            addChannel(author, channelId, newTeamId, author);
+                        })
+                        .catch((e) => {
+                            console.log(`An error occurred while trying to create General channel: ${e.message}`);
+                        })
+
+                    navigate(`/app/teams/${newTeamId}`);
+                })
 
         } else {
             setOpen(false);
@@ -216,13 +216,13 @@ export default function CreateTeam() {
                                     <input type="text" ref={inputRef} onChange={(e) => {
                                         handleSearchUsers(e.target.value);
                                     }}
-                                        className="input input-bordered w-full text-black bg-white dark:bg-darkInput"
+                                        className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText"
                                     />
                                     {/* Display search results */}
                                     {searchResults.length > 0 && (
                                         <ul className="scrollable-list max-h-24	overflow-y-auto">
                                             {searchResults.map((user) => (
-                                                <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2'>
+                                                <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2 dark:hover:bg-darkAccent rounded-md'>
                                                     <img src={user.photoURL} className='h-8 w-8 rounded-full' />
                                                     <div className='flex flex-col items-start'>
                                                         <p className='text-sm'>{user.name}{' '}{user.surname}</p>
