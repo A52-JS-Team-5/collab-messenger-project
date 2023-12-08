@@ -1,17 +1,62 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import iconLogo from '../../assets/app-icon/app-icon.svg'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import './SideMenu.css';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
+import { db } from "../../config/firebase-config";
+import { ref, onValue } from 'firebase/database';
+import AppContext from "../../context/AuthContext";
 
 const SideMenu = () => {
     const [activeLink, setActiveLink] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const loggedUser = useContext(AppContext);
+    const [areAllChatsRead, setAreAllChatsRead] = useState(true);
+    const [areAllChannelsRead, setAreAllChannelsRead] = useState(true);
 
     useEffect(() => {
         setActiveLink(location.pathname);
-    }, [location.pathname]);
+
+        const chatsRef = ref(db, `chats`);
+        const chatsListener = onValue(chatsRef, (snapshot) => {
+          const updatedChatData = snapshot.val();
+    
+          if (updatedChatData) {
+            const userChats = Object.entries(updatedChatData).filter(([ , chat]) => {
+              return chat.participants && chat.participants[loggedUser.userData?.handle] && chat.lastMessage !== chat.participantsReadMsg?.[loggedUser.userData?.handle];
+            });
+    
+            if (userChats.length > 0) {
+                setAreAllChatsRead(false);
+            } else {
+                setAreAllChatsRead(true);
+            }
+          }
+        });
+
+        const channelsRef = ref(db, 'channels');
+        const channelsListener = onValue(channelsRef, (snapshot) => {
+            const updatedChannelData = snapshot.val();
+            
+          if (updatedChannelData) {
+            const unreadChannels = Object.entries(updatedChannelData).filter(([ , channel]) => {
+              return channel.participants && channel.participants[loggedUser.userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[loggedUser.userData?.handle];
+            });
+            
+            if (unreadChannels.length > 0) {
+                setAreAllChannelsRead(false);
+            } else {
+                setAreAllChannelsRead(true);
+            }
+          }
+        });
+        
+        return () => {
+          chatsListener();
+          channelsListener();
+        }
+    }, [location.pathname, loggedUser.userData?.handle]);
 
     return (
         <div className='flex flex-col max-xl:hidden xl:display-flex xl:display-flex-col pb-4'>
@@ -25,12 +70,30 @@ const SideMenu = () => {
                 </li>
                 <li>
                     <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/chats') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                        {areAllChatsRead === true ? (
+                            <div className='pl-9'>
+                                <div className='w-2 h-2 rounded-full bg-transparent'></div>
+                            </div>
+                        ) : (
+                            <div className='pl-9'>
+                                <div className='w-2 h-2 rounded-full bg-pink'></div>
+                            </div>
+                        )}
                         <i className="fa-solid fa-message"></i>
                         <p className='text-xs'>Chats</p>
                     </Link>
                 </li>
                 <li>
                     <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/teams') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                        {areAllChannelsRead === true ? (
+                            <div className='pl-9'>
+                                <div className='w-2 h-2 rounded-full bg-transparent'></div>
+                            </div>
+                        ) : (
+                            <div className='pl-9'>
+                                <div className='w-2 h-2 rounded-full bg-pink'></div>
+                            </div>
+                        )}
                         <i className="fa-solid fa-users"></i>
                         <p className='text-xs'>Teams</p>
                     </Link>
