@@ -205,10 +205,10 @@ export const getChannelByName = (name) => {
 export const deleteChannel = (channelData) => {
 
   return Promise.all([
-    Object.keys(channelData.participants).forEach(user => {
+    Object.keys(channelData.participants).map(user => {
       return remove(ref(db, `/users/${user}/channels/${channelData.id}`))
     }),
-    Object.keys(channelData.messages).forEach(message => {
+    Object.keys(channelData.messages).map(message => {
       return remove(ref(db, `/messages/${message}`))
     }),
     remove(ref(db, `/teams/${channelData.team}/channels/${channelData.id}`)),
