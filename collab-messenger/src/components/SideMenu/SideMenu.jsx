@@ -24,15 +24,21 @@ const SideMenu = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/chats') ? 'dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                    <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/chats') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
                         <i className="fa-solid fa-message"></i>
                         <p className='text-xs'>Chats</p>
                     </Link>
                 </li>
                 <li>
-                    <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/teams') ? 'dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                    <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/teams') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
                         <i className="fa-solid fa-users"></i>
                         <p className='text-xs'>Teams</p>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/app/later" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/later') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                        <i className="fa-solid fa-bookmark"></i>
+                        <p className='text-xs'>Later</p>
                     </Link>
                 </li>
             </ul>
