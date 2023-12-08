@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from 'react';
 import AppContext from '../../context/AuthContext';
 import Avatar from '../Avatar/Avatar';
-import { getChatById } from '../../services/chats.services';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
 import StatusBubble from '../StatusBubble/StatusBubble';
@@ -24,24 +21,6 @@ export default function ChatBox({ chatId, onClick }) {
   const isGroupChat = chatData?.isGroup === true;
 
   useEffect(() => {
-    getChatById(chatId)
-      .then((data) => {
-        setChatData(data);
-        if (data.isGroup === true) {
-          setChatTitle(data.title);
-        } else {
-          setChatTitle(Object.keys(data.participants).find(user => user !== loggedUser.userData?.handle));
-        }
-
-        setLastMessage(data.lastMessage);
-        setIsLastMsgGif(data.lastMessage.includes('giphy'));
-        setIsLastMsgFile(data.lastMessage.includes('chat_uploads'));
-      })
-      .catch((e) => {
-        toast('Error in getting chat data. Please try again');
-        console.log(e.message);
-      })
-
     const chatRef = ref(db, `chats/${chatId}`);
     const chatListener = onValue(chatRef, (snapshot) => {
       const updatedChatData = snapshot.val();
@@ -51,6 +30,10 @@ export default function ChatBox({ chatId, onClick }) {
       if (updatedChatData?.lastMessage) {
         setLastMessage(updatedChatData.lastMessage);
       }
+
+      setIsLastMsgGif(updatedChatData.lastMessage.includes('giphy'));
+      setIsLastMsgFile(updatedChatData.lastMessage.includes('chat_uploads'));
+
       if (updatedChatData?.participantsReadMsg) {
         const userLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
         setAreMessagesRead(userLastReadMessage === updatedChatData.lastMessage);
