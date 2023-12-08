@@ -5,9 +5,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { updateChannelTitle } from "../../services/channels.services";
 import { db } from '../../config/firebase-config';
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { getChannelById } from "../../services/channels.services";
 import { getUploadedFilesInChannel } from "../../common/helpers";
 import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
 import AddChannelMembers from "../AddChannelMembers/AddChannelMembers";
@@ -28,15 +25,6 @@ export default function ChannelInformation() {
   const [showTitle, setShowTitle] = useState(true);
 
   useEffect(() => {
-    getChannelById(channelId)
-      .then((data) => {
-        setChannelData(data);
-      })
-      .catch((e) => {
-        toast('Error in getting channel data. Please try again.')
-        console.log(e.message);
-      });
-
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
@@ -103,8 +91,8 @@ export default function ChannelInformation() {
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
             {!showTitle && (
               <div>
-                <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md m-3" />
-                <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh]" onClick={setNewContent}>Save</button>
+                <input type="text" value={`${form}`} onChange={onInputChange} onKeyDown={handleKeyDown} className="input input-bordered bg-white border-3 input-md m-3 dark:text-pureWhite dark:bg-darkInput" />
+                <button className="btn btn-ghost btn-xs flex self-center text-black hover:bg-lightBlue mb-3 ml-[11vh] dark:text-pureWhite dark:bg-darkFront" onClick={setNewContent}>Save</button>
               </div>
             )}
           </div>
@@ -117,7 +105,7 @@ export default function ChannelInformation() {
             <LeaveChannelModal channelId={channelId} />
           </div>
         )}
-        <div className="collapse collapse-arrow bg-grey mt-4 text-left dark:bg-darkAccent">
+        <div className="collapse collapse-arrow bg-grey mt-4 text-left dark:bg-darkAccent dark:text-pureWhite">
           <input type="checkbox" />
           <div className="collapse-title text-sm font-medium ">
             <i className="fa-solid fa-user-group text-pink mr-2"></i>
@@ -126,7 +114,7 @@ export default function ChannelInformation() {
           <div className="collapse-content text-sm">
             {channelParticipants.map(user => (
               <div key={user} >
-                <div className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite cursor-pointer" onClick={() => handleOpenUserProfileModal(user)}>
+                <div className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite hover:text-black cursor-pointer" onClick={() => handleOpenUserProfileModal(user)}>
                   <Avatar user={user} />
                   <p>{user}</p>
                 </div>
@@ -135,7 +123,7 @@ export default function ChannelInformation() {
             )}
           </div>
         </div>
-        <div className="collapse collapse-arrow bg-grey mt-2 text-left dark:bg-darkAccent">
+        <div className="collapse collapse-arrow bg-grey mt-2 text-left dark:text-pureWhite dark:bg-darkAccent">
           <input type="checkbox" />
           <div className="collapse-title text-sm font-medium">
             <i className="fa-solid fa-box-archive text-pink mr-2"></i>
