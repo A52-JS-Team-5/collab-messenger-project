@@ -172,7 +172,7 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
             </div>
           </div>
 
-          <div id='messages-wrapper' className="p-3 h-[71vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
+          <div id='messages-wrapper' className="p-3 h-[67vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
         [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:text-darkText">
             {areThereMessages === true ? (
               <MessagesList chatMessages={allMessages} />
