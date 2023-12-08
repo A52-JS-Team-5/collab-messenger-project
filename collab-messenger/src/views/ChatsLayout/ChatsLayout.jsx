@@ -1,7 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { getLoggedUserChats, sortByDateDesc } from "../../services/chats.services";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import ChatBox from "../../components/ChatBox/ChatBox";
 import AppContext from "../../context/AuthContext";
@@ -11,26 +8,12 @@ import { db } from "../../config/firebase-config";
 import { ref, onValue } from 'firebase/database';
 import EmptyList from "../../components/EmptyList/EmptyList";
 import { useMediaQuery } from 'react-responsive';
+import { sortByDateDesc } from "../../services/chats.services";
 
 export default function ChatsLayout() {
   const [allLoggedUserChats, setAllLoggedUserChats] = useState([]);
   const loggedUser = useContext(AppContext);
-  const [userChatIds, setUserChatIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    getLoggedUserChats(loggedUser.userData?.handle)
-      .then(chats => {
-        const sortedChats = sortByDateDesc(chats);
-        setAllLoggedUserChats(sortedChats);
-        setUserChatIds(sortedChats.map(chat => chat.id));
-      })
-      .catch(e => {
-        toast('Error in getting chats. Please try again.');
-        console.log(e.message);
-      })
-
-  }, [loggedUser.userData?.handle]);
 
   useEffect(() => {
     const chatsRef = ref(db, `chats`);
@@ -65,7 +48,7 @@ export default function ChatsLayout() {
     return () => {
       chatsListener();
     }
-  }, [userChatIds, loggedUser.userData?.handle]);
+  }, [loggedUser.userData?.handle]);
 
   // Responsiveness
   const isDesktopOrLaptop = useMediaQuery({
