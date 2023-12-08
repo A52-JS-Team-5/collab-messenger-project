@@ -63,7 +63,7 @@ export default function ChannelBox({ channelId, onClick }) {
             </p>
           </div>
           <div className="flex justify-between items-center mb-1">
-            <p className="text-xs font-medium text-black dark:text-darkText">
+            <p className="text-xs font-medium text-black dark:text-darkText text-left truncate w-48">
               {isLastMsgGif ? 'GIF' : isLastMsgFile ? 'File Sent' : lastMessage}
             </p>
           </div>
