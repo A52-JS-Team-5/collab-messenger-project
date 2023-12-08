@@ -154,7 +154,7 @@ export default function ChatsLayout() {
               </div>
             )}
           </div>}
-          {activeMobileComponent === 1 && !isLoading && <div className="w-full rounded-md flex items-center pb-4 pt-2">
+          {activeMobileComponent === 1 && !isLoading && <div className="w-full rounded-md flex items-center pb-4">
             {allLoggedUserChats.length > 0 ? (
               <div className="w-full h-full flex flex-col items-start">
                 <Outlet />
