@@ -3,24 +3,27 @@ import image from '/src/assets/placeholderImg.png'
 import imageOne from '/src/assets/image1.svg'
 import imageTwo from '/src/assets/image2.svg'
 import imageThree from '/src/assets/image3.svg'
+import { useContext } from 'react';
+import AppContext from '../../context/AuthContext';
 
 function Home() {
 
   const navigate = useNavigate();
-    
+  const user = useContext(AppContext);
+
   return (
     <div>
       <div className="hero my-12 dark:text-darkText">
         <div className="hero-content flex-col lg:flex-row-reverse gap-14">
-            <img src={image} className="max-w-md rounded-lg" />
-            <div className='flex flex-col items-start max-lg:items-center max-w-2xl'>
-                <h1 className="text-5xl font-bold text-black text-left max-lg:text-center dark:text-darkText">Get to know Chatter</h1>
-                <p className="py-6 text-black text-left max-lg:text-center dark:text-darkText">Where collaboration feels effortless, offering intuitive communication and customizable channels. Stay connected, work together, and unleash your team&apos;s creativity with Chatter - your go-to platform for smooth collaboration!</p>
-                <div className='space-x-4'>
-                    <button className="bg-pink text-pureWhite" onClick={() => navigate('/register')}>Register</button>
-                    <button className="bg-blue text-pureWhite" onClick={() => navigate('/login')}>Login</button>
-                </div>
-            </div>
+          <img src={image} className="max-w-md rounded-lg" />
+          <div className='flex flex-col items-start max-lg:items-center max-w-2xl'>
+            <h1 className="text-5xl font-bold text-black text-left max-lg:text-center dark:text-darkText">Get to know Chatter</h1>
+            <p className="py-6 text-black text-left max-lg:text-center dark:text-darkText">Where collaboration feels effortless, offering intuitive communication and customizable channels. Stay connected, work together, and unleash your team&apos;s creativity with Chatter - your go-to platform for smooth collaboration!</p>
+            {!user && <div className='space-x-4'>
+              <button className="bg-pink text-pureWhite" onClick={() => navigate('/register')}>Register</button>
+              <button className="bg-blue text-pureWhite" onClick={() => navigate('/login')}>Login</button>
+            </div>}
+          </div>
         </div>
       </div>
       <div className="hero my-12 bg-white dark:bg-darkFront">
@@ -99,7 +102,7 @@ function Home() {
           </div>
         </div>
       </div>
-  </div>
+    </div>
   )
 }
 

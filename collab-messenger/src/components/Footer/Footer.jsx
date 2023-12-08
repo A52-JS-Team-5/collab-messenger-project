@@ -5,10 +5,13 @@ import instagram from '/insta.png'
 import linkedIn from '/linkedIn.png'
 import youtube from '/youtube.png'
 import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react'
+import AppContext from '../../context/AuthContext'
 
 export default function Footer() {
 
   const navigate = useNavigate();
+  const user = useContext(AppContext);
 
   const handleLinkClick = () => {
     // Find the checkbox element and uncheck it
@@ -28,10 +31,10 @@ export default function Footer() {
                 <h1 className='text-left'>Medium length heading</h1>
                 <p className='text-left'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
               </div>
-            <div className='flex items-center justify-center md:justify-end md:w-1/3 p-4 md:pl-0 md:pr-4'>
+              {!user && <div className='flex items-center justify-center md:justify-end md:w-1/3 p-4 md:pl-0 md:pr-4'>
               <button className="bg-pink text-pureWhite mr-2" onClick={() => navigate('/register')}>Register</button>
               <button className="bg-blue text-pureWhite" onClick={() => navigate('/login')}>Login</button>
-            </div>
+            </div>}
           </div>
         </div>
       </div>
