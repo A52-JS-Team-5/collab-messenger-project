@@ -2,12 +2,13 @@ import { useState, useContext, useRef } from "react";
 import cn from 'classnames'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { addChannel, createChannel } from "../../services/channels.services";
+import { addChannel, createChannel, getChannelsByTeamId } from "../../services/channels.services";
 import { searchUsers } from '../../services/users.services';
 import PropTypes from "prop-types";
 import AppContext from '../../context/AuthContext';
 import { createNotification, pushNotifications } from "../../services/notifications.services";
-import { CREATED_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH } from "../../common/constants";
+import { CREATED_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH, ZERO } from "../../common/constants";
+
 export default function AddChannelModal({ teamId, teamParticipants, teamOwner, isOpen, onClose, teamName }) {
   const user = useContext(AppContext);
   const [teamChannelTitle, setTeamChannelTitle] = useState('');
@@ -32,20 +33,12 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
     setChannelType(e.target.value);
   }
 
-//   const updateChannelData = (field) => (value) => {
-//     setChannelData({
-//         ...channelData,
-//         [field]: value,
-//     });
-// };
-
   const handleSearchUsers = (query) => {
     if (query.trim() !== "") {
         searchUsers(query)
             .then((filteredUsers) => {
-                // const currentUserHandle = user.userData.handle;
-                const selectedUsers = filteredUsers.filter(user => !channelData.members[user.id]);
-                setSearchResults(selectedUsers);
+              const selectedUsers = filteredUsers.filter(user => teamParticipants.includes(user.handle) && !channelData.members[user.id]);
+              setSearchResults(selectedUsers);
             })
             .catch((error) => {
                 console.error(error.message);
@@ -98,49 +91,55 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
       return;
     }
 
-    // add a check to see if there is already a channel with the same name
-
-    if (channelType === 'Private') {
-      const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
-      createChannel(teamId, teamChannelTitle, membersToAdd)
-        .then((channelId) => {
-          addChannel(teamParticipants, channelId, teamId, teamOwner)
-          return channelId;
-        })
-        .then((channelId) => {
-          navigate(`/app/teams/${teamId}/${channelId}`);
-        })
-        .catch((e) => {
-          console.log(`Error creating a new channel: ${e.message}`);
-        })
+    getChannelsByTeamId(teamId)
+      .then((snapshot) => {
+        const teamChannels = Object.values(snapshot.val());
+        if (teamChannels.filter((teamChannel) => teamChannel.title === teamChannelTitle).length > ZERO) {
+          toast(`Channel title "${teamChannelTitle}" is already taken. Please choose a different title.`);
+          return;
+        } else {
+          if (channelType === 'Private') {
+            const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
+            createChannel(teamId, teamChannelTitle, membersToAdd)
+              .then((channelId) => {
+                addChannel(teamParticipants, channelId, teamId, teamOwner)
+                return channelId;
+              })
+              .then((channelId) => {
+                navigate(`/app/teams/${teamId}/${channelId}`);
+              })
+              .catch((e) => {
+                console.log(`Error creating a new channel: ${e.message}`);
+              })
+              
+              onClose();
+      
+          } else {
+            createChannel(teamId, teamChannelTitle, teamParticipants)
+              .then((channelId) => {
+                addChannel(teamParticipants, channelId, teamId, teamOwner)
+                return channelId;
+              })
+              .then((channelId) => {
+                navigate(`/app/teams/${teamId}/${channelId}`);
+              })
+              .then(() => {
+                // the notifications don't work properly
+                return createNotification(`${CREATED_CHANNEL_NOTIFICATION}: ${teamName}`, CREATED_CHANNEL_TYPE)
+              })
+              .then((notificationId) => {
+                Promise.all(teamParticipants.map((member) => {
+                  pushNotifications(member, notificationId)
+                }))
+              })
+              .catch((e) => {
+                console.log(`Error creating a new channel: ${e.message}`);
+              })
         
-        onClose();
-
-    } else {
-      createChannel(teamId, teamChannelTitle, teamParticipants)
-        .then((channelId) => {
-          addChannel(teamParticipants, channelId, teamId, teamOwner)
-          return channelId;
-        })
-        .then((channelId) => {
-          navigate(`/app/teams/${teamId}/${channelId}`);
-        })
-        .then(() => {
-          // the notifications don't work properly
-          return createNotification(`${CREATED_CHANNEL_NOTIFICATION}: ${teamName}`, CREATED_CHANNEL_TYPE)
-        })
-        .then((notificationId) => {
-          Promise.all(teamParticipants.map((member) => {
-            pushNotifications(member, notificationId)
-          }))
-        })
-        .catch((e) => {
-          console.log(`Error creating a new channel: ${e.message}`);
-        })
-  
-        onClose();
-    }
-
+              onClose();
+          }
+        }
+      })
   }
 
   return (
@@ -154,8 +153,8 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 <span className="label-text text-black bg-transparent dark:text-darkText">Channel Title</span>
               </label>
               <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText" />
-              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange} defaultValue='default'>
-                <option disabled value='default'>Select Channel Type</option>
+              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange}>
+                <option disabled selected>Select Channel Type</option>
                 <option>Public</option>
                 <option>Private</option>
               </select>
