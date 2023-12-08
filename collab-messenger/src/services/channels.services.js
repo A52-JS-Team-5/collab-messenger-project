@@ -41,7 +41,7 @@ export const createChannel = (teamId, title, participants) => {
     isPublic: false,
     lastMessage: '',
     participantsReadMsg: {},
-    team: teamId
+    team: teamId,
   };
 
   participants.forEach((participant) => {
@@ -123,9 +123,7 @@ export const userChannelsDocument = (snapshots) => {
         : [],
       messages: channel.messages ? Object.keys(channel.messages) : [],
       lastMessage: channel.lastMessage,
-      participantsReadMsg: channel.participantsReadMsg
-      ? channel.participantsReadMsg
-      : {},
+      participantsReadMsg: channel.participantsReadMsg,
     };
   });
 };
@@ -197,26 +195,27 @@ export const makeChannelPublic = (id) => {
   }).catch((e) => console.log(`Error in making channel public: ${e.message}`));
 };
 
-// this doesn't work because in channels we don't have team name
-export const getChannelByName = (name) => {
+export const getChannelByTitle = (title) => {
   return get(
-    query(ref(db, 'channels'), orderByChild('name'), equalTo(name))
+    query(ref(db, 'channels'), orderByChild('title'), equalTo(title))
   ).catch((e) => console.log(`Error in getting channel: ${e.message}`));
 };
 
-export const deleteChannel = (channelData) => {
+export const getChannelsByTeamId = (teamId) => {
+  return get(query(ref(db, 'channels'), orderByChild('team'), equalTo(teamId)));
+};
 
+export const deleteChannel = (channelData) => {
   return Promise.all([
-    Object.keys(channelData.participants).map(user => {
-      return remove(ref(db, `/users/${user}/channels/${channelData.id}`))
+    Object.keys(channelData.participants).forEach((user) => {
+      return remove(ref(db, `/users/${user}/channels/${channelData.id}`));
     }),
-    Object.keys(channelData.messages).map(message => {
-      return remove(ref(db, `/messages/${message}`))
+    Object.keys(channelData.messages).forEach((message) => {
+      return remove(ref(db, `/messages/${message}`));
     }),
     remove(ref(db, `/teams/${channelData.team}/channels/${channelData.id}`)),
     remove(ref(db, `/channels/${channelData.id}`)),
-  ])
-    .catch((e) => console.log('Error in leaving chat', e.message));
+  ]).catch((e) => console.log('Error in leaving chat', e.message));
 };
 
 export const updateChannelFiles = (channelId, fileUrl) => {
@@ -232,9 +231,10 @@ export const updateChannelTitle = (channelId, newTitle) => {
   const updates = {};
   updates[`/channels/${channelId}/title`] = newTitle;
 
-  return update(ref(db), updates)
-    .catch((e) => console.log('Error changing channel title: ', e.message));
-}
+  return update(ref(db), updates).catch((e) =>
+    console.log('Error changing channel title: ', e.message)
+  );
+};
 
 export const updateChannelParticipants = (channelId, participants) => {
   const updates = {};
@@ -244,6 +244,7 @@ export const updateChannelParticipants = (channelId, participants) => {
     updates[`/users/${participant.value}/channels/${channelId}`] = true;
   });
 
-  return update(ref(db), updates)
-    .catch((e) => console.log('Error adding channel participants: ', e.message));
-}
+  return update(ref(db), updates).catch((e) =>
+    console.log('Error adding channel participants: ', e.message)
+  );
+};
