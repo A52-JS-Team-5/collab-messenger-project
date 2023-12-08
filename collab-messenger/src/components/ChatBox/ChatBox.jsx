@@ -10,6 +10,7 @@ import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
 import StatusBubble from '../StatusBubble/StatusBubble';
 import GroupChatAvatar from '../GroupChatAvatar/GroupChatAvatar';
+import { getUserByHandle } from '../../services/users.services';
 
 export default function ChatBox({ chatId, onClick }) {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function ChatBox({ chatId, onClick }) {
   const [isLastMsgGif, setIsLastMsgGif] = useState(false);
   const [chatTitle, setChatTitle] = useState('');
   const [areMessagesRead, setAreMessagesRead] = useState(true);
+  const isGroupChat = chatData?.isGroup === true;
 
   useEffect(() => {
     getChatById(chatId)
@@ -70,8 +72,20 @@ export default function ChatBox({ chatId, onClick }) {
     navigate(`${chatId}`);
   };
 
+  // Show user other participant's name and surname
+  const [participantTitle, setParticipantTitle] = useState('');
+  useEffect(() => {
+    if (!isGroupChat && chatTitle) {
+      getUserByHandle(chatTitle)
+        .then(user => {
+          setParticipantTitle(`${user.name} ${user.surname}`)
+        })
+        .catch(error => console.log(error))
+    }
+  }, [chatTitle, isGroupChat])
+
   return (
-    <div id='chatBox-wrapper' onClick={handleClick} className="w-full relative flex items-center space-x-3 p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer dark:text-darkText dark:hover:bg-darkAccent">
+    <div id='chatBox-wrapper' onClick={handleClick} className="w-full relative flex justify-center space-x-3 p-3 hover:bg-lightBlue rounded-lg transition cursor-pointer dark:text-darkText dark:hover:bg-darkAccent">
       {chatData?.isGroup === true ? (
         <GroupChatAvatar />
       ) : (
@@ -83,13 +97,12 @@ export default function ChatBox({ chatId, onClick }) {
       <div id='chatBox-content' className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-medium">
-              {chatTitle}
-            </p>
+            {!isGroupChat && < div id='chat-title' className="flex text-sm font-semibold">{participantTitle}</div>}
+            {isGroupChat && < div id='chat-title' className="flex text-sm font-semibold">{chatTitle}</div>}
           </div>
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-xs font-medium text-black dark:text-darkText">
-              {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage.length > 25 ? lastMessage.slice(0, 25) + ' ...' : lastMessage))}
+          <div className="flex justify-between items-center">
+            <p className="text-xs font-medium text-black dark:text-darkText text-left truncate w-48">
+              {isLastMsgGif ? 'GIF' : (isLastMsgFile ? 'File Sent' : (lastMessage))}
             </p>
           </div>
         </div>
