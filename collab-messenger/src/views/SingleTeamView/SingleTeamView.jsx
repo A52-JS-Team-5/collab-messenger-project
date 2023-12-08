@@ -27,6 +27,28 @@ const SingleTeamView = () => {
     const [isChannelInfoVisible, setIsChannelInfoVisible] = useState(false);
     const channelLayout = isChannelInfoVisible === true ? 'basis-3/5' : 'basis-4/5';
     const [noData, setNoData] = useState(false);
+    const [loggedUserChannels, setLoggedUserChannels] = useState([]);
+
+    useEffect(() => {
+        if (user?.userData?.handle) {
+            const userChannelsRef = ref(db, `users/${user.userData.handle}/channels`);
+
+            const userChannelsListener = onValue(userChannelsRef, (snapshot) => {
+                const data = snapshot.val();
+
+                if (data === null) {
+                    setLoggedUserChannels([])
+                } else {
+                    setLoggedUserChannels(Object.keys(data))
+                }
+
+            })
+
+            return () => {
+                userChannelsListener();
+            };
+        }
+    }, [user?.userData?.handle])
 
     useEffect(() => {
         const teamRef = ref(db, `teams/${teamId}`);
@@ -50,13 +72,8 @@ const SingleTeamView = () => {
                 channels: updatedTeamData.channels ? Object.keys(updatedTeamData.channels) : [],
                 photoURL: updatedTeamData.photoURL,
             };
-            setTeamDetails(teamDetails);
 
-            // add logic for filtering channels that the user is in with team channels
-            const userChannels = (teamDetails.channels || []).filter((channel) =>
-                Object.keys(user.userData?.channels || {}).includes(channel)
-            );
-            setAllTeamChannelsOfUser(userChannels);
+            setTeamDetails(teamDetails);
 
             // Check if the current user is the owner
             if (teamDetails.owner === user?.userData?.handle) {
@@ -70,6 +87,15 @@ const SingleTeamView = () => {
             teamListener();
         };
     }, [teamId, user.userData?.handle, user.userData?.channels]);
+
+    useEffect(() => {
+        if (teamDetails?.channels) {
+            const userChannels = teamDetails.channels.filter((channel) =>
+                loggedUserChannels.includes(channel)
+            );
+            setAllTeamChannelsOfUser(userChannels);
+        }
+    }, [teamDetails?.channels, loggedUserChannels]);
 
     const handleClick = () => {
         const elem = document.activeElement;
@@ -166,7 +192,7 @@ const SingleTeamView = () => {
 
     return (
         <>
-            {isDesktopOrLaptop && !noData && <div className='flex flex-row mt-4 gap-4 h-[87vh]'>
+            {isDesktopOrLaptop && !noData && <div className='flex flex-row gap-4 h-[86vh]'>
                 {!isLoading && (
                     <div className='flex flex-row mt-4 gap-4 h-full w-full'>
                         <div className='flex flex-col basis-1/5 p-4 rounded-md bg-pureWhite dark:bg-darkFront dark:text-darkText'>
@@ -180,7 +206,7 @@ const SingleTeamView = () => {
                                 <div className='flex flex-col gap-4'>
                                     <img src={teamDetails?.photoURL} className='w-24 h-24 object-cover rounded-md'></img>
                                     <div className='flex flex-row items-center justify-between'>
-                                        <h2 className='text-xl text-left font-bold'>{teamDetails?.name}</h2>
+                                        <h2 className='text-xl text-left font-bold truncate	w-48'>{teamDetails?.name}</h2>
                                         <div className="dropdown dropdown-end">
                                             <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30 dark:text-yellow dark:hover:bg-[#35331C] dark:focus:!bg-[#35331C]">
                                                 <i className="fa-solid fa-ellipsis-vertical"></i>
@@ -201,7 +227,7 @@ const SingleTeamView = () => {
                                 </div>
                             </div>
                             <div className="divider"></div>
-                            <div className="flex flex-col gap-1 h-[32vh] overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
+                            <div className="flex flex-col gap-1 basis-128 overflow-y-auto [&::-webkit-scrollbar]:[width:8px]
                 [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:[&::-webkit-scrollbar-thumb]:bg-mint">
                                 {allTeamChannelsOfUser.map(channel => (
                                     <ChannelBox key={channel} channelId={channel} onClick={handleClickChannelBox} />)
@@ -238,7 +264,7 @@ const SingleTeamView = () => {
                                 <div className='flex flex-col gap-4'>
                                     <img src={teamDetails?.photoURL} className='w-24 h-24 object-cover rounded-md'></img>
                                     <div className='flex flex-row items-center justify-between'>
-                                        <h2 className='text-xl text-left font-bold'>{teamDetails?.name}</h2>
+                                        <h2 className='text-xl text-left font-bold truncate	w-48'>{teamDetails?.name}</h2>
                                         <div className="dropdown dropdown-end">
                                             <label tabIndex="0" className="btn btn-ghost btn-square btn-sm text-blue hover:bg-blue30 focus:!bg-blue30 dark:text-yellow dark:hover:bg-[#35331C] dark:focus:!bg-[#35331C]">
                                                 <i className="fa-solid fa-ellipsis-vertical"></i>
