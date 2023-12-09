@@ -39,7 +39,11 @@ export const ADDED_TO_CHANNEL_NOTIFICATION =
 
 export const DELETED_TEAM_NOTIFICATION = 'This team has been deleted';
 
-export const CREATED_CHANNEL_NOTIFICATION = 'You have created a new channel';
+export const CREATED_PUBLIC_CHANNEL_NOTIFICATION =
+  'You have created a new Public channel';
+
+export const CREATED_PRIVATE_CHANNEL_NOTIFICATION =
+  'You have created a new Private channel';
 
 export const ADDED_TO_TEAM_TYPE = 'addedToTeam';
 
