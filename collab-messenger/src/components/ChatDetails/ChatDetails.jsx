@@ -32,7 +32,7 @@ export default function ChatDetails() {
     messages: {},
     participants: {}
   });
-  const chatTitle = !chatData?.isGroup ? Object.keys(chatData.participants).find(user => user !== loggedUserHandle) : chatData.title;
+  const [chatTitle, setChatTitle] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const [message, setMessage] = useState({
     author: '',
@@ -116,6 +116,12 @@ export default function ChatDetails() {
           setAllMessages(Object.keys(updatedChatData.messages));
         } else {
           setAllMessages([]);
+        }
+
+        if (!updatedChatData.isGroup) {
+          setChatTitle(Object.keys(updatedChatData?.participants).find(user => user !== loggedUser.userData?.handle))
+        } else {
+          setChatTitle(updatedChatData.title);
         }
 
         if (updatedChatData?.participantsReadMsg) {
