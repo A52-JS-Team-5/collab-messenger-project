@@ -23,6 +23,7 @@ export const createNotification = (message, type, elemId = null) => {
 export const deleteNotification = (userId, notificationId) => {
     const updates = {};
     updates[`/users/${userId}/notifications/${notificationId}`] = null;
+    updates[`notifications/${notificationId}/readBy/${userId}`] = null;
 
     return update(ref(db), updates)
         .then(() => {
@@ -56,7 +57,24 @@ export const getNotificationById = (notificationId) => {
                 type: notification.type,
                 elemId: notification.elemId ? notification.elemId : null,
                 timestamp: notification.timestamp,
+                readBy: notification.readBy ? Object.keys(notification.readBy) : [],
             }
         })
         .catch(e => console.log(e.message))
 }
+
+export const markNotificationAsRead = (handle, notificationId) => {
+    const updates = {};
+    updates[`notifications/${notificationId}/readBy/${handle}`] = true;
+
+    return update(ref(db), updates)
+        .catch((e) => console.log('Error updating details', e.message));
+};
+
+export const markNotificationAsUnread = (handle, notificationId) => {
+    const updates = {};
+    updates[`notifications/${notificationId}/readBy/${handle}`] = null;
+
+    return update(ref(db), updates)
+        .catch((e) => console.log('Error updating details', e.message));
+};
