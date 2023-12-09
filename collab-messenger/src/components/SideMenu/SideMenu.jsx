@@ -20,41 +20,41 @@ const SideMenu = () => {
 
         const chatsRef = ref(db, `chats`);
         const chatsListener = onValue(chatsRef, (snapshot) => {
-          const updatedChatData = snapshot.val();
-    
-          if (updatedChatData) {
-            const userChats = Object.entries(updatedChatData).filter(([ , chat]) => {
-              return chat.participants && chat.participants[loggedUser.userData?.handle] && chat.lastMessage !== chat.participantsReadMsg?.[loggedUser.userData?.handle];
-            });
-    
-            if (userChats.length > 0) {
-                setAreAllChatsRead(false);
-            } else {
-                setAreAllChatsRead(true);
+            const updatedChatData = snapshot.val();
+
+            if (updatedChatData !== null) {
+                const userChats = Object.entries(updatedChatData).filter(([, chat]) => {
+                    return chat.participants && chat.participants[loggedUser.userData?.handle] && chat.lastMessage !== chat.participantsReadMsg?.[loggedUser.userData?.handle];
+                });
+
+                if (userChats.length > 0) {
+                    setAreAllChatsRead(false);
+                } else {
+                    setAreAllChatsRead(true);
+                }
             }
-          }
         });
 
         const channelsRef = ref(db, 'channels');
         const channelsListener = onValue(channelsRef, (snapshot) => {
             const updatedChannelData = snapshot.val();
-            
-          if (updatedChannelData) {
-            const unreadChannels = Object.entries(updatedChannelData).filter(([ , channel]) => {
-              return channel.participants && channel.participants[loggedUser.userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[loggedUser.userData?.handle];
-            });
-            
-            if (unreadChannels.length > 0) {
-                setAreAllChannelsRead(false);
-            } else {
-                setAreAllChannelsRead(true);
+
+            if (updatedChannelData !== null) {
+                const unreadChannels = Object.entries(updatedChannelData).filter(([, channel]) => {
+                    return channel.participants && channel.participants[loggedUser.userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[loggedUser.userData?.handle];
+                });
+
+                if (unreadChannels.length > 0) {
+                    setAreAllChannelsRead(false);
+                } else {
+                    setAreAllChannelsRead(true);
+                }
             }
-          }
         });
-        
+
         return () => {
-          chatsListener();
-          channelsListener();
+            chatsListener();
+            channelsListener();
         }
     }, [location.pathname, loggedUser.userData?.handle]);
 
@@ -69,13 +69,13 @@ const SideMenu = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link to="/app/chats" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/chats') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                    <Link to="/app/chats" className={`relative flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/chats') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
                         {areAllChatsRead === true ? (
-                            <div className='pl-9'>
+                            <div className='absolute top-2 right-2'>
                                 <div className='w-2 h-2 rounded-full bg-transparent'></div>
                             </div>
                         ) : (
-                            <div className='pl-9'>
+                            <div className='absolute top-2 right-2'>
                                 <div className='w-2 h-2 rounded-full bg-pink'></div>
                             </div>
                         )}
@@ -84,13 +84,13 @@ const SideMenu = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link to="/app/teams" className={`flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/teams') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
+                    <Link to="/app/teams" className={`relative flex flex-col gap-2 h-20 justify-center !text-blue dark:!text-yellow ${activeLink.includes('/app/teams') ? '!bg-lightBlue dark:!bg-darkFront dark:!"text-yellow' : 'hover:!text-blue hover:!bg-lightBlue focus:!bg-blue30 dark:hover:!text-yellow dark:hover:!bg-darkFront dark:focus:!bg-darkAccent'}`}>
                         {areAllChannelsRead === true ? (
-                            <div className='pl-9'>
+                            <div className='absolute top-2 right-2'>
                                 <div className='w-2 h-2 rounded-full bg-transparent'></div>
                             </div>
                         ) : (
-                            <div className='pl-9'>
+                            <div className='absolute top-2 right-2'>
                                 <div className='w-2 h-2 rounded-full bg-pink'></div>
                             </div>
                         )}
