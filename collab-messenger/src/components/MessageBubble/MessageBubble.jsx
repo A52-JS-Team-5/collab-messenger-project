@@ -98,7 +98,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
               {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
               {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
               <img src={message.content} alt="GIF" />
-              <div className='flex flex-row justify-center gap-1'>
+              <div className={`flex flex-row justify-center gap-1 ${!editMessageOption && 'pl-1'}`}>
                 {editMessageOption !== true && <MessageReactions
                   areEmojisVisible={areEmojisVisible}
                   setAreEmojisVisible={setAreEmojisVisible}
@@ -111,22 +111,39 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
           ) : (
             isMessageLink === true ? (
               isMessagePdf !== true ? (
-                <img src={message.content} alt='Image File Sent' width={200} />
-              ) : (
-                <div className='flex flex-row border w-48 h-20 bg-white items-center rounded-xl dark:bg-darkAccent'>
-                  <i className="fa-regular fa-file fa-xl p-5"></i>
-                  <a download target="_blank" rel="noreferrer" href={message.content}>{message.title.length > 10 ? message.title.slice(0, 10) + '...' : message.title}</a>
+                <div className='flex flex-row'>
+                  {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
+                  {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
+                  <img src={message.content} alt='Image File Sent' width={200} />
                   <div className='flex flex-row justify-center gap-1'>
-                    {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
-                    {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
-                    {editMessageOption !== true && <MessageReactions
-                      areEmojisVisible={areEmojisVisible}
-                      setAreEmojisVisible={setAreEmojisVisible}
-                      onReaction={onReaction}
-                      isMessageImage={true} />
-                    }
-                    {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
-                    {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
+                    <div className={`flex flex-row justify-center gap-1 ${!editMessageOption && 'pl-1'}`}>
+                      {editMessageOption !== true && <MessageReactions
+                        areEmojisVisible={areEmojisVisible}
+                        setAreEmojisVisible={setAreEmojisVisible}
+                        onReaction={onReaction} />
+                      }
+                      {!editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
+                      {!editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className='flex flex-row'>
+                  {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
+                  {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
+                  <div className='flex flex-row w-48 h-20 bg-white items-center rounded-xl dark:bg-darkAccent'>
+                    <i className="fa-regular fa-file fa-xl p-4"></i>
+                    <a download target="_blank" rel="noreferrer" href={message.content}>{message.title.length > 10 ? message.title.slice(0, 10) + '...' : message.title}</a>
+                    <div className='flex flex-row justify-center gap-1'>
+                      {editMessageOption !== true && <MessageReactions
+                        areEmojisVisible={areEmojisVisible}
+                        setAreEmojisVisible={setAreEmojisVisible}
+                        onReaction={onReaction}
+                        isMessageImage={true} />
+                      }
+                      {!editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
+                      {!editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
+                    </div>
                   </div>
                 </div>
               )
