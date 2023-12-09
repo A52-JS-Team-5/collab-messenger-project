@@ -14,13 +14,18 @@ export default function ChatsLayout() {
   const [allLoggedUserChats, setAllLoggedUserChats] = useState([]);
   const loggedUser = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [noData, setNoData] = useState(false);
 
   useEffect(() => {
     const chatsRef = ref(db, `chats`);
     const chatsListener = onValue(chatsRef, (snapshot) => {
       const updatedChatData = snapshot.val();
 
-      if (updatedChatData) {
+      if (updatedChatData === null) {
+        setNoData(true);
+        setIsLoading(false);
+      } else {
+        setNoData(false);
         const userChats = Object.entries(updatedChatData).filter(([, chat]) => {
           return chat.participants && chat.participants[loggedUser.userData?.handle];
         });
@@ -105,10 +110,10 @@ export default function ChatsLayout() {
             )}
           </div>
           {!isLoading && <div className="basis-4/5 w-full rounded-md flex items-center place-content-evenly overflow-auto">
-            {allLoggedUserChats.length > 0 ? (
+            {!noData && allLoggedUserChats.length > 0 ? (
               <Outlet />
             ) : (
-              <EmptyList />
+              <EmptyList content={`It appears you haven't engaged in any chats yet.`} />
             )}
           </div>}
         </div>
@@ -136,14 +141,17 @@ export default function ChatsLayout() {
                 )}
               </div>
             )}
+            {allLoggedUserChats.length == 0 && (
+              <div className="flex flex-col gap-1">
+                <EmptyList content={`It appears you haven't engaged in any chats yet.`} />
+              </div>
+            )}
           </div>}
           {activeMobileComponent === 1 && !isLoading && <div className="w-full rounded-md flex items-center pb-4">
-            {allLoggedUserChats.length > 0 ? (
+            {allLoggedUserChats.length > 0 && (
               <div className="w-full h-full flex flex-col items-start">
                 <Outlet />
               </div>
-            ) : (
-              <EmptyList />
             )}
           </div>}
         </div>
