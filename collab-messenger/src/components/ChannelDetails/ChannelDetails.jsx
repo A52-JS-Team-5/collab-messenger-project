@@ -25,8 +25,6 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
     messages: {},
     participants: [],
   });
-
-  const channelTitle = channelData.title;
   const [allMessages, setAllMessages] = useState([]);
   const [message, setMessage] = useState({
     author: '',
@@ -111,23 +109,23 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
         } else {
           setAllMessages([]);
         }
-      }
 
-      if (updatedChannelData?.participantsReadMsg) {
-        const loggedUserLastReadMessage = updatedChannelData.participantsReadMsg[loggedUser.userData.handle];
-        const isLatestMessage = loggedUserLastReadMessage === updatedChannelData.isLatestMessage;
+        if (updatedChannelData?.participantsReadMsg) {
+          const loggedUserLastReadMessage = updatedChannelData.participantsReadMsg[loggedUser.userData.handle];
+          const isLatestMessage = loggedUserLastReadMessage === updatedChannelData.isLatestMessage;
 
-        if (!isLatestMessage) {
-          const updateUserLastReadMessage = () => {
-            const updateMsg = {};
-            updateMsg[`/channels/${channelId}/participantsReadMsg/${loggedUser.userData.handle}`] = updatedChannelData.lastMessage;
+          if (!isLatestMessage) {
+            const updateUserLastReadMessage = () => {
+              const updateMsg = {};
+              updateMsg[`/channels/${channelId}/participantsReadMsg/${loggedUser.userData.handle}`] = updatedChannelData.lastMessage;
 
-            return update(ref(db), updateMsg)
-              .catch((e) =>
-                console.log(`Error adding last read message to logged user data: ${e.message}`)
-              );
+              return update(ref(db), updateMsg)
+                .catch((e) =>
+                  console.log(`Error adding last read message to logged user data: ${e.message}`)
+                );
+            }
+            updateUserLastReadMessage();
           }
-          updateUserLastReadMessage();
         }
       }
     });
@@ -161,14 +159,13 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
           <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput dark:text-darkText'>
             <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
               <div id="header-content" className="flex gap-3">
-                <div id='chat-title' className="flex place-items-end">{channelTitle}</div>
+                <div id='chat-title' className="flex place-items-end">{channelData?.title}</div>
               </div>
               <div className='flex justify-end gap-1'>
                 <button className="btn btn-ghost btn-sm" onClick={() => { setIsChannelInfoVisible(!isChannelInfoVisible) }}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
               </div>
             </div>
           </div>
-
           <div id='messages-wrapper' className="p-3 h-[67vh] overflow-auto [&::-webkit-scrollbar]:[width:8px]
         [&::-webkit-scrollbar-thumb]:bg-lightBlue [&::-webkit-scrollbar-thumb]:rounded-md p-1 dark:text-darkText">
             {areThereMessages === true ? (
@@ -213,7 +210,7 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
           <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput'>
             <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] justify-between items-center">
               <div id="header-content" className="flex gap-3">
-                <div id='chat-title' className="flex place-items-end">{channelTitle}</div>
+                <div id='chat-title' className="flex place-items-end">{channelData?.title}</div>
               </div>
               <div className='flex justify-end gap-1'>
                 <button className="btn btn-ghost btn-sm" onClick={() => { setIsChannelInfoVisible(!isChannelInfoVisible) }}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
