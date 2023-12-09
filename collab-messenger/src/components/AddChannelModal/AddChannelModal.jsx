@@ -7,7 +7,7 @@ import { searchUsers } from '../../services/users.services';
 import PropTypes from "prop-types";
 import AppContext from '../../context/AuthContext';
 import { createNotification, pushNotifications } from "../../services/notifications.services";
-import { CREATED_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH, ZERO } from "../../common/constants";
+import { CREATED_PUBLIC_CHANNEL_NOTIFICATION, CREATED_PRIVATE_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH, ZERO } from "../../common/constants";
 
 export default function AddChannelModal({ teamId, teamParticipants, teamOwner, isOpen, onClose, teamName }) {
   const user = useContext(AppContext);
@@ -108,6 +108,14 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
               .then((channelId) => {
                 navigate(`/app/teams/${teamId}/${channelId}`);
               })
+              .then(() => {
+                return createNotification(`${CREATED_PRIVATE_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, CREATED_CHANNEL_TYPE)
+              })
+              .then((notificationId) => {
+                Promise.all(teamParticipants.map((member) => {
+                  pushNotifications(member, notificationId)
+                }))
+              })
               .catch((e) => {
                 console.log(`Error creating a new channel: ${e.message}`);
               })
@@ -124,8 +132,7 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 navigate(`/app/teams/${teamId}/${channelId}`);
               })
               .then(() => {
-                // the notifications don't work properly
-                return createNotification(`${CREATED_CHANNEL_NOTIFICATION}: ${teamName}`, CREATED_CHANNEL_TYPE)
+                return createNotification(`${CREATED_PUBLIC_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, CREATED_CHANNEL_TYPE)
               })
               .then((notificationId) => {
                 Promise.all(teamParticipants.map((member) => {
