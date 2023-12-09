@@ -165,7 +165,6 @@ export default function CreateTeam() {
                 })
                 .then((notificationId) =>
                     pushNotifications(author, notificationId))
-
                 .then(() => {
                     createChannel(newTeamId, 'General', author)
                         .then((channelId) => {
