@@ -74,8 +74,8 @@ export default function ChangeTeamPhoto({ teamDetails }) {
                     <p className="text-left">A picture helps people recognize the team.</p>
                 </div>
                 <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
-                    <div className='flex flex-col self-stretch w-24 justify-top'>
-                        <img src={photoURL} alt="Team Photo" className="object-cover rounded-md w-24 h-24 aspect-square" />
+                    <div className='flex flex-col self-stretch w-24 h-24 aspect-square justify-top'>
+                        <img src={photoURL} alt="Team Photo" className="object-cover rounded-md" />
                     </div>
                     <div className="flex flex-col justify-center w-full">
                         <label className="label self-stretch">
