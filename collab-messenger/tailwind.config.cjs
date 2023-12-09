@@ -25,6 +25,8 @@ module.exports = {
       darkText: '#CACACA',
       darkInput: '#383838',
       lightYellow: '#FFEFA8',
+      unreadNotification: '#F2F2FF',
+      darkUnreadNotification: '#555555',
     },
   },
   // eslint-disable-next-line no-undef
