@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getChatById } from '../../services/chats.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MessagesList from '../MessagesList/MessagesList';
@@ -18,6 +17,7 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useMediaQuery } from 'react-responsive';
 import { getUserByHandle } from '../../services/users.services';
+import EmptyList from "../EmptyList/EmptyList";
 
 export default function ChatDetails() {
   const loggedUser = useContext(AppContext);
@@ -43,6 +43,8 @@ export default function ChatDetails() {
   const isLink = message.content.includes('chat_uploads');
   const areThereMessages = allMessages.length > 0;
   const isGroupChat = chatData?.isGroup === true;
+  const [noData, setNoData] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const updateMessage = (field) => (e) => {
     if (field === 'content' && message.content.includes('chat_uploads')) {
@@ -97,47 +99,41 @@ export default function ChatDetails() {
   };
 
   useEffect(() => {
-    getChatById(chatId)
-      .then((data) => {
-        setChatData(data);
-
-        if (data.messages) {
-          setAllMessages(Object.keys(data.messages));
-        } else {
-          setAllMessages([]);
-        }
-      })
-      .catch((e) => {
-        toast('Error in getting chat data. Please try again.')
-        console.log('Error in getting chat data: ', e.message);
-      });
-
     const chatRef = ref(db, `chats/${chatId}`);
     const chatListener = onValue(chatRef, (snapshot) => {
       const updatedChatData = snapshot.val();
-      if (updatedChatData) {
+
+      if (updatedChatData === null) {
+        setNoData(true);
+        setLoading(false);
+        setChatData(null);
+      } else {
+        setNoData(false);
         setChatData(updatedChatData);
+        setLoading(false);
 
         if (updatedChatData.messages) {
           setAllMessages(Object.keys(updatedChatData.messages));
+        } else {
+          setAllMessages([]);
         }
-      }
 
-      if (updatedChatData?.participantsReadMsg) {
-        const loggedUserLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
-        const isLatestMessage = loggedUserLastReadMessage === updatedChatData.lastMessage;
+        if (updatedChatData?.participantsReadMsg) {
+          const loggedUserLastReadMessage = updatedChatData.participantsReadMsg[loggedUser.userData?.handle];
+          const isLatestMessage = loggedUserLastReadMessage === updatedChatData.lastMessage;
 
-        if (!isLatestMessage) {
-          const updateUserLastReadMessage = () => {
-            const updateMsg = {};
-            updateMsg[`/chats/${chatId}/participantsReadMsg/${loggedUser.userData?.handle}`] = updatedChatData.lastMessage;
+          if (!isLatestMessage) {
+            const updateUserLastReadMessage = () => {
+              const updateMsg = {};
+              updateMsg[`/chats/${chatId}/participantsReadMsg/${loggedUser.userData?.handle}`] = updatedChatData.lastMessage;
 
-            return update(ref(db), updateMsg)
-              .catch((e) =>
-                console.log(`Error adding last read message to logged user data: `, e.message)
-              );
-          };
-          updateUserLastReadMessage();
+              return update(ref(db), updateMsg)
+                .catch((e) =>
+                  console.log(`Error adding last read message to logged user data: `, e.message)
+                );
+            };
+            updateUserLastReadMessage();
+          }
         }
       }
     });
@@ -191,7 +187,7 @@ export default function ChatDetails() {
 
   return (
     <>
-      {isDesktopOrLaptop && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 h-full'>
+      {!noData && isDesktopOrLaptop && !loading && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 h-full'>
         <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-pureWhite dark:bg-darkFront`}>
           <div id="header" className="sticky w-full pt-3 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput">
             <div id="header-content" className="flex flex-row gap-3 justify-center">
@@ -262,7 +258,7 @@ export default function ChatDetails() {
           </div>
         )}
       </div>}
-      {isTabletOrMobile && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 max-h-fit'>
+      {!noData && isTabletOrMobile && !loading && <div id='chatDetails-wrapper' className='flex flex-row w-full gap-3 max-h-fit'>
         {activeMobileComponent === 0 && <div id='chat-section-layout' className={`${layout} w-full rounded-md bg-pureWhite dark:bg-darkFront p-2`}>
           <div id="header" className="sticky w-full pt-2 flex flex-row sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput">
             <div id="header-content" className="flex gap-2 flex-row justify-center">
@@ -342,6 +338,7 @@ export default function ChatDetails() {
         )}
       </div>
       }
+      {noData && !loading && <EmptyList content={`Hmm, looks like there's no available data for this chat.`} />}
     </>
   )
 }
