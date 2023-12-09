@@ -160,8 +160,8 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 <span className="label-text text-black bg-transparent dark:text-darkText">Channel Title</span>
               </label>
               <input type="text" defaultValue={teamChannelTitle} onChange={(e) => {setTeamChannelTitle(e.target.value)}} className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText" />
-              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange}>
-                <option disabled selected>Select Channel Type</option>
+              <select className="select select-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText mt-4" onChange={handleSelectChange} defaultValue='default'>
+                <option disabled value='default'>Select Channel Type</option>
                 <option>Public</option>
                 <option>Private</option>
               </select>
@@ -175,13 +175,13 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                       <input type="text" ref={inputRef} onChange={(e) => {
                           handleSearchUsers(e.target.value);
                       }}
-                          className="input input-bordered w-full text-black bg-white"
+                          className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText"
                       />
                       {/* Display search results */}
                       {searchResults.length > 0 && (
                           <ul className="scrollable-list max-h-24	overflow-y-auto">
                               {searchResults.map((user) => (
-                                  <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2'>
+                                  <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2 dark:hover:bg-darkAccent dark:text-darkText'>
                                       <img src={user.photoURL} className='h-8 w-8 rounded-full' />
                                       <div className='flex flex-col items-start'>
                                           <p className='text-sm'>{user.name}{' '}{user.surname}</p>
