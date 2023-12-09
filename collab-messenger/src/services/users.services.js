@@ -206,7 +206,8 @@ export const searchUsers = (query) => {
             (user) =>
               user.name.toLowerCase().includes(query.toLowerCase()) ||
               user.surname.toLowerCase().includes(query.toLowerCase()) ||
-              user.handle.toLowerCase().includes(query.toLowerCase())
+              user.handle.toLowerCase().includes(query.toLowerCase()) ||
+              user.email.toLowerCase().includes(query.toLowerCase())
           );
 
           resolve(filteredUsers);
