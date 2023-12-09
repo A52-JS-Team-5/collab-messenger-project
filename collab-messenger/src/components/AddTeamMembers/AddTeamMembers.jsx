@@ -123,7 +123,7 @@ const AddTeamMembers = ({ teamDetails }) => {
                                 {searchResults.length > 0 && (
                                     <ul className="scrollable-list max-h-24	overflow-y-auto">
                                         {searchResults.map((user) => (
-                                            <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2 dark:hover:bg-darkAccent'>
+                                            <li key={user.id} onClick={() => handleAddMember(user.id)} className='cursor-pointer flex flex-row gap-2 items-center hover:bg-pureWhite pt-1 pb-1 pl-2 pr-2 dark:hover:bg-darkAccent dark:text-darkText'>
                                                 <img src={user.photoURL} className='h-8 w-8 rounded-full' />
                                                 <div className='flex flex-col items-start self-stretch'>
                                                     <p className='text-sm'>{user.name}{' '}{user.surname}</p>
@@ -140,7 +140,7 @@ const AddTeamMembers = ({ teamDetails }) => {
                             <div className="selected-members">
                                 <ul className='flex flex-wrap gap-2'>
                                     {selectedMembers.map((member) => (
-                                        <li key={member.id} className='badge badge-outline gap-2 p-4'>
+                                        <li key={member.id} className='badge badge-outline gap-2 p-4 dark:text-textDark'>
                                             <img src={member.photoURL} className='h-4 w-4 rounded-full' />
                                             {member.name}{' '}{member.surname}
                                             <i className="fa-solid fa-x cursor-pointer" onClick={() => handleRemoveMember(member.handle)}></i>
