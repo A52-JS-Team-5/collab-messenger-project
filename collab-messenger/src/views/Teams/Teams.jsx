@@ -156,7 +156,7 @@ const Teams = () => {
                     </div>
                 )}
                 {!isLoading && teams.length === 0 &&
-                    <div className='flex w-full h-full'><EmptyList /></div>}
+                    <div className='flex w-full h-full'><EmptyList content={`Currently, you haven't joined any teams.`}/></div>}
             </div>
         </div>
     )
