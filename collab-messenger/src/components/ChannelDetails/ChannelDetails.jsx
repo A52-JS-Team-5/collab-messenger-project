@@ -4,7 +4,6 @@ import AppContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { addMessageChannel } from "../../services/messages.services";
 import { createChannelMessage } from "../../services/messages.services";
-import { getChannelById } from "../../services/channels.services";
 import { db } from '../../config/firebase-config';
 import { ref, onValue, query, orderByChild, equalTo, update } from 'firebase/database';
 import MessagesList from '../MessagesList/MessagesList';
@@ -14,6 +13,7 @@ import UploadFile from '../UploadFile/UploadFile';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useMediaQuery } from 'react-responsive';
+import EmptyList from "../EmptyList/EmptyList";
 
 export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoVisible }) {
   const loggedUser = useContext(AppContext);
@@ -34,6 +34,8 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
     createdOn: '',
     title: '',
   });
+  const [noData, setNoData] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const isLink = message.content.includes('channel_uploads');
   const areThereMessages = allMessages.length > 0;
@@ -91,28 +93,23 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
   };
 
   useEffect(() => {
-    getChannelById(channelId)
-      .then((data) => {
-        setChannelData(data);
-        if (data.messages) {
-          setAllMessages(Object.keys(data.messages))
-        } else {
-          setAllMessages([]);
-        }
-      })
-      .catch((e) => {
-        toast('Error in getting channel data. Please try again.')
-        console.log(e.message);
-      });
-
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
-      if (updatedChannelData) {
+
+      if (updatedChannelData === null) {
+        setNoData(true);
+        setLoading(false);
+        setChannelData(null);
+      } else {
         setChannelData(updatedChannelData);
+        setNoData(false);
+        setLoading(false);
 
         if (updatedChannelData.messages) {
           setAllMessages(Object.keys(updatedChannelData.messages));
+        } else {
+          setAllMessages([]);
         }
       }
 
@@ -159,7 +156,7 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
 
   return (
     <>
-      {isDesktopOrLaptop &&
+      {isDesktopOrLaptop && !noData && !loading &&
         <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
           <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput dark:text-darkText'>
             <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
@@ -211,7 +208,7 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
             </div>
           )}
         </div>}
-      {isTabletOrMobile &&
+      {isTabletOrMobile && !noData && !loading &&
         <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
           <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput'>
             <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] justify-between items-center">
@@ -265,6 +262,7 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
             </div>
           )}
         </div>}
+      {noData && !loading && <EmptyList content={`Hmm, looks like there's no available data for this channel.`} />}
     </>
   )
 }
