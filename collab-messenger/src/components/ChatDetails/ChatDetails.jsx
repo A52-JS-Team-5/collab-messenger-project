@@ -260,7 +260,7 @@ export default function ChatDetails() {
         </div>
         {isChatInfoVisible === true && (
           <div id='chatInformation-section-layout' className={`basis-3/12 bg-pureWhite w-full rounded-md dark:bg-darkFront`}>
-            <ChatInformation isGroupChat={isGroupChat} chatTitle={chatTitle} chatId={chatId} chatData={chatData} />
+            <ChatInformation isGroupChat={isGroupChat} />
           </div>
         )}
       </div>}
