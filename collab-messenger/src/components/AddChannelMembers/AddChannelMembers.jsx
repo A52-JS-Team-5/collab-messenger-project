@@ -1,15 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { updateChannelParticipants } from "../../services/channels.services";
-import { getTeamById } from "../../services/teams.services";
 import cn from "classnames";
 import ReactSelect from "react-select";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PropTypes from "prop-types";
 
-export default function AddChannelMembers({ channelId, channelParticipants, teamId }) {
+export default function AddChannelMembers({ channelId, channelParticipants, teamMembers }) {
   const [open, setOpen] = useState(false);
-  const [users, setUsers] = useState([]);
   const handleToggle = () => setOpen((prev) => !prev);
   const [participants, setParticipants] = useState([]);
 
@@ -28,14 +26,6 @@ export default function AddChannelMembers({ channelId, channelParticipants, team
     handleToggle();
   }
 
-  useEffect(() => {
-    getTeamById(teamId)
-      .then((teamData) => {
-        setUsers(teamData.members)
-      })
-      .catch(e => console.log(e.message))
-  }, [teamId]);
-
   return (
     <div className="start-chat-view">
       <div className="rounded-full w-8 h-8 bg-lightBlue hover:cursor-pointer" title="Add More Participants" onClick={handleToggle}>
@@ -50,31 +40,28 @@ export default function AddChannelMembers({ channelId, channelParticipants, team
                 <span className="label-text text-black bg-transparent">Users</span>
               </label>
               <div className="mt-2">
-                {users.length !== 0 && (
-                  <ReactSelect 
-                    styles={{
-                      menuPortal: (base) => ({
-                        ...base,
-                        zIndex: 9999
-                      }),
-                      option: (provided, state) => ({
-                        ...provided,
-                        backgroundColor: state.isSelected ? 'pink' : 'white',
-                        color: 'black',
-                      }),
-                    }} 
-                    classNames={{
-                      control: () => "text-sm"
-                    }} 
-                    onChange={(selectedOptions) => {setParticipants(selectedOptions)}
-                    } 
-                    isMulti
-                    menuPortalTarget={document.body} 
-                    options={users
-                      .filter(user => !channelParticipants.includes(user.handle))
-                      .map((user) => ({value: user.id, label: user.handle}))} 
-                  />
-                )}
+                <ReactSelect 
+                  styles={{
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected ? 'pink' : 'white',
+                      color: 'black',
+                    }),
+                  }} 
+                  classNames={{
+                    control: () => "text-sm"
+                  }} 
+                  onChange={(selectedOptions) => {setParticipants(selectedOptions)}} 
+                  isMulti
+                  menuPortalTarget={document.body} 
+                  options={teamMembers
+                    .filter(user => !channelParticipants.includes(user))
+                    .map((user) => ({value: user, label: user}))} 
+                />
               </div>
             </div>
           </div>
@@ -91,5 +78,5 @@ export default function AddChannelMembers({ channelId, channelParticipants, team
 AddChannelMembers.propTypes = {
   channelId: PropTypes.string,
   channelParticipants: PropTypes.array,
-  teamId: PropTypes.string
+  teamMembers: PropTypes.array
 };
