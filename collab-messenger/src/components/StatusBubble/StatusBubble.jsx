@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getUserByHandle } from "../../services/users.services";
 import PropTypes from 'prop-types';
 import { db } from '../../config/firebase-config';
 import { ref, onValue } from 'firebase/database';
@@ -15,20 +14,11 @@ export default function StatusBubble({ view, userHandle }) {
   const positionOfStatus = {
     'ChatDetails': 'left-[32px] bottom-[4px]',
     'ChatDetails-Mobile': 'left-[32px] bottom-[4px]',
-    'ChatBox': 'left-8 top-10'
+    'ChatBox': 'left-8 top-10',
+    'AppNav': 'top-8 right-1'
   }
 
   useEffect(() => {
-    getUserByHandle(userHandle)
-      .then((userData) => {
-        if(userData?.status) {
-          setUserCurrentStatus(userData?.status);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching user status: ', error);
-      })
-
     const userRef = ref(db, `users/${userHandle}/status`);
     const userStatusListener = onValue(userRef, (snapshot) => {
       const updatedStatus = snapshot.val();
