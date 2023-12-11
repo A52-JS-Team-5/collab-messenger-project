@@ -1,48 +1,46 @@
 import PropTypes from "prop-types";
 import Avatar from "../Avatar/Avatar";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { onValue, ref } from "firebase/database";
+import { db } from '../../config/firebase-config';
 import LeaveChatModal from "../LeaveChatModal/LeaveChatModal";
 import { updateGroupChatTitle } from "../../services/chats.services";
-import { ref, list, getStorage, getDownloadURL } from "firebase/storage";
 import GroupChatAvatar from "../GroupChatAvatar/GroupChatAvatar";
 import AddGroupChatMembers from "../AddGroupChatMembers/AddGroupChatMembers";
 import UserProfile from "../../views/UserProfile/UserProfile";
+import { getUploadedFilesInChat } from '../../common/helpers';
 
-export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatData }) {
+export default function ChatInformation({ isGroupChat }) {
+  const { chatId } = useParams();
   const [form, setForm] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const chatParticipants = Object.keys(chatData.participants);
+  const [chatData, setChatData] = useState({
+    title: '',
+    participants: {}
+  });
   const [showTitle, setShowTitle] = useState(true);
-  const [originalContent, setOriginalContent] = useState(chatTitle);
 
   useEffect(() => {
-    const storage = getStorage();
-    const storageRef = ref(storage, `chat_uploads/${chatId}`);
-
-    list(storageRef, { maxResults: 10 })
-      .then((result) => {
-        const uploads = result.items;
-
-        const downloadUrls = uploads.map(item => {
-          return getDownloadURL(ref(storage, item._location.path_))
-            .then((url) => ({
-              fileName: item._location.path_.split('/').pop(),
-              'url': url
-            }))
-            .catch(e => console.log('Error getting download URL for file: ', e.message))
-        })
-
-        Promise.all(downloadUrls)
-          .then((urls) => setUploadedFiles(urls))
-          .catch(e => console.log(e.message));
-      })
-      .catch((e) => console.log(e.message));
-
+    const chatRef = ref(db, `chats/${chatId}`);
+    const chatListener = onValue(chatRef, (snapshot) => {
+      const updatedChannelData = snapshot.val();
+      if (updatedChannelData) {
+        setChatData(updatedChannelData);
+      }
+      getUploadedFilesInChat(chatId)
+        .then((urls) => setUploadedFiles(urls))
+        .catch(e => console.log(e.message));
+    });
+  
+    return () => {
+      chatListener();
+    };
   }, [chatId]);
 
   const handleOpenEditField = () => {
     setShowTitle(!showTitle);
-    setForm(originalContent);
+    setForm(chatData.title);
   };
 
   const onInputChange = (e) => {
@@ -51,7 +49,6 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
 
   const setNewContent = () => {
     updateGroupChatTitle(chatId, form);
-    setOriginalContent(form);
     setShowTitle(true);
   };
 
@@ -80,10 +77,10 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
 
   return (
     <div id="chat-information-wrapper" className="m-5">
-      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />}
+      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatData.title} chatComponent={'ChatInformation'} />}
       <div className="flex flex-row justify-center">
-        {!isGroupChat ? (<button className="btn btn-active btn-link" onClick={() => handleOpenUserProfileModal(chatTitle)}>{chatTitle}</button>) : (showTitle && <div className="m-3 font-bold">{chatTitle}</div>)}
-        {openUserProfileModal === chatTitle && <UserProfile userHandle={chatTitle} isOpen={true} onClose={handleCloseUserProfileModal} />}
+        {!isGroupChat ? (<button className="btn btn-active btn-link" onClick={() => handleOpenUserProfileModal(chatData.title)}>{chatData.title}</button>) : (showTitle && <div className="m-3 font-bold">{chatData.title}</div>)}
+        {openUserProfileModal === chatData.title && <UserProfile userHandle={chatData.title} isOpen={true} onClose={handleCloseUserProfileModal} />}
         {isGroupChat && (
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
@@ -98,7 +95,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
         {isGroupChat && (
           <div>
             <div className="flex flex-row gap-5 justify-center">
-              <AddGroupChatMembers chatId={chatId} chatParticipants={chatParticipants} />
+              <AddGroupChatMembers chatId={chatId} chatParticipants={Object.keys(chatData.participants)} />
               <LeaveChatModal chatId={chatId} />
             </div>
             <div className="collapse collapse-arrow bg-white dark:bg-darkAccent mt-4 text-left">
@@ -108,7 +105,7 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
                 Participants
               </div>
               <div className="collapse-content text-sm">
-                {chatParticipants.map(user => (
+                {Object.keys(chatData.participants).map(user => (
                   <div key={user} >
                     <div className="flex flex-row gap-2 p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkFront" onClick={() => handleOpenUserProfileModal(user)}>
                       <Avatar user={user} />
@@ -145,7 +142,4 @@ export default function ChatInformation({ isGroupChat, chatTitle, chatId, chatDa
 
 ChatInformation.propTypes = {
   isGroupChat: PropTypes.bool,
-  chatTitle: PropTypes.string,
-  chatId: PropTypes.string,
-  chatData: PropTypes.object
 };
