@@ -5,30 +5,23 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from '../../context/AuthContext';
 import iconLogo from '../../assets/app-icon/app-icon.svg';
-import { db } from '../../config/firebase-config';
-import { ref, onValue } from 'firebase/database';
+import StatusBubble from '../StatusBubble/StatusBubble';
 import { changeStatus } from '../../services/users.services';
 import UserProfile from '../../views/UserProfile/UserProfile';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
+import { DEFAULT_USER_PHOTO } from '../../common/constants';
 
 export default function AppNav({ onLogout }) {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg')
+    const [photoURL, setPhotoURL] = useState(DEFAULT_USER_PHOTO);
     const user = useContext(AppContext);
     const [currentStatus, setCurrentStatus] = useState(user.userData?.status);
-    const statusColors = {
-        'Online': 'bg-green',
-        'Offline': 'bg-black',
-        'Away': 'bg-yellow'
-    };
 
     const handleStatusChange = (event) => {
         const selection = event.target.value;
-        if (user.userData?.status !== selection) {
-            changeStatus(user.userData?.handle, selection);
-            setCurrentStatus(selection);
-        }
+        changeStatus(user.userData?.handle, selection);
+        setCurrentStatus(selection);
     }
 
     const handleClick = () => {
@@ -43,18 +36,6 @@ export default function AppNav({ onLogout }) {
             setPhotoURL(user.userData.photoURL);
         }
     }, [user]);
-
-    useEffect(() => {
-        const userRef = ref(db, `users/${user.userData?.handle}/status`);
-        const userStatusListener = onValue(userRef, (snapshot) => {
-            const updatedStatus = snapshot.val();
-            setCurrentStatus(updatedStatus);
-        });
-
-        return () => {
-            userStatusListener();
-        };
-    }, [user.userData?.handle, currentStatus])
 
     const handleSearch = () => {
         navigate('/app/search-results', { state: { searchTerm: searchTerm } });
@@ -94,7 +75,7 @@ export default function AppNav({ onLogout }) {
                             <div className="w-10 rounded-full static">
                                 <img src={photoURL} />
                             </div>
-                            <div className={`absolute top-8 right-1 w-2 h-2 rounded-full ${statusColors[currentStatus]}`}></div>
+                            <StatusBubble view={'AppNav'} userHandle={user.userData?.handle} />
                         </label>
                         <ul tabIndex="0" className="dropdown-content z-[1000] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
                             <li className='dark:text-yellow'><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent dark:!bg-darkAccent">
