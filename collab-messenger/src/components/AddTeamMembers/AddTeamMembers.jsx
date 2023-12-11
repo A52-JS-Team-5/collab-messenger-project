@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { createNotification, pushNotifications } from '../../services/notifications.services';
 import { ADDED_TO_TEAM_NOTIFICATION, ADDED_TO_TEAM_TYPE } from '../../common/constants';
 import PropTypes from 'prop-types';
+import { addNewTeamMembersToPublicChannels } from '../../services/channels.services';
 
 const AddTeamMembers = ({ teamDetails }) => {
     const user = useContext(AppContext);
@@ -79,6 +80,9 @@ const AddTeamMembers = ({ teamDetails }) => {
             .then((notificationId) =>
                 Promise.all(membersToAdd.map((member) =>
                     pushNotifications(member, notificationId))))
+            .then(() => {
+                addNewTeamMembersToPublicChannels(teamDetails.channels, membersToAdd)
+            })
             .catch((error) => {
                 console.log(error.message);
                 toast('An error occurred while trying to add team members.')
