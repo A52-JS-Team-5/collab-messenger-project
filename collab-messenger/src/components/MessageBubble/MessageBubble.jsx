@@ -133,7 +133,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
                   {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
                   <div className='flex flex-row w-48 h-20 bg-white items-center rounded-xl dark:bg-darkAccent'>
                     <i className="fa-regular fa-file fa-xl p-4"></i>
-                    <a download target="_blank" rel="noreferrer" href={message.content}>{message.title.length > 10 ? message.title.slice(0, 10) + '...' : message.title}</a>
+                    <a download target="_blank" rel="noreferrer" href={message.content}>{message?.title?.length > 10 ? message?.title.slice(0, 10) + '...' : message?.title}</a>
                     <div className='flex flex-row justify-center gap-1'>
                       {editMessageOption !== true && <MessageReactions
                         areEmojisVisible={areEmojisVisible}
