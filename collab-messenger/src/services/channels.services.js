@@ -30,7 +30,7 @@ export const getChannelsCount = () => {
     .catch((e) => console.log(`Error getting channels count: ${e.message}`));
 };
 
-export const createChannel = (teamId, title, participants) => {
+export const createChannel = (teamId, title, participants, publicStatus) => {
   const channelsRef = ref(db, 'channels');
 
   const newChannel = {
@@ -38,7 +38,7 @@ export const createChannel = (teamId, title, participants) => {
     participants: {},
     messages: {},
     createdOn: Date.now(),
-    isPublic: false,
+    isPublic: publicStatus,
     lastMessage: '',
     participantsReadMsg: {},
     team: teamId,
@@ -108,7 +108,7 @@ export const getAllChannels = () => {
 
 export const userChannelsDocument = (snapshots) => {
   return snapshots.map((snapshot) => {
-    if (!snapshot || snapshot.val) {
+    if (!snapshot) {
       throw new Error(`Invalid snapshot: ${snapshot}`);
     }
 
@@ -241,10 +241,44 @@ export const updateChannelParticipants = (channelId, participants) => {
 
   participants.forEach((participant) => {
     updates[`/channels/${channelId}/participants/${participant.value}`] = true;
+    updates[`/channels/${channelId}/participantsReadMsg/${participant.value}`] = "";
     updates[`/users/${participant.value}/channels/${channelId}`] = true;
   });
 
   return update(ref(db), updates).catch((e) =>
     console.log('Error adding channel participants: ', e.message)
   );
+};
+
+export const addNewTeamMembersToPublicChannels = (teamChannels, membersToAdd) => {
+  const channelRefs = teamChannels.map((channelId) =>
+    get(ref(db, `channels/${channelId}`))
+  );
+  
+  Promise.all(channelRefs)
+    .then((channelsSnapshots) => {
+      if (channelsSnapshots.length === 0) {
+        return [];
+      }
+
+      return userChannelsDocument(channelsSnapshots);
+    })
+    .then((channelsData) => {
+      const publicChannels = channelsData.filter(channel => channel.isPublic === true);
+      publicChannels.forEach(ch => {
+        const updates = {};
+
+        membersToAdd.forEach((participant) => {
+          updates[`/channels/${ch.id}/participants/${participant}`] = true;
+          updates[`/users/${participant}/channels/${ch.id}`] = true;
+          updates[`/channels/${ch.id}/participantsReadMsg/${participant}`] = "";
+        });
+      
+        return update(ref(db), updates);
+      })
+    })
+    .catch((e) =>
+      console.log(`Error in getting channels of logged user: ${e.message}`)
+    );
+
 };
