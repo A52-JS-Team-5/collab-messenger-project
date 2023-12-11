@@ -127,7 +127,7 @@ export default function CreateTeam() {
                     pushNotifications(member, notificationId))))
 
             .then(() => {
-                createChannel(newTeamId, 'General', membersToAdd)
+                createChannel(newTeamId, 'General', membersToAdd, true)
                     .then((channelId) => {
                         addChannel(membersToAdd, channelId, newTeamId, user.userData.handle);
                     })
@@ -166,7 +166,7 @@ export default function CreateTeam() {
                 .then((notificationId) =>
                     pushNotifications(author, notificationId))
                 .then(() => {
-                    createChannel(newTeamId, 'General', author)
+                    createChannel(newTeamId, 'General', author, true)
                         .then((channelId) => {
                             addChannel(author, channelId, newTeamId, author);
                         })
