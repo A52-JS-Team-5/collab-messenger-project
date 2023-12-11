@@ -4,6 +4,7 @@ import Avatar from "../Avatar/Avatar";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { updateChannelTitle } from "../../services/channels.services";
+import { getTeamById } from "../../services/teams.services";
 import { db } from '../../config/firebase-config';
 import { getUploadedFilesInChannel } from "../../common/helpers";
 import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
@@ -16,38 +17,38 @@ export default function ChannelInformation() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [channelData, setChannelData] = useState({
     title: '',
-    messages: {},
     participants: {},
     team: ''
   });
-  const channelTitle = channelData.title;
-  const channelParticipants = Object.keys(channelData?.participants);
   const [showTitle, setShowTitle] = useState(true);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
+    getTeamById(channelData.team)
+      .then((teamData) => {
+        setTeamMembers(teamData.members);
+      })
+      .catch(e => console.log(e.message));
+
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
       if (updatedChannelData) {
         setChannelData(updatedChannelData);
       }
+      getUploadedFilesInChannel(channelId)
+        .then((urls) => setUploadedFiles(urls))
+        .catch(e => console.log(e.message));
     });
 
     return () => {
       channelListener();
     };
-  }, [channelId]);
-
-  useEffect(() => {
-    getUploadedFilesInChannel(channelId)
-      .then((urls) => setUploadedFiles(urls))
-      .catch(e => console.log(e.message));
-
-  }, [channelId]);
+  }, [channelId, channelData.team]);
 
   const handleOpenEditField = () => {
     setShowTitle(!showTitle);
-    setForm(channelTitle);
+    setForm(channelData.title);
   };
 
   const onInputChange = (e) => {
@@ -85,8 +86,8 @@ export default function ChannelInformation() {
   return (
     <div id="channel-information-wrapper" className="m-5 ">
       <div className="flex flex-row justify-center">
-        {channelTitle === "General" ? (<div className="m-3 font-bold">{channelTitle}</div>) : (showTitle && <div className="m-3 font-bold">{channelTitle}</div>)}
-        {channelTitle !== "General" && (
+        {channelData.title === "General" ? (<div className="m-3 font-bold">{channelData.title}</div>) : (showTitle && <div className="m-3 font-bold">{channelData.title}</div>)}
+        {channelData.title !== "General" && (
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
             {!showTitle && (
@@ -99,9 +100,9 @@ export default function ChannelInformation() {
         )}
       </div>
       <div id="channel-options">
-        {channelTitle !== "General" && (
+        {channelData.title !== "General" && (
           <div className="flex flex-row gap-5 justify-center">
-            <AddChannelMembers channelId={channelId} channelParticipants={channelParticipants} teamId={channelData.team} />
+            <AddChannelMembers channelId={channelId} channelParticipants={Object.keys(channelData?.participants)} teamMembers={teamMembers} />
             <LeaveChannelModal channelId={channelId} />
           </div>
         )}
@@ -112,7 +113,7 @@ export default function ChannelInformation() {
             Participants
           </div>
           <div className="collapse-content text-sm">
-            {channelParticipants.map(user => (
+            {Object.keys(channelData?.participants).map(user => (
               <div key={user} >
                 <div className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite hover:text-black cursor-pointer" onClick={() => handleOpenUserProfileModal(user)}>
                   <Avatar user={user} />
