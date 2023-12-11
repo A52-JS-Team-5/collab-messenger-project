@@ -100,7 +100,7 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
         } else {
           if (channelType === 'Private') {
             const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
-            createChannel(teamId, teamChannelTitle, membersToAdd)
+            createChannel(teamId, teamChannelTitle, membersToAdd, false)
               .then((channelId) => {
                 addChannel(teamParticipants, channelId, teamId, teamOwner)
                 return channelId;
@@ -123,7 +123,7 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
               onClose();
       
           } else {
-            createChannel(teamId, teamChannelTitle, teamParticipants)
+            createChannel(teamId, teamChannelTitle, teamParticipants, true)
               .then((channelId) => {
                 addChannel(teamParticipants, channelId, teamId, teamOwner)
                 return channelId;
