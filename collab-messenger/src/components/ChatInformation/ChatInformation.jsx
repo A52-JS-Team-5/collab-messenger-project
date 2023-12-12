@@ -24,13 +24,15 @@ export default function ChatInformation({ isGroupChat }) {
   useEffect(() => {
     const chatRef = ref(db, `chats/${chatId}`);
     const chatListener = onValue(chatRef, (snapshot) => {
-      const updatedChannelData = snapshot.val();
-      if (updatedChannelData) {
-        setChatData(updatedChannelData);
+      const updatedChatData = snapshot.val();
+      if (updatedChatData) {
+        setChatData(updatedChatData);
       }
-      getUploadedFilesInChat(chatId)
-        .then((urls) => setUploadedFiles(urls))
-        .catch(e => console.log(e.message));
+      if(updatedChatData.uploadedFiles) {
+        getUploadedFilesInChat(chatId)
+          .then((urls) => setUploadedFiles(urls))
+          .catch(e => console.log(e.message));
+      }
     });
   
     return () => {
