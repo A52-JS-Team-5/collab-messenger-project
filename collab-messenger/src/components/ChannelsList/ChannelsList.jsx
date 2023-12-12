@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteChannel, getChannelById } from '../../services/channels.services';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { getChannelById } from '../../services/channels.services';
 import AddChannelModal from '../AddChannelModal/AddChannelModal';
 import AppContext from '../../context/AuthContext';
+import DeleteChannelModal from '../DeleteChannelModal/DeleteChannelModal';
 
 export default function ChannelsList({ teamDetails }) {
   const navigate = useNavigate();
@@ -50,16 +49,6 @@ export default function ChannelsList({ teamDetails }) {
     getChannelDetails();
 }, [teamDetails.channels, user, teamDetails.owner]);
 
-  const handleChannelDeletion = (channelData) => {
-
-    deleteChannel(channelData)
-      .then(() => {
-        navigate(`/app/teams/${channelData.team}`);
-        toast('Channel was deleted successfully');
-      })
-      .catch((e) => console.log(e.message));
-  };
-
   return (
     <div className='flex flex-col gap-2'>
       <div className="flex flex-col bg-white rounded-md p-4 dark:bg-darkAccent dark:text-darkText">
@@ -76,9 +65,7 @@ export default function ChannelsList({ teamDetails }) {
                 <p className='place-self-center ' onClick={() => navigate(`/app/teams/${channel.team}/${channel.id}`)}>{channel.title}</p>
               </div>
               {channel.title !== 'General' && showManageTeam && (
-                <button onClick={() => handleChannelDeletion(channel)} className="btn btn-ghost btn-sm btn-square hover:!bg-grey text-blue">
-                  <i className="fa-solid fa-trash"></i>
-                </button>
+                <DeleteChannelModal channelData={channel} />
               )}
             </div>
           </li>)
