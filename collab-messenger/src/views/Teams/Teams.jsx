@@ -59,8 +59,9 @@ const Teams = () => {
                 // Wait for all promises to resolve
                 Promise.all(promises)
                     .then((teamDetails) => {
-                        setTeams(teamDetails.filter(team => team !== 'Team does not exist!'));
-                        setUserTeamsChannels(teamDetails.map(team => team.channels));
+                        const existingTeams = teamDetails.filter(team => team !== 'Team does not exist!');
+                        setTeams(existingTeams);
+                        setUserTeamsChannels(existingTeams.map(team => team?.channels));
                         setIsLoading(false);
                     })
                     .catch((error) => {
@@ -111,7 +112,7 @@ const Teams = () => {
                 
                 if (updatedChannelData) {
                     Object.entries(updatedChannelData).forEach(([channelId, channel]) => {
-                        const isChannelNotRead = userTeamsChannels.some(el => el.includes(channelId)) && channel.participants[userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[userData?.handle];
+                        const isChannelNotRead = userTeamsChannels.flat().some(el => el === channelId) && channel.participants[userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[userData?.handle];
                         if (isChannelNotRead === true) {
                             setUnreadTeamChannels(prev => [...prev, channelId]);
                         } else {
