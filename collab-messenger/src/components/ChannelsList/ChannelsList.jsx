@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteChannel, getChannelById } from '../../services/channels.services';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddChannelModal from '../AddChannelModal/AddChannelModal';
+import AppContext from '../../context/AuthContext';
 
 export default function ChannelsList({ teamDetails }) {
   const navigate = useNavigate();
   const [allChannels, setAllChannels] = useState([]);
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] = useState(false);
+  const user = useContext(AppContext);
+  const [showManageTeam, setShowManageTeam] = useState(false);
 
   const openCreateChannelModal = () => {
     setIsCreateChannelModalOpen(true);
@@ -41,8 +44,11 @@ export default function ChannelsList({ teamDetails }) {
       }
     };
 
+    if (teamDetails.owner === user?.userData?.handle) {
+      setShowManageTeam(true);
+    }
     getChannelDetails();
-}, [teamDetails.channels]);
+}, [teamDetails.channels, user, teamDetails.owner]);
 
   const handleChannelDeletion = (channelData) => {
 
@@ -58,7 +64,7 @@ export default function ChannelsList({ teamDetails }) {
     <div className='flex flex-col gap-2'>
       <div className="flex flex-col bg-white rounded-md p-4 dark:bg-darkAccent dark:text-darkText">
         <div className='flex flex-col items-end mb-3'>
-          <button onClick={openCreateChannelModal} className='btn bg-pink border-none text-pureWhite w-fit justify-center'><i className="fa-solid fa-users"></i>Add Channel</button>
+          {showManageTeam && <button onClick={openCreateChannelModal} className='btn bg-pink border-none text-pureWhite w-fit justify-center'><i className="fa-solid fa-users"></i>Add Channel</button>}
           {isCreateChannelModalOpen && (
             <AddChannelModal teamId={teamDetails.id} teamParticipants={teamDetails.members} teamOwner={teamDetails.owner} isOpen={isCreateChannelModalOpen} onClose={closeCreateChannelModal} teamName={teamDetails.name}/>
           )}
@@ -69,7 +75,7 @@ export default function ChannelsList({ teamDetails }) {
               <div className='flex flex-row w-full'>
                 <p className='place-self-center ' onClick={() => navigate(`/app/teams/${channel.team}/${channel.id}`)}>{channel.title}</p>
               </div>
-              {channel.title !== 'General' && (
+              {channel.title !== 'General' && showManageTeam && (
                 <button onClick={() => handleChannelDeletion(channel)} className="btn btn-ghost btn-sm btn-square hover:!bg-grey text-blue">
                   <i className="fa-solid fa-trash"></i>
                 </button>

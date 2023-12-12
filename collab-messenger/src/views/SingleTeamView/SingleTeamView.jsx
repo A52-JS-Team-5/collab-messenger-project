@@ -213,7 +213,7 @@ const SingleTeamView = () => {
                                             </label>
                                             <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52 dark:bg-darkAccent">
                                                 <li onClick={handleClickTeamDetails}><a className="dark:!text-yellow">Team Details</a></li>
-                                                <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>
+                                                {showManageTeam && <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>}
                                                 {/*Leave - only for members who are not the owner*/}
                                                 {!showManageTeam && <li onClick={openLeaveModal}><a className="dark:!text-yellow">Leave Team</a></li>}
                                                 {/*Delete - only for team owner*/}
@@ -271,7 +271,7 @@ const SingleTeamView = () => {
                                             </label>
                                             <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow-md bg-pureWhite rounded-box w-52 dark:bg-darkAccent">
                                                 <li onClick={handleMobileClickTeamDetails}><a className="dark:!text-yellow">Team Details</a></li>
-                                                <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>
+                                                {showManageTeam && <li onClick={openCreateChannelModal}><a className="dark:!text-yellow">Add Channel</a></li>}
                                                 {/*Leave - only for members who are not the owner*/}
                                                 {!showManageTeam && <li onClick={openLeaveModal}><a className="dark:!text-yellow">Leave Team</a></li>}
                                                 {/*Delete - only for team owner*/}

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { onValue, ref } from "firebase/database";
 import Avatar from "../Avatar/Avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { updateChannelTitle } from "../../services/channels.services";
 import { getTeamById } from "../../services/teams.services";
@@ -10,6 +10,7 @@ import { getUploadedFilesInChannel } from "../../common/helpers";
 import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
 import AddChannelMembers from "../AddChannelMembers/AddChannelMembers";
 import UserProfile from "../../views/UserProfile/UserProfile";
+import AppContext from "../../context/AuthContext";
 
 export default function ChannelInformation() {
   const { channelId } = useParams();
@@ -18,14 +19,20 @@ export default function ChannelInformation() {
   const [channelData, setChannelData] = useState({
     title: '',
     participants: {},
-    team: ''
+    team: '',
+    isPublic: false,
   });
   const [showTitle, setShowTitle] = useState(true);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [showManageTeam, setShowManageTeam] = useState(false);
+  const user = useContext(AppContext);
 
   useEffect(() => {
     getTeamById(channelData.team)
       .then((teamData) => {
+        if (teamData.owner === user?.userData?.handle) {
+          setShowManageTeam(true);
+        }
         setTeamMembers(teamData.members);
       })
       .catch(e => console.log(e.message));
@@ -44,7 +51,7 @@ export default function ChannelInformation() {
     return () => {
       channelListener();
     };
-  }, [channelId, channelData.team]);
+  }, [channelId, channelData.team, user?.userData?.handle]);
 
   const handleOpenEditField = () => {
     setShowTitle(!showTitle);
@@ -87,7 +94,7 @@ export default function ChannelInformation() {
     <div id="channel-information-wrapper" className="m-5 ">
       <div className="flex flex-row justify-center">
         {channelData.title === "General" ? (<div className="m-3 font-bold">{channelData.title}</div>) : (showTitle && <div className="m-3 font-bold">{channelData.title}</div>)}
-        {channelData.title !== "General" && (
+        {channelData.title !== "General" && showManageTeam && (
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
             {!showTitle && (
@@ -100,10 +107,10 @@ export default function ChannelInformation() {
         )}
       </div>
       <div id="channel-options">
-        {channelData.title !== "General" && (
+        {channelData.isPublic === false && (
           <div className="flex flex-row gap-5 justify-center">
-            <AddChannelMembers channelId={channelId} channelParticipants={Object.keys(channelData?.participants)} teamMembers={teamMembers} />
-            <LeaveChannelModal channelId={channelId} />
+            {showManageTeam && <AddChannelMembers channelId={channelId} channelParticipants={Object.keys(channelData?.participants)} teamMembers={teamMembers} />}
+            {!showManageTeam && <LeaveChannelModal channelId={channelId} />}
           </div>
         )}
         <div className="collapse collapse-arrow bg-grey mt-4 text-left dark:bg-darkAccent dark:text-pureWhite">
