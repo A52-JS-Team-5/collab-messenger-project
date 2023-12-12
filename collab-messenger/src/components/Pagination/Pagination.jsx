@@ -11,7 +11,7 @@ export default function Pagination({ numberOfUsers, usersPerPage, setCurrentPage
     <>
       <div className="join">
         {pages.map((page, index) => {
-          return <button className='btn btn-square font-medium bg-white text-black border-black hover:bg-blue30' key={index} onClick={() => setCurrentPage(page)}>{page}</button>
+          return <button className='btn btn-square font-bold bg-transparent text-pink text-lg border-grey hover:bg-pureWhite hover:border-transparent' key={index} onClick={() => setCurrentPage(page)}>{page}</button>
         })}
       </div>
     </>
