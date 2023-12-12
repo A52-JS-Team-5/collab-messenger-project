@@ -5,12 +5,12 @@ const storage = getStorage();
 export const isEmailValid = (email) => {
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   return emailRegex.test(email);
-}
+};
 
 export const isPhoneNumberValid = (number) => {
   const numberRegex = /^\d+$/;
   return numberRegex.test(number);
-}
+};
 
 export const getUploadedFilesInChannel = (channelId) => {
   const storageRef = ref(storage, `channel_uploads/${channelId}`);
@@ -30,8 +30,8 @@ export const getUploadedFilesInChannel = (channelId) => {
       return Promise.all(downloadUrls)
         
       })
-    .catch((e) => console.log(e.message));
-}
+    .catch((e) => console.log('Error in getting uploaded files in channel: ', e.message));
+};
 
 export const getUploadedFilesInChat = (chatId) => {
   const storageRef = ref(storage, `chat_uploads/${chatId}`);
@@ -51,5 +51,5 @@ export const getUploadedFilesInChat = (chatId) => {
 
         return Promise.all(downloadUrls)
       })
-      .catch((e) => console.log(e.message));
-}
+      .catch((e) => console.log('Error in getting uploaded files in chat: ', e.message));
+};
