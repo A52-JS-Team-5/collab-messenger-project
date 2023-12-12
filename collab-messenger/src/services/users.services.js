@@ -9,11 +9,10 @@ export const getUserByHandle = (handle) => {
     .then((snapshot) => {
       return snapshot.val();
     })
-    .catch((e) => console.log('Error in getting user', e.message));
+    .catch((e) => console.log('Error in getting user by handle: ', e.message));
 };
 
 export const createUserHandle = (handle, uid, email, name, surname, phoneNumber) => {
-
   return set(ref(db, `users/${handle}`), {
     handle,
     uid,
@@ -30,12 +29,12 @@ export const createUserHandle = (handle, uid, email, name, surname, phoneNumber)
     status: 'Online',
     createdOn: Date.now(),
   })
-    .catch(e => console.log('Error in creating user:', e.message))
+    .catch(e => console.log('Error in creating user: ', e.message))
 };
 
 export const getUserData = (uid) => {
   return get(query(ref(db, 'users'), orderByChild('uid'), equalTo(uid)))
-    .catch((e) => console.log('Error in getting user data', e.message));
+    .catch((e) => console.log('Error in getting user data: ', e.message));
 };
 
 export const getUsersCount = () => {
@@ -49,8 +48,8 @@ export const getUsersCount = () => {
         return ZERO;
       }
     })
-    .catch(e => console.log(e.message));
-}
+    .catch(e => console.log('Error in getting users count:', e.message));
+};
 
 const fromUsersDocument = (snapshot) => {
   const usersDocument = snapshot.val();
@@ -88,8 +87,8 @@ export const getAllUsers = () => {
 
       return fromUsersDocument(snapshot);
     })
-    .catch(e => console.log(e.message));
-}
+    .catch(e => console.log('Error in getting all users: ', e.message));
+};
 
 export const getCurrentUserUid = () => {
   const auth = getAuth();
@@ -99,7 +98,7 @@ export const getCurrentUserUid = () => {
   } else {
     throw new Error('No user is logged in')
   }
-}
+};
 
 export const getUsernameByUid = (uid) => {
   // Query the "users" collection to find a user with a matching "uid" property
@@ -117,7 +116,7 @@ export const getUsernameByUid = (uid) => {
       }
     })
     .catch((error) => {
-      console.log(error.message);
+      console.log('Error in getting username by UID', error.message);
     });
 };
 
@@ -130,21 +129,21 @@ export const checkEmailExists = (email) => {
       }
       return false; // Database is empty; the email doesn't exist
     })
-    .catch(e => console.log(e.message));
+    .catch(e => console.log('Error in checking if email exists in database: ', e.message));
 };
 
 export const changeStatus = (userHandle, newStatus) => {
   return update(ref(db, `users/${userHandle}`), { status: newStatus })
     .catch((e) => console.log('Error in changing status:', e.message));
-}
+};
 
 export const editUserProfile = (handle, updates) => {
   return update(ref(db, `users/${handle}`), updates)
     .then(() => {
       return 'Successful update';
     })
-    .catch(e => console.log(e.message))
-}
+    .catch(e => console.log('Error in editing user profile: ', e.message))
+};
 
 // Sorting of users
 function ascendingSort(a, b) {

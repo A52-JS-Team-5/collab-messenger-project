@@ -8,7 +8,7 @@ export const addMessage = (userHandle, chatId, messageId, message) => {
   updateMessages[`/chats/${chatId}/lastMessage`] = message;
 
   return update(ref(db), updateMessages).catch((e) =>
-    console.log('Error adding message: ', e.message)
+    console.log('Error in adding message: ', e.message)
   );
 };
 
@@ -47,7 +47,7 @@ export const createFileUploadMessage = (
       return newMessageRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating message: ${error.message}`);
+      console.log(`Error in creating message on file upload: ${error.message}`);
     });
 };
 
@@ -67,7 +67,7 @@ export const createMessage = (content, userHandle, chatId) => {
       return newMessageRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating message: ${error.message}`);
+      console.log(`Error in creating chat message: ${error.message}`);
     });
 };
 
@@ -87,7 +87,7 @@ export const createChannelMessage = (content, userHandle, channelId) => {
       return newMessageRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating channel message: ${error.message}`);
+      console.log(`Error in creating channel message: ${error.message}`);
     });
 };
 
@@ -115,7 +115,7 @@ export const createFileUploadMessageForChannels = (
       return newMessageRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating message: ${error.message}`);
+      console.log(`Error creating message on file upload in channel: ${error.message}`);
     });
 };
 
@@ -129,13 +129,13 @@ export const getMessageById = (messageId) => {
       return { ...snapshot.val(), id: messageId };
     })
     .catch((error) => {
-      console.error('Error fetching message: ', error);
+      console.log('Error fetching message by ID: ', error.message);
     });
 };
 
 export const editMessage = (messageId, updates) => {
   return update(ref(db, `/messages/${messageId}`), updates).catch((e) => {
-    console.log('Error editing comment: ', e.message);
+    console.log('Error in editing message: ', e.message);
   });
 };
 
@@ -145,7 +145,7 @@ export const saveMessage = (handle, msgId) => {
   updateItems[`/users/${handle}/savedMessages/${msgId}`] = true;
 
   return update(ref(db), updateItems)
-    .catch((e) => console.log('Error in saving message', e.message));
+    .catch((e) => console.log('Error in saving message: ', e.message));
 };
 
 export const unsaveMessage = (handle, msgId) => {
@@ -154,7 +154,7 @@ export const unsaveMessage = (handle, msgId) => {
   updateItems[`/users/${handle}/savedMessages/${msgId}`] = null;
 
   return update(ref(db), updateItems)
-    .catch((e) => console.log('Error in unsaving message', e.message));
+    .catch((e) => console.log('Error in unsaving message: ', e.message));
 };
 
 export const getSavedMessageById = (messageId) => {
@@ -167,7 +167,7 @@ export const getSavedMessageById = (messageId) => {
       return { ...snapshot.val(), id: messageId };
     })
     .catch((error) => {
-      console.error('Error fetching message: ', error);
+      console.error('Error in fetching saved message by ID: ', error);
       return null;
     });
 };

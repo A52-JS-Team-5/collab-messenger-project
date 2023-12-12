@@ -69,7 +69,7 @@ export const addChannel = (participants, channelId, teamId, teamOwner) => {
   updateChannels[`/users/${teamOwner}/channels/${channelId}`] = true;
 
   return update(ref(db), updateChannels).catch((e) =>
-    console.log(`Error adding channel to users' data: ${e.message}`)
+    console.log(`Error adding new channel to users' and teams' data: ${e.message}`)
   );
 };
 
@@ -100,7 +100,7 @@ export const getAllChannels = () => {
       if (!snapshot.exists()) {
         return [];
       }
-      console.log(snapshot);
+
       return fromChannelsDocument(snapshot);
     })
     .catch((e) => console.log(`Error in getting all channels: ${e.message}`));
@@ -129,7 +129,7 @@ export const userChannelsDocument = (snapshots) => {
 };
 
 export const getLoggedUserChannels = (userHandle) => {
-  return get(query(ref(db, `users/${userHandle}/channels`)))
+  return get(ref(db, `users/${userHandle}/channels`))
     .then((snapshot) => {
       if (!snapshot.exists()) {
         return [];
@@ -157,6 +157,7 @@ export const leaveChannel = (channelId, userHandle) => {
   return Promise.all([
     remove(ref(db, `/users/${userHandle}/channels/${channelId}`)),
     remove(ref(db, `/channels/${channelId}/participants/${userHandle}`)),
+    remove(ref(db, `/channels/${channelId}/participantsReadMsg/${userHandle}`))
   ]).catch((e) => console.log(`Error in leaving channel: ${e.message}`));
 };
 
@@ -198,11 +199,12 @@ export const makeChannelPublic = (id) => {
 export const getChannelByTitle = (title) => {
   return get(
     query(ref(db, 'channels'), orderByChild('title'), equalTo(title))
-  ).catch((e) => console.log(`Error in getting channel: ${e.message}`));
+  ).catch((e) => console.log(`Error in getting channel by title: ${e.message}`));
 };
 
 export const getChannelsByTeamId = (teamId) => {
-  return get(query(ref(db, 'channels'), orderByChild('team'), equalTo(teamId)));
+  return get(query(ref(db, 'channels'), orderByChild('team'), equalTo(teamId)))
+    .catch(e => console.log('Error in getting channels by team id: ', e.message));
 };
 
 export const deleteChannel = (channelData) => {
@@ -215,7 +217,7 @@ export const deleteChannel = (channelData) => {
     }),
     remove(ref(db, `/teams/${channelData.team}/channels/${channelData.id}`)),
     remove(ref(db, `/channels/${channelData.id}`)),
-  ]).catch((e) => console.log('Error in leaving chat', e.message));
+  ]).catch((e) => console.log('Error in deleting channel: ', e.message));
 };
 
 export const updateChannelFiles = (channelId, fileUrl) => {
@@ -223,7 +225,7 @@ export const updateChannelFiles = (channelId, fileUrl) => {
   updateChannel[`/channels/${channelId}/uploadedFiles/url`] = fileUrl;
 
   return update(ref(db), updateChannel).catch((e) =>
-    console.log(`Error updating channel: `, e.message)
+    console.log(`Error in updating channels' uploaded files: `, e.message)
   );
 };
 
@@ -278,7 +280,6 @@ export const addNewTeamMembersToPublicChannels = (teamChannels, membersToAdd) =>
       })
     })
     .catch((e) =>
-      console.log(`Error in getting channels of logged user: ${e.message}`)
+      console.log(`Error in adding new team members to public channels of team: ${e.message}`)
     );
-
 };

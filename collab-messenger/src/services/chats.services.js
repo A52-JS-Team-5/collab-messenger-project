@@ -7,7 +7,7 @@ export const updateChatFiles = (chatId, fileUrl) => {
   updateChat[`/chats/${chatId}/uploadedFiles/url`] = fileUrl;
 
   return update(ref(db), updateChat).catch((e) =>
-    console.log(`Error adding chat to users' data`, e.message)
+    console.log(`Error in updating uploaded files in chat: ${e.message}`)
   );
 };
 
@@ -21,7 +21,7 @@ export const getChatsCount = () => {
         return ZERO;
       }
     })
-    .catch((e) => console.log('Error getting chats count', e.message));
+    .catch((e) => console.log('Error in getting chats count', e.message));
 };
 
 export const createChat = (...participants) => {
@@ -46,7 +46,7 @@ export const createChat = (...participants) => {
       return newChatRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating chat: ${error.message}`);
+      console.log(`Error in creating chat: ${error.message}`);
     });
 };
 
@@ -60,7 +60,7 @@ export const addChat = (userHandle, loggedUserHandle, chatId) => {
     chatId;
 
   return update(ref(db), updateChats).catch((e) =>
-    console.log(`Error adding chat to users' data`, e.message)
+    console.log(`Error in adding chat to users' data`, e.message)
   );
 };
 
@@ -158,7 +158,7 @@ export const createGroupChat = (title, participants) => {
       return newChatRef.key;
     })
     .catch((error) => {
-      console.log(`Error creating group chat: ${error.message}`);
+      console.log(`Error in creating group chat: ${error.message}`);
     });
 };
 
@@ -169,7 +169,7 @@ export const addGroupChat = (chatId, participants) => {
   });
 
   return update(ref(db), updateChats).catch((e) =>
-    console.log(`Error adding chat to users' data`, e.message)
+    console.log(`Error in adding group chat to users' data`, e.message)
   );
 };
 
@@ -182,7 +182,7 @@ export const updateGroupChatParticipants = (chatId, participants) => {
   });
 
   return update(ref(db), updates)
-    .catch((e) => console.log('Error adding group chat participants: ', e.message));
+    .catch((e) => console.log('Error in adding group chat participants: ', e.message));
 }
 
 export const updateGroupChatTitle = (chatId, newTitle) => {
@@ -190,7 +190,7 @@ export const updateGroupChatTitle = (chatId, newTitle) => {
   updates[`/chats/${chatId}/title`] = newTitle;
 
   return update(ref(db), updates)
-    .catch((e) => console.log('Error changing group chat title: ', e.message));
+    .catch((e) => console.log('Error in changing group chat title: ', e.message));
 }
 
 export const leaveChat = (chatId, userHandle) => {
@@ -264,5 +264,5 @@ export const getChatById = (id) => {
       if (!chat.messages) chat.messages = {};
       return chat;
     })
-    .catch((e) => console.log('Error in getting chat by ID:', e.message));
+    .catch((e) => console.log('Error in getting chat by ID: ', e.message));
 };
