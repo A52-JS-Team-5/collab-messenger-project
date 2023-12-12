@@ -5,9 +5,8 @@ import AppContext from '../../context/AuthContext';
 import { addChat, createChat } from '../../services/chats.services';
 
 export default function UsersList({ users }) {
-
   return (
-    <div className="grid grid-cols-5 grid-rows-2 gap-1 overflow-auto max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 [&::-webkit-scrollbar]:[width:8px]
+    <div className="grid grid-cols-5 grid-rows-3 gap-1 overflow-auto max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-4 w-full [&::-webkit-scrollbar]:[width:8px]
     [&::-webkit-scrollbar-thumb]:bg-mint [&::-webkit-scrollbar-thumb]:rounded-md">
       {users.map(user => {
         return (
@@ -48,18 +47,21 @@ function UserData({ user }) {
 
   return (
     
-    <div className='user-card w-64 rounded-md justify-left items-start bg-pureWhite dark:bg-darkFront p-4 dark:text-darkText'>
+    <div className='user-card flex flex-col gap-4 w-64 rounded-md justify-left items-start bg-pureWhite dark:bg-darkFront p-4 dark:text-darkText'>
       <div className='user-card-head'>
-        <div className='author-description flex flex-col items-start'>
-          <div className='handle hover:cursor-pointer font-extrabold'>{user?.id}</div>
-          <div className='email'>{user?.email}</div>
+        <div className='author-description flex flex-row items-start gap-2'>
+          <img className='w-12 h-12 object-cover rounded-full' src={user?.photoURL} />
+          <div className='flex flex-col'>
+            <div className="flex place-items-end text-lg font-semibold">{`${user.name} ${user.surname}`}</div>
+            <div className="flex place-items-end text-sm">@{user.id}</div>
+          </div>
         </div>
       </div>
-      <div className='joined-on'>Joined On: {(user?.createdOn)}</div>
-      <div className='user-card-footer h-8'>
-        <div className='pl-40'>
+      <div className='h-12 flex flex-col w-full'>
+        <div className='text-sm flex place-items-end'>Member since: {(user?.createdOn)}</div>
+        <div className='flex place-self-end'>
             {loggedUser?.userData && user?.handle !== loggedUser.userData?.handle && 
-              <button className="btn btn-ghost flex " onClick={startChat}><i className="fa-solid fa-comment"></i></button>
+              <div className="cursor-pointer pr-3" onClick={startChat}><i className="fa-solid fa-comment text-lightBlue"></i></div>
             }
         </div>
       </div>
