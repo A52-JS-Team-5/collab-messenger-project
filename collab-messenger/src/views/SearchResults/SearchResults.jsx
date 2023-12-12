@@ -6,12 +6,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import Pagination from "../../components/Pagination/Pagination";
 import UsersList from "../../components/UsersList/UsersList";
 import UsersSort from "../../components/UsersSort/UsersSort";
-import EmptyIcon from '../../assets/empty-icon/EmptyList.svg'
+import EmptyList from "../../components/EmptyList/EmptyList";
 
 export default function SearchResults() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
+  const [usersPerPage] = useState(15);
   const [numberOfUsers, setNumberOfUsers] = useState(0);
   const lastPostIndex = currentPage * usersPerPage;
   const firstPostIndex = lastPostIndex - usersPerPage;
@@ -38,28 +38,18 @@ export default function SearchResults() {
   }, [searchTerm, firstPostIndex, lastPostIndex])
 
   return (
-    <>
-      <div className='flex flex-col px-36 max-xl:px-6 py-2 dark:text-darkText'>
-        <div className="hero my-7">
-          <div className="hero-content text-center">
-            <div className="max-w-md">
-              <h1 className="text-2xl font-bold">Found Users Based On Your Search</h1>
-            </div>
-          </div>
+    <div className='mt-4 flex flex-col gap-4 h-[88vh] mt-4 w-full'>
+      <div className="p-4 flex flex-row justify-between items-center bg-pureWhite rounded-lg dark:bg-darkFront dark:text-darkText">
+        <h2 className='m-3 font-bold text-left'>Found Users Based On Your Search</h2>
+        <div className='flex flex-row justify-end pr-4'>
+          <UsersSort users={users} setUsers={setUsers} />
         </div>
       </div>
-
-      {numberOfUsers.length === 0 ? (
-        <div className='flex flex-col justify-center gap-4'>
-          <img src={EmptyIcon} id='EmptyList' alt="Empty List Illustration" className='max-h-64' />
-          <p className='mt-4'>Oops, no users or teams were found based on your search criteria. Please try again!</p>
-        </div>
+      {numberOfUsers === 0 ? (
+        <div className='flex w-full h-full'><EmptyList content={`Oops, no users were found based on your search!`}/></div>
       ) : (
         <>
           <div className='flex flex-col gap-3'>
-            <div className='flex flex-row justify-end pr-4'>
-              <UsersSort users={users} setUsers={setUsers} />
-            </div>
             <UsersList users={users} />
             <div className="flex flex-row justify-center">
               <Pagination numberOfUsers={numberOfUsers} usersPerPage={usersPerPage} setCurrentPage={setCurrentPage} />
@@ -68,6 +58,6 @@ export default function SearchResults() {
         </>
       )
       }
-    </>
+    </div>
   )
 }
