@@ -56,3 +56,7 @@ export const REMOVED_FROM_CHANNEL_TYPE = 'removedFromChannel';
 export const DELETED_TEAM_TYPE = 'deletedTeam';
 
 export const CREATED_CHANNEL_TYPE = 'createdChannel';
+
+export const DELETED_CHANNEL_NOTIFICATION = 'This channel has been deleted';
+
+export const DELETED_CHANNEL_TYPE = 'deletedChannel';
