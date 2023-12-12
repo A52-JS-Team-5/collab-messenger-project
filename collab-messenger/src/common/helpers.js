@@ -36,7 +36,7 @@ export const getUploadedFilesInChannel = (channelId) => {
 export const getUploadedFilesInChat = (chatId) => {
   const storageRef = ref(storage, `chat_uploads/${chatId}`);
 
-    list(storageRef, { maxResults: 10 })
+    return list(storageRef, { maxResults: 10 })
       .then((result) => {
         const uploads = result.items;
 
