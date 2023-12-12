@@ -11,6 +11,7 @@ import LeaveChannelModal from "../LeaveChannelModal/LeaveChannelModal";
 import AddChannelMembers from "../AddChannelMembers/AddChannelMembers";
 import UserProfile from "../../views/UserProfile/UserProfile";
 import AppContext from "../../context/AuthContext";
+import RemoveChannelMember from "../RemoveChannelMember/RemoveChannelMember";
 
 export default function ChannelInformation() {
   const { channelId } = useParams();
@@ -25,24 +26,27 @@ export default function ChannelInformation() {
   const [showTitle, setShowTitle] = useState(true);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showManageTeam, setShowManageTeam] = useState(false);
-  const user = useContext(AppContext);
+  const [teamTitle, setTeamTitle] = useState('');
+  const loggedUser = useContext(AppContext);
 
   useEffect(() => {
-    getTeamById(channelData.team)
-      .then((teamData) => {
-        if (teamData.owner === user?.userData?.handle) {
-          setShowManageTeam(true);
-        }
-        setTeamMembers(teamData.members);
-      })
-      .catch(e => console.log(e.message));
-
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
-      if (updatedChannelData) {
-        setChannelData(updatedChannelData);
-      }
+      setChannelData(updatedChannelData);
+
+      getTeamById(updatedChannelData.team)
+        .then((teamData) => {
+          setTeamTitle(teamData.name);
+          if (teamData.owner === loggedUser.userData?.handle) {
+            setShowManageTeam(true);
+          } else {
+            setShowManageTeam(false);
+          }
+          setTeamMembers(teamData.members);
+        })
+        .catch(e => console.log(e.message));
+
       getUploadedFilesInChannel(channelId)
         .then((urls) => setUploadedFiles(urls))
         .catch(e => console.log(e.message));
@@ -51,7 +55,7 @@ export default function ChannelInformation() {
     return () => {
       channelListener();
     };
-  }, [channelId, channelData.team, user?.userData?.handle]);
+  }, [channelId, channelData.team, loggedUser.userData?.handle]);
 
   const handleOpenEditField = () => {
     setShowTitle(!showTitle);
@@ -77,15 +81,12 @@ export default function ChannelInformation() {
     }
   };
 
-  // State for the currently opened user profile modal
   const [openUserProfileModal, setOpenUserProfileModal] = useState('');
 
-  // Function to open user profile modal for a specific user
   const handleOpenUserProfileModal = (userHandle) => {
     setOpenUserProfileModal(userHandle);
   };
 
-  // Function to close user profile modal
   const handleCloseUserProfileModal = () => {
     setOpenUserProfileModal(false);
   };
@@ -121,13 +122,17 @@ export default function ChannelInformation() {
           </div>
           <div className="collapse-content text-sm">
             {Object.keys(channelData?.participants).map(user => (
-              <div key={user} >
-                <div className="flex flex-row gap-2 p-2 rounded-md items-center hover:bg-pureWhite hover:text-black cursor-pointer" onClick={() => handleOpenUserProfileModal(user)}>
+              <li key={user} className='flex flex-row justify-between p-2 rounded-md items-center cursor-pointer hover:bg-pureWhite dark:hover:bg-darkBase'>
+                <div className='flex flex-row gap-2 items-center' onClick={() => handleOpenUserProfileModal(user)}>
                   <Avatar user={user} />
-                  <p>{user}</p>
+                    <div className='flex flex-col items-start'>
+                      <p className='text-sm'>{user}</p>
+                    </div>
                 </div>
                 {openUserProfileModal === user && <UserProfile userHandle={user} isOpen={true} onClose={handleCloseUserProfileModal} />}
-              </div>)
+                {user !== loggedUser.userData?.handle && showManageTeam && channelData.isPublic === false && <RemoveChannelMember channelId={channelId} userHandle={user} channelName={channelData.title} teamTitle={teamTitle} />}
+              </li>
+              )
             )}
           </div>
         </div>
