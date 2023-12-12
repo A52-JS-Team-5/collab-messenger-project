@@ -48,7 +48,6 @@ export default function ChannelInformation() {
         .catch(e => console.log(e.message));
     });
 
-    
     return () => {
       channelListener();
     };
