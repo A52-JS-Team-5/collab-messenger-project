@@ -7,7 +7,7 @@ import { searchUsers } from '../../services/users.services';
 import PropTypes from "prop-types";
 import AppContext from '../../context/AuthContext';
 import { createNotification, pushNotifications } from "../../services/notifications.services";
-import { CREATED_PUBLIC_CHANNEL_NOTIFICATION, CREATED_PRIVATE_CHANNEL_NOTIFICATION, CREATED_CHANNEL_TYPE, MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH, ZERO } from "../../common/constants";
+import { MAX_CHANNEL_NAME_LENGTH, MIN_CHANNEL_NAME_LENGTH, ADDED_TO_CHANNEL_TYPE, ZERO, ADDED_TO_PRIVATE_CHANNEL_NOTIFICATION, ADDED_TO_PUBLIC_CHANNEL_NOTIFICATION } from "../../common/constants";
 
 export default function AddChannelModal({ teamId, teamParticipants, teamOwner, isOpen, onClose, teamName }) {
   const user = useContext(AppContext);
@@ -102,17 +102,17 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
             const membersToAdd = [...selectedMembers.map((member) => member.handle), user.userData.handle];
             createChannel(teamId, teamChannelTitle, membersToAdd, false)
               .then((channelId) => {
-                addChannel(teamParticipants, channelId, teamId, teamOwner)
+                addChannel(membersToAdd, channelId, teamId, teamOwner)
                 return channelId;
               })
               .then((channelId) => {
                 navigate(`/app/teams/${teamId}/${channelId}`);
               })
               .then(() => {
-                return createNotification(`${CREATED_PRIVATE_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, CREATED_CHANNEL_TYPE)
+                return createNotification(`${ADDED_TO_PRIVATE_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, ADDED_TO_CHANNEL_TYPE)
               })
               .then((notificationId) => {
-                Promise.all(teamParticipants.map((member) => {
+                Promise.all(membersToAdd.map((member) => {
                   pushNotifications(member, notificationId)
                 }))
               })
@@ -132,7 +132,7 @@ export default function AddChannelModal({ teamId, teamParticipants, teamOwner, i
                 navigate(`/app/teams/${teamId}/${channelId}`);
               })
               .then(() => {
-                return createNotification(`${CREATED_PUBLIC_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, CREATED_CHANNEL_TYPE)
+                return createNotification(`${ADDED_TO_PUBLIC_CHANNEL_NOTIFICATION}: ${teamChannelTitle} in ${teamName}`, ADDED_TO_CHANNEL_TYPE)
               })
               .then((notificationId) => {
                 Promise.all(teamParticipants.map((member) => {
