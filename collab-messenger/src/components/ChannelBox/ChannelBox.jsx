@@ -27,9 +27,7 @@ export default function ChannelBox({ channelId, onClick }) {
       }
       if (updatedChannelData?.title) {
         setChannelTitle(updatedChannelData.title);
-      } else {
-        setChannelTitle(Object.keys(updatedChannelData.participants).find(user => user !== loggedUser.userData?.handle));
-      }
+      } 
       setIsLastMsgGif(updatedChannelData.lastMessage.includes('giphy'));
       setIsLastMsgFile(updatedChannelData.lastMessage.includes('channel_uploads'));
     });
