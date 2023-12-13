@@ -20,6 +20,8 @@ export default function CreateTeam() {
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [newTeamId, setNewTeamId] = useState('');
     const inputRef = useRef();
+    const teamNameRef = useRef();
+    const teamDescriptionRef = useRef();
 
     const modalClass = cn({
         "modal modal-bottom sm:modal-middle": true,
@@ -66,11 +68,10 @@ export default function CreateTeam() {
         getTeamByName(teamData.name)
             .then((snapshot) => {
                 if (snapshot.exists()) {
-                    toast(`Team name is already taken. Please choose a different name.`);
-                    //throw new Error(`Team name is already taken.`);
-                } else {
-                    return createTeam(teamData.name, teamData.description, user.userData.handle, [], []);
+                    throw new Error(`Team name is already taken. Please choose a different name.`);
                 }
+
+                return createTeam(teamData.name, teamData.description, user.userData.handle, [], []);
             })
             .then((teamId) => {
                 addTeam(user.userData.handle, teamId);
@@ -79,7 +80,7 @@ export default function CreateTeam() {
             })
             .catch((error) => {
                 console.log(error.message);
-                toast('An error occurred while trying to create the team.')
+                toast(error.message);
             });
     };
 
@@ -183,6 +184,17 @@ export default function CreateTeam() {
         }
     }
 
+    const handleFirstCancel = () => {
+        handleToggle();
+        teamNameRef.current.value = '';
+        teamDescriptionRef.current.value = '';
+        setTeamData({
+            name: '',
+            description: '',
+            members: {},
+        });
+    }
+
     return (
         <div className="create-team-wrapper">
             <button className='btn bg-pink border-none text-pureWhite' onClick={handleToggle}><i className="fa-solid fa-users"></i>Create New Team</button>
@@ -194,14 +206,14 @@ export default function CreateTeam() {
                                 <label className="label">
                                     <span className="label-text">Team Name</span>
                                 </label>
-                                <input type="text" onChange={(e) => updateTeamData('name')(e.target.value)} className="input input-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" />
+                                <input ref={teamNameRef} type="text" onChange={(e) => updateTeamData('name')(e.target.value)} className="input input-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" />
                                 <span className="err-message text-red">{formErrorMsg.name}</span>
                             </div>
                             <div>
                                 <label className="label">
                                     <span className="label-text">Team Description</span>
                                 </label>
-                                <textarea className="textarea textarea-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" onChange={(e) => updateTeamData('description')(e.target.value)} />
+                                <textarea ref={teamDescriptionRef} className="textarea textarea-bordered w-full text-black bg-white dark:bg-darkAccent dark:text-darkText" onChange={(e) => updateTeamData('description')(e.target.value)} />
                             </div>
                         </div>
                     )}
@@ -250,7 +262,7 @@ export default function CreateTeam() {
                         </div>
                     )}
                     <div className="modal-action flex-row">
-                        {step === 1 && <button className="btn btn-outline border-pink text-pink" onClick={handleToggle}>Cancel</button>}
+                        {step === 1 && <button className="btn btn-outline border-pink text-pink" onClick={handleFirstCancel}>Cancel</button>}
                         {step === 1 && <button type="button" onClick={handleNextStep} className="btn bg-pink border-none text-pureWhite">Next</button>}
                         {step === 2 && <button className="btn btn-outline border-pink text-pink" onClick={handleSkip}>Skip</button>}
                         {step === 2 && <button type="button" onClick={handleSaveTeam} className="btn bg-pink border-none text-pureWhite">Save</button>}
