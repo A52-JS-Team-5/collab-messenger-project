@@ -118,7 +118,7 @@ export default function StartGroupChatModal() {
                   <span className="label-text text-black bg-transparent dark:text-darkText">Participants</span>
                 </label>
                 <input type="text" ref={inputRef} onChange={(e) => handleSearchUsers(e.target.value)}
-                  className="input input-bordered w-full text-black bg-white dark:bg-darkInput dark:text-darkText"
+                  className="input input-bordered w-full text-black bg-pureWhite dark:bg-darkInput dark:text-darkText"
                 />
                 <div className="scrollable-list-container flex flex-col gap-2 mt-2">
                   {/* Display search results */}
