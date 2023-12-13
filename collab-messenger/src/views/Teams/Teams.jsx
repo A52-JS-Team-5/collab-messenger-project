@@ -139,13 +139,13 @@ const Teams = () => {
                     <div className='grid grid-cols-5 max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-4 w-full'>
                         {teams.map(team => {
                             return (
-                                <div className='flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer dark:bg-darkFront dark:text-darkText' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
+                                <div className='relative flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer dark:bg-darkFront dark:text-darkText' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
                                     {unreadTeamChannels.length > 0 && [...team.channels].some(c => unreadTeamChannels.includes(c)) ? (
-                                        <div className='absolute pl-52 pb-28'>
+                                        <div className='absolute right-3 top-3'>
                                             <div className='w-2 h-2 rounded-full bg-pink'></div>
                                         </div>
                                     ) : (
-                                        <div className='absolute pl-52'>
+                                        <div className='absolute right-3 top-3'>
                                             <div className='w-2 h-2 rounded-full bg-transparent'></div>
                                         </div>
                                     )}
