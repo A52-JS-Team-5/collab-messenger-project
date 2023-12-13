@@ -155,11 +155,11 @@ export default function ChannelDetails({ isChannelInfoVisible, setIsChannelInfoV
   return (
     <>
       {isDesktopOrLaptop && !noData && !loading &&
-        <div id='chat-details-wrapper' className="flex flex-col w-full gap-3">
-          <div id='chat-section-layout' className='w-full shadow-sm border-b border-1 border-grey dark:border-darkInput dark:text-darkText'>
-            <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-6 justify-between items-center">
+        <div id='chat-details-wrapper' className="flex flex-col w-full h-full">
+          <div id='chat-section-layout' className='sticky w-full pt-3 pb-3 flex sm:px-4 py-[1vh] lg:px-6 justify-between items-center shadow-sm border-b border-1 border-grey dark:border-darkInput dark:text-darkText'>
+            <div id="header" className="sticky w-full flex py-[1vh] h-[4vh] px-1 justify-between items-center">
               <div id="header-content" className="flex gap-3">
-                <div id='chat-title' className="flex place-items-end">{channelData?.title}</div>
+                <div id='chat-title' className="flex place-items-end font-medium">{channelData?.title}</div>
               </div>
               <div className='flex justify-end gap-1'>
                 <button className="btn btn-ghost btn-sm" onClick={() => { setIsChannelInfoVisible(!isChannelInfoVisible) }}><i className="fa-solid fa-ellipsis text-pink dark:text-yellow"></i></button>
