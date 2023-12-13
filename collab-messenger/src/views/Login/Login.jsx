@@ -6,6 +6,7 @@ import { loginUser } from "../../services/auth.services.js";
 import { changeStatus, getUserByHandle } from "../../services/users.services.js";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import loginImg from '/src/assets/backgrounds/login-bg.svg';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -51,7 +52,7 @@ const Login = () => {
           .then(credential => {
             setContext({
               user: credential.user,
-            }); 
+            });
           })
           .then(() => navigate('/app'))
           .then(() => changeStatus(userData.handle, "Online"))
@@ -67,28 +68,26 @@ const Login = () => {
   };
 
   return (
-    <div className="max-2xl:px-2 dark:text-darkText flex flex-row items-center justify-center min-w-fit min-h-[88vh]">
-      <div className="flex-col lg:flex-row-reverse gap-16 max-2xl:gap-8">
-        <div className='card rounded rounded-3xl bg-beige shadow-xl min-w-[70vw] lg:min-w-[40vw] xl:min-w-[26vw] max-w-[26vw] dark:bg-darkFront'>
-          <div className='form-control flex flex-wrap flex-auto'>
-            <h3 className="text-3xl self-center text-black pb-8 font-bold dark:text-darkText">Sign In</h3>
-            <label className="label" htmlFor='username'>
-              <span className="label-text text-black pl-3 dark:text-darkText">Username</span>
-            </label>
-            <input type='text' id='username' placeholder="Type your username" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.username} onChange={updateForm('username')} />
-            <span className="err-message text-red">{formErrorMsg.username}</span>
-            <label className="label" htmlFor='password'>
-              <span className="label-text text-black pl-3 dark:text-darkText">Password</span>
-            </label>
-            <input type='password' id='password' placeholder="Type your password" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.password} onChange={updateForm('password')} />
-            <span className="err-message text-red">{formErrorMsg.password}</span>
-            <br />
-            <div className="pb-6 flex justify-between">
-              <p className='text-left '>New to Chatter?</p>
-              <Link to='/register' className='text-right'>Create an account</Link>
-            </div>
-            <button className="btn bg-pink self-center border-none text-pureWhite w-1/2" onClick={handleLogin}>Sign In</button>
+    <div className="flex px-40 max-2xl:px-2 max-2xl:py-2 items-center justify-center min-w-fit min-h-[88vh] rounded-3xl mt-2" style={{ backgroundImage: `url(${loginImg})`, objectFit: 'cover', backgroundPosition: 'center' }}>
+      <div className="flex flex-col lg:flex-row gap-16 max-2xl:gap-8 items-center justify-center min-w-fit min-h-[88vh]">
+        <div className='card rounded rounded-3xl bg-pureWhite shadow-2xl dark:bg-darkFront dark:text-darkText min-w-[90vw] md:min-w-[50vw] xl:min-w-[30vw] max-w-[30vw]'>
+          <h3 className="text-3xl self-center text-black pb-8 font-bold dark:text-darkText">Sign In</h3>
+          <label className="label" htmlFor='username'>
+            <span className="label-text text-black pl-3 dark:text-darkText">Username</span>
+          </label>
+          <input type='text' id='username' placeholder="Type your username" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.username} onChange={updateForm('username')} />
+          <span className="err-message text-red">{formErrorMsg.username}</span>
+          <label className="label" htmlFor='password'>
+            <span className="label-text text-black pl-3 dark:text-darkText">Password</span>
+          </label>
+          <input type='password' id='password' placeholder="Type your password" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.password} onChange={updateForm('password')} />
+          <span className="err-message text-red">{formErrorMsg.password}</span>
+          <br />
+          <div className="pb-6 flex justify-between">
+            <p className='text-left'>New to Chatter?</p>
+            <Link to='/register' className='text-right dark:text-yellow'>Create an account</Link>
           </div>
+          <button className="btn bg-pink self-center border-none text-pureWhite w-1/2" onClick={handleLogin}>Sign In</button>
         </div>
       </div>
     </div>

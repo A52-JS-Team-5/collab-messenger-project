@@ -7,6 +7,7 @@ import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, MIN_NAME
 import { isEmailValid, isPhoneNumberValid } from "../../common/helpers.js";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import registerImg from '/src/assets/backgrounds/register-bg.svg';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -111,51 +112,51 @@ const Register = () => {
 
   return (
     <>
-      <div className="flex px-40 max-2xl:px-6 items-center justify-center min-w-fit min-h-[88vh]">
+      <div className="flex px-40 max-2xl:px-2 max-2xl:py-2 items-center justify-center min-w-fit min-h-[88vh] rounded-3xl mt-2" style={{ backgroundImage: `url(${registerImg})`, objectFit: 'cover', backgroundPosition: 'center' }}>
         <div className="flex flex-col lg:flex-row gap-16 max-2xl:gap-8 items-center justify-center min-w-fit min-h-[88vh]">
-          <div className='signup-wrapper min-w-[50%] card rounded rounded-3xl bg-beige shadow-xl dark:bg-darkFront dark:text-darkText'>
+          <div className='signup-wrapper card rounded rounded-3xl bg-pureWhite shadow-2xl dark:bg-darkFront dark:text-darkText min-w-[90vw] md:min-w-[60vw] lg:min-w-[50vw] xl:min-w-[40vw] 2xl:min-w-[32vw] max-w-[40vw]'>
             <h2 className="self-center text-3xl text-black pb-8 font-bold dark:text-darkText">Create account</h2>
             <div className='form-control flex flex-wrap flex-auto'>
               <div className="flex gap-4 flex-col md:flex-row">
-                <div>
+                <div className="flex flex-col w-full">
                   <label className="label" htmlFor='name'>
                     <span className="label-text text-black pl-3 dark:text-darkText">Name</span>
                   </label>
-                  <input type='text' id="name" placeholder="Enter Your First Name" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.name} onChange={updateForm('name')} autoComplete='name' />
+                  <input type='text' id="name" placeholder="Enter Your First Name" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.name} onChange={updateForm('name')} autoComplete='name' />
                   <span className="err-message text-red">{formErrorMsg.name}</span>
                 </div>
-                <div>
+                <div className="flex flex-col w-full"> 
                   <label className="label" htmlFor='surname'>
                     <span className="label-text text-black pl-3 dark:text-darkText">Surname</span>
                   </label>
-                  <input type='text' id="surname" placeholder="Enter Your Surname" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.surname} onChange={updateForm('surname')} autoComplete='surname' />
+                  <input type='text' id="surname" placeholder="Enter Your Surname" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.surname} onChange={updateForm('surname')} autoComplete='surname' />
                   <span className="err-message text-red">{formErrorMsg.surname}</span>
                 </div>
               </div>
               <label className="label" htmlFor='email'>
                 <span className="label-text text-black pl-3 dark:text-darkText">Email</span>
               </label>
-              <input type='email' id="email" placeholder="Enter Your Email" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.email} onChange={updateForm('email')} autoComplete='email' />
+              <input type='email' id="email" placeholder="Enter Your Email" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.email} onChange={updateForm('email')} autoComplete='email' />
               <span className="err-message text-red">{formErrorMsg.email}</span>
               <label className="label" htmlFor='handle'>
                 <span className="label-text text-black pl-3 dark:text-darkText">Username</span>
               </label>
-              <input type='text' id="handle" placeholder="Enter Your Username" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.handle} onChange={updateForm('handle')} />
+              <input type='text' id="handle" placeholder="Enter Your Username" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.handle} onChange={updateForm('handle')} />
               <span className="err-message text-red">{formErrorMsg.handle}</span>
               <label className="label" htmlFor='password'>
                 <span className="label-text text-black pl-3 dark:text-darkText">Password</span>
               </label>
-              <input type='password' id="password" placeholder="Enter Your Password" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.password} onChange={updateForm('password')} />
+              <input type='password' id="password" placeholder="Enter Your Password" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.password} onChange={updateForm('password')} />
               <span className="err-message text-red">{formErrorMsg.password}</span>
               <label className="label" htmlFor='tel-number'>
                 <span className="label-text text-black pl-3 dark:text-darkText">Phone Number</span>
               </label>
-              <input type='text' id="tel-number" placeholder="Enter Your Phone #" className="input input-bordered w-full bg-white dark:bg-darkInput" value={form.phoneNumber} onChange={updateForm('phoneNumber')} />
+              <input type='text' id="tel-number" placeholder="Enter Your Phone #" className="input input-bordered w-full bg-pureWhite dark:bg-darkInput" value={form.phoneNumber} onChange={updateForm('phoneNumber')} />
               <span className="err-message text-red">{formErrorMsg.phoneNumber}</span>
               <br />
               <div className="pb-6 flex gap-2 justify-between">
                 <p className="text-left">Already have an account?</p>
-                <Link to='/login' className="text-right">Sign in instead</Link>
+                <Link to='/login' className="text-right dark:text-yellow">Sign in instead</Link>
               </div>
               <button className="btn bg-pink text-pureWhite border-none self-center w-1/2" onClick={onRegister}>Sign Up</button>
             </div>
