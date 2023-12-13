@@ -9,7 +9,7 @@
 - [Firebase Setup Instructions](#Firebase-Setup-Instructions)
 - [Project Folder Structure](#Project-Folder-Structure)
 - [Database Structure](#Database-Structure)
-- [Project Screenshots](#Project-Screenshots)
+- [Project Images](#Project-Images)
 - [Development Team](#Development-Team)
 
 
@@ -149,125 +149,163 @@ The source code is separated in folders and single-responsible components, as fo
 ## Database Structure
 
 Project data is stored in Firebase Realtime Database in the following documents:
-  * `channels` - stores any data connected to created channels in the app. 
-  
-  Example:
+  * `channels` - stores any data connected to created channels in the app. Example:
 
-     "categories": {
-      "Arts-Crafts": {
-        "description": "Various creative DIY projects, including painting, knitting, and crafting, and exchange ideas with fellow crafters.
-        ",
-        "id": 0,
-        "name": "Arts & Crafts"
-      },
-    },
-
-  * `chats` - stores any data connected to created chats in the app. 
-
-  Example:
-
-    "comments": {
-      "-NjBuT14PizudIKWzVYy": {
-        "author": "georgidobrev",
-        "createdOn": 1699949961473,
-        "description": "Hello again, I forgot to mention that I currently own 1 dumbbell with a total weight of 10 kgs. Thank you in advance!",
-        "postId": "-NjBu8a_OuGkdFJb7Jd7"
-      },
-      "-NjBuXt55hsWfCTaZhsT": {
-        "author": "yovchev",
-        "createdOn": 1699949981091,
-      "description": "Hi, George, what's your question?",
-        "postId": "-NjBu8a_OuGkdFJb7Jd7"
-      }
-    },
-
-  * `messages` - stores all sent messages in the app with their detailed information, such as:
-    
-    author (user that uploaded the post),
-    
-    category in which the post was made,
-    
-    title, description and date of creation,
-    
-        "posts": {
-          "-NjBu8a_OuGkdFJb7Jd7": {
-            "author": "georgidobrev",
-            "category": "Fitness",
-            "commentedBy": {
-              "georgidobrev": true,
-              "stoykova": true,
-              "yovchev": true
+        "channels": {
+          "-Nl2kk1P0pKJLhHwnjBt": {
+            "createdOn": 1701943902266,
+            "isPublic": true,
+            "lastMessage": "Yes, I am.",
+            "messages": {
+              "-Nl7byXyOMne2FiFzQNG": true,
+              "-Nl7hGG-1qQV7e_nopQd": true
             },
-            "comments": {
-              "-NjBuT14PizudIKWzVYy": true,
-              "-NjBuXt55hsWfCTaZhsT": true,
-             "-NjBvWkFwt-idXyiidtH": true,
-              "-NjBy5DAT1Zn0OHlBeIK": true
+            "participants": {
+              "georgi": true,
+              "ivan": true
             },
-            "createdOn": 1699949877792,
-            "description": "Hello, I'm Georgi and I would like to introduce myself and ask for your help regarding some dumbbell exercises.",
-            "likedBy": {
-              "georgidobrev": true,
-              "stoykova": true,
-              "yovchev": true
-             },
-            "title": "Dumbbell exercises question"
-            }
-        },
-  
-  * `notifications` - stores all notifications about teams and channels.
-
-  * `teams` - stores all data about teams created in the app
-    
-  * `users` - stores data regarding registered users, such as:
-    
-    handle (username, chosen by the user),
-
-    name, surname and phone number,
-    their status and avatar image URL
-    
-    email and date of creation of profile,
-
-    channels, chat and teams that user is a member of 
-
-    saved messages, 
-    
-         "users": {
-            "emma": {
-              "createdOn": 1699957309906,
-              "email": "emmast@abv.bg",
-              "handle": "emma",
-              "isAdmin": false,
-              "isBlocked": false,
-              "name": "Emma",
-            "surname": "Stone",
-              "uid": "Kh7ZUV75UDdk5S23G1IwqxEM30A3"
+            "participantsReadMsg": {
+              "georgi": "Yes, I am.",
+              "ivan": "Are you done with your task?"
             },
-            "georgidobrev": {
-              "bio": "Hello, I'm Georgi and this is my bio.",
-              "commentedPost": {
-                "-NjBu8a_OuGkdFJb7Jd7": true,
-                "-NjBuL-CBeIolrJ3LDdv": true,
-                "-NjBvNryVoaxBz7qW4WU": true
-              },
-              "createdOn": 1699949599775,
-              "email": "georgidobrev.5@gmail.com",
-              "handle": "georgidobrev",
-              "isAdmin": true,
-              "isBlocked": false,
-              "likedPosts": {
-                "-NjBu8a_OuGkdFJb7Jd7": true,
-                "-NjBuL-CBeIolrJ3LDdv": true,
-                "-NjBvNryVoaxBz7qW4WU": true,
-                "-NjByquV0qhljcTYhdxa": true
-              },
-              "name": "Georgi",
-              "surname": "Dobrev",
-              "uid": "QLfNKADTZjXZxgEjXCa7SSyPXx32"
+            "team": "NlT2JQlvQo_JbeEdos3",
+            "title": "General",
+            "uploadedFiles": {
+              "url": "https://firebasestorage.googleapis.com/v0/b/testing-5cdb8.appspot.com/o/channel_uploads%2F-Nl2kk1P0pKJLhHwnjBt%2F"
             }
           }
+        }
 
-## Project Screenshots
+  * `chats` - stores any data connected to created chats in the app. Example: 
+
+        "chats": {
+          "-NlTRO2QT55tpvph8SkZ": {
+            "createdOn": 1702391550426,
+            "isGroup": false,
+            "lastMessage": "How are you?",
+            "messages": {
+              "-NlTROX5kMNvgbZgn3G_": true,
+              "-NlTRSuji4TCfwXdFBN2": true
+            },
+            "participants": {
+              "stoyan": true,
+              "alex": true
+            },
+            "participantsReadMsg": {
+              "stoyan": "Hey",
+              "alex": "How are you?"
+            },
+            "uploadedFiles": {
+              "url": "https://firebasestorage.googleapis.com/v0/b/testing-5cdb8.appspot.com/o/chat_uploads%2F-Nl2kk1P0pKJLhHwnjBt"
+            }
+          }
+        }
+
+  * `messages` - stores all sent messages in the app with their detailed information. Example:
+    
+        "messages": {
+          "-NlXlqsqwNWpWlRhygxx": {
+            "author": "ivan",
+            "chatId": "-NlTRO2QT55tpvph8SkZ",
+            "content": "How are you?",
+            "createdOn": 1702464284634,
+            "reactions": {
+              "georgi": "🩷"
+            }
+          },
+
+          "-NlS_LgRqCO9NYZDnEUz": {
+            "author": "silvia",
+            "chatId": "-NlSZ6WcH6bJZHz5YsKu",
+            "content": "https://firebasestorage.googleapis.com/v0/b/testing-5cdb8.appspot.com/o/chat_uploads%2F-NlSZ6WcH6bJZHz5YsKu",
+            "createdOn": 1702377123182,
+            "title": "Test Results.pdf",
+            "type": "application/pdf"
+          }
+        }
+
+  
+  * `notifications` - stores all notifications about teams and channels. Example:
+
+        "notifications": {
+          "-Nl2O4zsmXj3LlmUiv3f": {
+            "elemId": "-Nl2O4AZymYRMaf_H3fW",
+            "message": "You have been added to a new team: Chatter Company Staff.",
+            "timestamp": 1701937700788,
+            "type": "addedToTeam"
+          }
+        }
+
+  * `teams` - stores all data about teams created in the app. Example:
+    
+        "teams": {
+          "-NlT2JQlvQo_JbeEdos3": {
+            "channels": {
+              "-NlT2K1J1c4etI2NQe7R": true,
+              "-NlTBIpUPDwefhdgQUYA": true
+            },
+            "createdOn": 1702384978050,
+            "description": "This team includes all staff members of Chatter",
+            "members": {
+              "georgi": true,
+              "ivan": true
+            },
+            "name": "Chatter Company Staff",
+            "owner": "georgi",
+            "photoURL": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg"
+          }
+        }
+
+  * `users` - stores data regarding registered users. Example:
+    
+         "users": {
+            "georgi": {
+              "channels": {
+                "-Nl2O519TA52nDKdhvmK": true
+              },
+              "chatParticipants": {
+                "ivan": "-Nl2Ol-jn8vAbnsHYa06"
+              },
+              "chats": {
+                "-Nl2Ol-jn8vAbnsHYa06": true
+              },
+              "createdOn": 1701937683761,
+              "email": "georgi@gmail.com",
+              "handle": "georgi",
+              "messagedChannels": {
+                "-Nl2OJYKKDBEHAOymiwQ": true
+              },
+              "messagedPosts": {
+                "-NlNptYATmK2IApKIdEk": true
+              },
+              "name": "Georgi",
+              "notifications": {
+                "-Nl2O4zsmXj3LlmUiv3f": true
+              },
+              "phoneNumber": "0890890890",
+              "photoURL": "upload.wikimedia.org/Default_pfp.svg",
+              "savedMessages": {
+                "-Nl2_30_BWIXF-3a_Nl2": true
+              },
+              "status": "Online",
+              "surname": " Georgiev",
+              "teamsMember": {
+                "-Nl2O4AZymYRMaf_H3fW": true
+              },
+              "teamsOwner": {
+                "-Nl2O4AZymYRMaf_H3fW": true
+              },
+              "uid": "fHyNNYax4cPd6XyLb90D6sdh40v2"
+            },
+          }
+
+## Project Images
+
+![Chatter Mockup All Devices](/collab-messenger/public/mockups/chatter-mockup-devices.png)
+
+![Chatter Mockup Computer Screen](/collab-messenger/public/mockups/chatter-mockup-screens.png)
+
+![Chatter Mockup Mobile Screen](/collab-messenger/public/mockups/chatter-mockup-mobile.png)
 
 ## Development Team
 **Telerik Academy A52 Team 5**:
