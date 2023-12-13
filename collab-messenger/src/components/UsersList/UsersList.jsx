@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AppContext from '../../context/AuthContext';
 import { addChat, createChat } from '../../services/chats.services';
+import { db } from '../../config/firebase-config';
+import { ref, onValue } from 'firebase/database';
 
 export default function UsersList({ users }) {
   return (
@@ -22,12 +24,25 @@ export default function UsersList({ users }) {
 function UserData({ user }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
-  const existingChats = loggedUser.userData?.chatParticipants || undefined;
-  const existingChatId = existingChats ? existingChats[`${user?.handle}`] : undefined;
+  const [existingChatId, setExistingChatId] = useState('');
+
+  useEffect(() => {
+    const userRef = ref(db, `users/${loggedUser.userData?.handle}/chatParticipants`);
+    const userChatsListener = onValue(userRef, (snapshot) => {
+      if(snapshot.exists()) {
+        const existingChats = snapshot.val();
+        setExistingChatId(existingChats[`${user?.handle}`]);
+      } 
+    });
+  
+    return () => {
+      userChatsListener();
+    };
+  }, [loggedUser.userData?.handle, user?.handle])
 
   const startChat = (event) => {
     event.preventDefault();
-    if (existingChats && existingChatId && Object.keys(existingChats).includes(user?.handle)) {
+    if (existingChatId) {
       navigate(`/app/chats/${existingChatId}`)
     } else {
       createChat(user?.handle, loggedUser.userData?.handle)
