@@ -68,7 +68,7 @@ export default function AppNav({ onLogout }) {
                 <img src={iconLogo} className='max-h-12 cursor-pointer xl:hidden sm:max-xl:display-block' alt="Chatter App Logo" onClick={() => { navigate("/") }} />
                 <div className='flex flex-row gap-2 justify-center w-full'>
                     <input type='search' name='main-search' id='main-posts-search' value={searchTerm}
-                        onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl dark:!bg-darkInput' placeholder="What are you searching for today?" />
+                        onKeyDown={handleEnterKeyPress} onChange={(e) => setSearchTerm(e.target.value)} className='input input-bordered w-full max-w-xl dark:!bg-darkInput dark:text-darkText' placeholder="What are you searching for today?" />
                     <button onClick={handleSearch} className='btn bg-blue text-pureWhite border-none hover:bg-darker-blue'><i className="fa-solid fa-magnifying-glass"></i></button>
                 </div>
                 {user !== null && (
