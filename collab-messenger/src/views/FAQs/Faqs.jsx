@@ -2,7 +2,7 @@ function Faqs() {
 
     return (
         <div>
-            <div className="hero mt-32">
+            <div className="hero my-12 lg:my-24 pt-10">
                 <div className="hero-content flex-col lg:flex-row-reverse gap-14">
                     <div className='flex flex-col items-center max-lg:items-center max-w-2xl'>
                         <h1 className="text-5xl font-bold text-black max-lg:text-center dark:text-darkText">Frequently asked questions</h1>
@@ -10,7 +10,7 @@ function Faqs() {
                     </div>
                 </div>
             </div>
-            <div className='flex flex-col gap-6 px-96 max-xl:px-10 pt-16 pb-16 text-black dark:bg-darkFront dark:text-darkText'>
+            <div className='flex flex-col gap-6 px-96 max-xl:px-10 pb-16 text-black dark:text-darkText'>
                 <div className="collapse collapse-arrow bg-white dark:bg-darkAccent">
                     <input type="checkbox" />
                     <div className="collapse-title text-xl text-left font-semibold">
