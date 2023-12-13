@@ -24,13 +24,6 @@ export default function AppNav({ onLogout }) {
         setCurrentStatus(selection);
     }
 
-    const handleClick = () => {
-        const elem = document.activeElement;
-        if (elem) {
-            elem?.blur();
-        }
-    };
-
     useEffect(() => {
         if (user.userData?.photoURL) {
             setPhotoURL(user.userData.photoURL);
@@ -54,11 +47,20 @@ export default function AppNav({ onLogout }) {
 
     const openUserProfileModal = () => {
         setIsUserProfileModalOpen(true);
+        setIsDropdownOpen(false);
     };
 
     const closeUserProfileModal = () => {
         setIsUserProfileModalOpen(false);
+        setIsDropdownOpen(false);
     };
+
+    // State and functions for dropdown
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
+    const handleDropDownClick = () => {
+        setIsDropdownOpen(prev => !prev);
+    }
 
     return (
         <div className="flex flex-row gap-2 self-stretch w-full">
@@ -71,13 +73,13 @@ export default function AppNav({ onLogout }) {
                 </div>
                 {user !== null && (
                     <div className="dropdown dropdown-end">
-                        <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
+                        <label tabIndex="0" className="btn btn-ghost btn-circle avatar" onClick={handleDropDownClick}>
                             <div className="w-10 rounded-full static">
                                 <img src={photoURL} />
                             </div>
                             <StatusBubble view={'AppNav'} userHandle={user.userData?.handle} />
                         </label>
-                        <ul tabIndex="0" className="dropdown-content z-[1000] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
+                        {isDropdownOpen && <ul tabIndex="0" className="dropdown-content z-[1000] menu p-2 shadow-md bg-neutral-50 rounded-box w-52 dark:bg-darkAccent">
                             <li className='dark:text-yellow'><select placeholder={currentStatus} onChange={handleStatusChange} className="select w-full max-w-xs bg-transparent dark:!bg-darkAccent">
                                 <option className='dark:!text-darkText'>Online</option>
                                 <option className='dark:!text-darkText'>Away</option>
@@ -86,11 +88,11 @@ export default function AppNav({ onLogout }) {
                             </li>
                             <div className="divider m-0"></div>
                             <li onClick={openUserProfileModal}><a className='dark:text-yellow'>See Profile</a></li>
-                            <li onClick={handleClick}><Link to={`/app/users/${user?.userData?.handle}/edit`} className='dark:text-yellow'>Edit Profile</Link></li>
-                            <li onClick={handleClick}><Link to='/' onClick={onLogout} className='dark:text-yellow'>Logout</Link></li>
+                            <li onClick={handleDropDownClick}><Link to={`/app/users/${user?.userData?.handle}/edit`} className='dark:text-yellow'>Edit Profile</Link></li>
+                            <li onClick={handleDropDownClick}><Link to='/' onClick={onLogout} className='dark:text-yellow'>Logout</Link></li>
                             <div className="divider m-0 max-xl:display-flex xl:hidden"></div>
                             <li className='flex flex-row items-start max-xl:display-flex xl:hidden'><ThemeSwitcher /></li>
-                        </ul>
+                        </ul>}
                         {isUserProfileModalOpen && <UserProfile userHandle={user?.userData?.handle} isOpen={isUserProfileModalOpen} onClose={closeUserProfileModal} />}
                     </div>
                 )}
