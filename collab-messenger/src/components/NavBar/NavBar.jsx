@@ -38,7 +38,7 @@ export default function NavBar({ onLogout }) {
   };
 
   return (
-    <nav className='sticky top-4 z-[50]'>
+    <nav className='sticky top-0 z-[50]'>
       <div id='navbar' className="navbar rounded-xl flex flex-row shadow-lg dark:!bg-darkFront dark:!border-none">
         <div className="basis-1/4 gap-2">
           <img src={iconLogo} className='max-h-10 cursor-pointer' id='iconLogo' alt="Chatter Logo" onClick={() => { navigate("/") }} />
@@ -75,7 +75,7 @@ export default function NavBar({ onLogout }) {
           <div className='flex flex-row gap-0.5 justify-end'>
             <input id="drawer" type="checkbox" className="drawer-toggle drawer-checkbox" />
             <div className="drawer-content">
-              <label htmlFor="drawer" className="drawer-button btn bg-pink m-1 text-pureWhite"><i className="fa-solid fa-bars fa-2xl"></i></label>
+              <label htmlFor="drawer" className="drawer-button btn bg-pink m-1 text-pureWhite border-none"><i className="fa-solid fa-bars fa-2xl"></i></label>
             </div>
             <div className="drawer-side">
               <label htmlFor="drawer" aria-label="close sidebar" className="drawer-overlay"></label>
