@@ -60,7 +60,7 @@ const MobileSideMenu = () => {
     };
 
     return (
-        <div className="fixed z-50 w-full h-16 max-w-xs -translate-x-1/2 bg-lightBlue rounded-full bottom-4 left-1/2 xl:hidden sm:max-xl:display-block dark:bg-darkInput">
+        <div className="fixed z-40 w-full h-16 max-w-xs -translate-x-1/2 bg-lightBlue rounded-full bottom-4 left-1/2 xl:hidden sm:max-xl:display-block dark:bg-darkInput">
             <div className="grid h-full grid-cols-4">
                 <button onClick={() => handleLinkClick('/app')} type="button" className={`${activeLink === '/app' && 'bg-blue text-white dark:bg-darkFront'} inline-flex flex-col items-center justify-center px-5 rounded-s-full hover:bg-gray-50 group text-blue dark:text-yellow`}>
                     <i className="fa-solid fa-house"></i>
