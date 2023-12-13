@@ -75,7 +75,7 @@ export default function ChangeTeamPhoto({ teamDetails }) {
                 </div>
                 <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
                     <div className='flex flex-col self-stretch w-24 h-24 aspect-square justify-top'>
-                        <img src={photoURL} alt="Team Photo" className="object-cover rounded-md" />
+                        <img src={photoURL} alt="Team Photo" className="w-24 h-24 object-cover rounded-md" />
                     </div>
                     <div className="flex flex-col justify-center w-full">
                         <label className="label self-stretch">
