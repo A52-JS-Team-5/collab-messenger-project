@@ -107,24 +107,24 @@ const Teams = () => {
 
     useEffect(() => {
         const channelsRef = ref(db, 'channels');
-            const channelsListener = onValue(channelsRef, (snapshot) => {
-                const updatedChannelData = snapshot.val();
-                
-                if (updatedChannelData) {
-                    Object.entries(updatedChannelData).forEach(([channelId, channel]) => {
-                        const isChannelNotRead = userTeamsChannels.flat().some(el => el === channelId) && channel.participants[userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[userData?.handle];
-                        if (isChannelNotRead === true) {
-                            setUnreadTeamChannels(prev => [...prev, channelId]);
-                        } else {
-                            setUnreadTeamChannels(prev => [...prev]);
-                        }
-                    });
-                }
-            });
-           
-            return () => {
-                channelsListener();
+        const channelsListener = onValue(channelsRef, (snapshot) => {
+            const updatedChannelData = snapshot.val();
+
+            if (updatedChannelData) {
+                Object.entries(updatedChannelData).forEach(([channelId, channel]) => {
+                    const isChannelNotRead = userTeamsChannels.flat().some(el => el === channelId) && channel.participants[userData?.handle] && channel.lastMessage !== channel.participantsReadMsg?.[userData?.handle];
+                    if (isChannelNotRead === true) {
+                        setUnreadTeamChannels(prev => [...prev, channelId]);
+                    } else {
+                        setUnreadTeamChannels(prev => [...prev]);
+                    }
+                });
             }
+        });
+
+        return () => {
+            channelsListener();
+        }
     }, [userData?.handle, userTeamsChannels])
 
     return (
@@ -140,7 +140,7 @@ const Teams = () => {
                         {teams.map(team => {
                             return (
                                 <div className='relative flex flex-col gap-4 p-6 rounded-md bg-pureWhite max-h-44 justify-center items-center cursor-pointer dark:bg-darkFront dark:text-darkText' onClick={() => navigate(`/app/teams/${team?.id}`)} key={team.id}>
-                                    {unreadTeamChannels.length > 0 && [...team.channels].some(c => unreadTeamChannels.includes(c)) ? (
+                                    {unreadTeamChannels?.length > 0 && team.channels && Array.isArray(team.channels) && [...team.channels].some(c => unreadTeamChannels.includes(c)) ? (
                                         <div className='absolute right-3 top-3'>
                                             <div className='w-2 h-2 rounded-full bg-pink'></div>
                                         </div>
@@ -157,7 +157,7 @@ const Teams = () => {
                     </div>
                 )}
                 {!isLoading && teams.length === 0 &&
-                    <div className='flex w-full h-full'><EmptyList content={`Currently, you haven't joined any teams.`}/></div>}
+                    <div className='flex w-full h-full'><EmptyList content={`Currently, you haven't joined any teams.`} /></div>}
             </div>
         </div>
     )
