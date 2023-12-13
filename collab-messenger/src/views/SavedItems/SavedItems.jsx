@@ -25,6 +25,7 @@ const SavedItems = () => {
                     setItems(Object.keys(snapshot.val()));
                 } else {
                     setItems([]);
+                    setMessages([]);
                     setLoading(false);
                 }
             })
