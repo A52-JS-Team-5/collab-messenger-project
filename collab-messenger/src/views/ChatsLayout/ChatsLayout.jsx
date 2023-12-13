@@ -109,13 +109,10 @@ export default function ChatsLayout() {
               </div>
             )}
           </div>
-          {!isLoading && <div className="basis-4/5 w-full rounded-md flex items-center place-content-evenly overflow-auto">
-            {!noData && allLoggedUserChats.length > 0 ? (
-              <Outlet />
-            ) : (
-              <EmptyList content={`It appears you haven't engaged in any chats yet.`} />
-            )}
-          </div>}
+          <div className="basis-4/5 w-full rounded-md flex items-center place-content-evenly overflow-auto">
+            {!isLoading && !noData && allLoggedUserChats && allLoggedUserChats.length > 0 && <Outlet />}
+            {!isLoading && allLoggedUserChats && allLoggedUserChats.length === 0 && <EmptyList content={`It appears you haven't engaged in any chats yet.`} />}
+          </div>
         </div>
       </div>}
       {isTabletOrMobile && <div className="mt-4">
@@ -134,14 +131,14 @@ export default function ChatsLayout() {
               </div>
             </div>
             <div className="divider m-1"></div>
-            {allLoggedUserChats.length > 0 && (
+            {!isLoading && !noData && allLoggedUserChats && allLoggedUserChats.length > 0 && (
               <div className="flex flex-col gap-1">
                 {allLoggedUserChats.map(chat => (
                   <ChatBox key={chat.id} chatId={chat.id} onClick={handleChatLink} />)
                 )}
               </div>
             )}
-            {allLoggedUserChats.length == 0 && (
+            {!isLoading && allLoggedUserChats && allLoggedUserChats.length == 0 && (
               <div className="flex flex-col gap-1">
                 <EmptyList content={`It appears you haven't engaged in any chats yet.`} />
               </div>
