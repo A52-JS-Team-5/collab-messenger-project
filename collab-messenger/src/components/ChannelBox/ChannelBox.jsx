@@ -1,9 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import AppContext from "../../context/AuthContext";
 import { useEffect, useState, useContext } from "react";
-import { getChannelById } from "../../services/channels.services";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 import { db } from "../../config/firebase-config";
 import { ref, onValue } from "firebase/database";
 import PropTypes from 'prop-types';
@@ -18,19 +15,6 @@ export default function ChannelBox({ channelId, onClick }) {
   const [areMessagesRead, setAreMessagesRead] = useState(true);
 
   useEffect(() => {
-    getChannelById(channelId)
-      .then((data) => {
-        setChannelTitle(data.title);
-
-        setLastMessage(data.lastMessage);
-        setIsLastMsgGif(data.lastMessage.includes('giphy'));
-        setIsLastMsgFile(data.lastMessage.includes('channel_uploads'));
-      })
-      .catch((e) => {
-        toast(`Error in getting channel data. Please try again.`);
-        console.log(e.message);
-      })
-
     const channelRef = ref(db, `channels/${channelId}`);
     const channelListener = onValue(channelRef, (snapshot) => {
       const updatedChannelData = snapshot.val();
@@ -41,6 +25,13 @@ export default function ChannelBox({ channelId, onClick }) {
         const userLastReadMessage = updatedChannelData.participantsReadMsg[loggedUser.userData.handle];
         setAreMessagesRead(userLastReadMessage === updatedChannelData.lastMessage);
       }
+      if (updatedChannelData?.title) {
+        setChannelTitle(updatedChannelData.title);
+      } else {
+        setChannelTitle(Object.keys(updatedChannelData.participants).find(user => user !== loggedUser.userData?.handle));
+      }
+      setIsLastMsgGif(updatedChannelData.lastMessage.includes('giphy'));
+      setIsLastMsgFile(updatedChannelData.lastMessage.includes('channel_uploads'));
     });
 
     return () => {
