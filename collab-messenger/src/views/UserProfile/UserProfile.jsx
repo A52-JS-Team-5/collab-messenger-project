@@ -43,7 +43,7 @@ const UserProfile = ({ userHandle, isOpen, onClose }) => {
 
   return (
     !loading && userDetails &&
-    <div className="user-profile-wrapper dark:text-darkText">
+    <div className="user-profile-wrapper dark:text-darkText z-[1001]">
       <div id='user-profile-modal' className={`${modalClass}`}>
         <div className="modal-box bg-gradient-to-b from-pureWhite from-20% to-lightBlue to-20% dark:bg-gradient-to-b dark:from-darkBase dark:from-20% dark:to-darkFront dark:to-20% min-[320px]:max-w-2xl max-[4800px]:max-w-2xl">
           <button className="btn btn-sm btn-circle hover:bg-lightBlue border-none text-blue bg-pureWhite absolute right-2 top-2 dark:bg-darkAccent" onClick={onClose}>✕</button>
