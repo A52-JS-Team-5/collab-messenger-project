@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import Avatar from "../Avatar/Avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { onValue, ref } from "firebase/database";
 import { db } from '../../config/firebase-config';
@@ -10,15 +10,18 @@ import GroupChatAvatar from "../GroupChatAvatar/GroupChatAvatar";
 import AddGroupChatMembers from "../AddGroupChatMembers/AddGroupChatMembers";
 import UserProfile from "../../views/UserProfile/UserProfile";
 import { getUploadedFilesInChat } from '../../common/helpers';
+import AppContext from '../../context/AuthContext';
 
 export default function ChatInformation({ isGroupChat }) {
   const { chatId } = useParams();
+  const { userData } = useContext(AppContext);
   const [form, setForm] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [chatData, setChatData] = useState({
     title: '',
     participants: {}
   });
+  const [chatTitle, setChatTitle] = useState('');
   const [showTitle, setShowTitle] = useState(true);
 
   useEffect(() => {
@@ -28,6 +31,13 @@ export default function ChatInformation({ isGroupChat }) {
       if (updatedChatData) {
         setChatData(updatedChatData);
       }
+
+      if (!updatedChatData.isGroup) {
+        setChatTitle(Object.keys(updatedChatData?.participants).find(user => user !== userData?.handle))
+      } else {
+        setChatTitle(updatedChatData.title);
+      }
+
       if(updatedChatData.uploadedFiles) {
         getUploadedFilesInChat(chatId)
           .then((urls) => setUploadedFiles(urls))
@@ -38,7 +48,7 @@ export default function ChatInformation({ isGroupChat }) {
     return () => {
       chatListener();
     };
-  }, [chatId]);
+  }, [chatId, userData?.handle]);
 
   const handleOpenEditField = () => {
     setShowTitle(!showTitle);
@@ -79,10 +89,10 @@ export default function ChatInformation({ isGroupChat }) {
 
   return (
     <div id="chat-information-wrapper" className="m-5">
-      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatData.title} chatComponent={'ChatInformation'} />}
+      {isGroupChat ? <GroupChatAvatar chatComponent={'ChatInformation'} /> : <Avatar user={chatTitle} chatComponent={'ChatInformation'} />}
       <div className="flex flex-row justify-center">
-        {!isGroupChat ? (<button className="btn btn-active btn-link" onClick={() => handleOpenUserProfileModal(chatData.title)}>{chatData.title}</button>) : (showTitle && <div className="m-3 font-bold">{chatData.title}</div>)}
-        {openUserProfileModal === chatData.title && <UserProfile userHandle={chatData.title} isOpen={true} onClose={handleCloseUserProfileModal} />}
+        {!isGroupChat ? (<button className="btn btn-active btn-link" onClick={() => handleOpenUserProfileModal(chatTitle)}>{chatTitle}</button>) : (showTitle && <div className="m-3 font-bold">{chatTitle}</div>)}
+        {openUserProfileModal === chatTitle && <UserProfile userHandle={chatTitle} isOpen={true} onClose={handleCloseUserProfileModal} />}
         {isGroupChat && (
           <div>
             {showTitle && <div className="flex self-center text-xs opacity-50 hover:cursor-pointer mt-4" onClick={handleOpenEditField}><i className="fa-solid fa-pen-to-square"></i></div>}
