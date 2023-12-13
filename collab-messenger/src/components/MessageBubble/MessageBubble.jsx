@@ -5,6 +5,8 @@ import { useState, useEffect, useContext } from 'react';
 import AppContext from '../../context/AuthContext';
 import MessageReactions from '../MessageReactions/MessageReactions';
 import Linkify from 'react-linkify';
+import { db } from '../../config/firebase-config';
+import { ref, onValue } from 'firebase/database';
 
 export default function MessageBubble({ message, messageClass, userAvatar, editMessageOption }) {
   const loggedUser = useContext(AppContext);
@@ -62,8 +64,20 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
 
   useEffect(() => {
     editMessage(message.id, { reactions: reactions });
-    setReactionValues(Object.values(reactions));
-  }, [reactions, message.id]);
+
+    const messageReactionsRef = ref(db, `messages/${message.id}/reactions`);
+      const messageReactionsListener = onValue(messageReactionsRef, (snapshot) => {
+        const updatedReactions = snapshot.val();
+        if (updatedReactions) {
+          setReactionValues(Object.values(updatedReactions));
+        }
+    });
+
+    return () => {
+      messageReactionsListener();
+    };
+    
+  }, [message.id, reactions]);
 
   // Save msg functionality
   const onSaveItem = () => {
