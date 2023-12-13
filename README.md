@@ -16,7 +16,7 @@
 ## Project Overview and Goals
 **Project Name:** Chatter
 
-**Project Link:** 
+**Project Link:** https://chatter-b6cde.firebaseapp.com/
 
 **Project Description:** Chatter is a messenger app, which enables you to:
   * socialize by creating one-on-one and group chats with any of our users
