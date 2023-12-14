@@ -134,7 +134,7 @@ const InsightsNotification = ({ notificationId }) => {
                                 <p className="text-left">Join the conversation in this new channel!</p>
                             </div>
                         </div>
-                        <div className='flex flex-row gap-1'>
+                        <div className='flex flex-col md:flex-row gap-1'>
                             {!notificationDetails?.readBy?.includes(user?.userData?.handle) && <button className="btn btn-ghost btn-sm btn-square hover:!bg-pureWhite text-blue dark:hover:!bg-darkFront dark:text-yellow" onClick={(e) => handleMarkAsRead(e)}>
                                 <i className="fa-solid fa-envelope-open"></i>
                             </button>}
