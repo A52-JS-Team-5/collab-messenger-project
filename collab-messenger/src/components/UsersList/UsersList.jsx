@@ -14,7 +14,7 @@ export default function UsersList({ users }) {
   )
 }
 
-function UserData({ user, key }) {
+function UserData({ user }) {
   const navigate = useNavigate();
   const loggedUser = useContext(AppContext);
   const [existingChatId, setExistingChatId] = useState('');
@@ -54,7 +54,7 @@ function UserData({ user, key }) {
   }
 
   return (
-    <div className='flex flex-col gap-4 rounded-md justify-left items-start bg-pureWhite dark:bg-darkFront p-4 dark:text-darkText self-stretch' key={key}>
+    <div className='flex flex-col gap-4 rounded-md justify-left items-start bg-pureWhite dark:bg-darkFront p-4 dark:text-darkText self-stretch'>
       <div className='flex flex-row items-start gap-2'>
         <img className='w-12 h-12 object-cover rounded-full' src={user?.photoURL} alt={`${user?.name} ${user?.surname}`} />
         <div className='flex flex-col'>
@@ -79,6 +79,5 @@ UsersList.propTypes = {
 };
 
 UserData.propTypes = {
-  user: PropTypes.object,
-  key: PropTypes.string
+  user: PropTypes.object
 };
