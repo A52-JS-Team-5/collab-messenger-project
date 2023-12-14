@@ -13,8 +13,8 @@ export default function SearchResults() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(15);
   const [numberOfUsers, setNumberOfUsers] = useState(0);
-  const lastPostIndex = currentPage * usersPerPage;
-  const firstPostIndex = lastPostIndex - usersPerPage;
+  const lastUserCardIndex = currentPage * usersPerPage;
+  const firstUserCardIndex = lastUserCardIndex - usersPerPage;
   const location = useLocation();
   const searchTerm = location.state['searchTerm'];
 
@@ -28,14 +28,14 @@ export default function SearchResults() {
             user?.teamsMember?.length > 0 && user.teamsMember.some((team) => team.toLowerCase() === searchTerm.toLowerCase());
         });
 
-        setUsers(foundUsers.slice(firstPostIndex, lastPostIndex));
+        setUsers(foundUsers.slice(firstUserCardIndex, lastUserCardIndex));
         setNumberOfUsers(foundUsers.length);
       })
       .catch(e => {
-        toast('Error getting user data. Please try again.')
+        toast('Problem occurred while getting user data. Please try again later.')
         console.log('Error getting users data: ', e.message)
       })
-  }, [searchTerm, firstPostIndex, lastPostIndex])
+  }, [searchTerm, firstUserCardIndex, lastUserCardIndex])
 
   return (
     <div className='mt-4 flex flex-col gap-4 mt-4 w-full h-[76%] min-[390px]:h-[84%] min-[768px]:h-[80%] min-[1180px]:h-[82%] min-[1280px]:h-[90%]'>

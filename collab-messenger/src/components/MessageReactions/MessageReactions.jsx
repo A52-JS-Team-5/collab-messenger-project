@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import QuickReactions from "react-quick-reactions";
 
-export default function MessageReactions({areEmojisVisible, setAreEmojisVisible, onReaction, isMessageImage = false }) {
+export default function MessageReactions({areEmojisVisible, setAreEmojisVisible, onReaction, isMessageFile = false }) {
   const reactionOptions = [
     {
       id: "laughing",
@@ -32,7 +32,7 @@ export default function MessageReactions({areEmojisVisible, setAreEmojisVisible,
 
   return (
     <div className='flex flex-row'>
-      <div className={`flex self-center ${isMessageImage ? "pl-12" : "pl-1"} text-xs hover:cursor-pointer`}>
+      <div className={`flex self-center ${isMessageFile ? "pl-12" : "pl-1"} text-xs hover:cursor-pointer`}>
         <QuickReactions
           reactionsArray={reactionOptions}
           placement='right'
@@ -56,5 +56,5 @@ MessageReactions.propTypes = {
   areEmojisVisible: PropTypes.bool,
   setAreEmojisVisible: PropTypes.func,
   onReaction: PropTypes.func,
-  isMessageImage: PropTypes.bool
+  isMessageFile: PropTypes.bool
 }
