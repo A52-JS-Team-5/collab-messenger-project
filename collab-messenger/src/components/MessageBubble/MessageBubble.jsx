@@ -17,7 +17,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
   const [reactionValues, setReactionValues] = useState([]);
   const isMessageGif = message.content.includes('giphy');
   const isMessageLink = message.content.includes('chat_uploads') || message.content.includes('channel_uploads');
-  const isMessagePdf = message.content.includes('pdf');
+  const isMessageAnImage = message.content.includes('gif') || message.content.includes('jp');
   const timeOptions = {
     year: 'numeric',
     month: 'numeric',
@@ -124,7 +124,7 @@ export default function MessageBubble({ message, messageClass, userAvatar, editM
             </div>
           ) : (
             isMessageLink === true ? (
-              isMessagePdf !== true ? (
+              isMessageAnImage === true ? (
                 <div className='flex flex-row'>
                   {editMessageOption && !isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onSaveItem}><i className="fa-regular fa-bookmark"></i></div>}
                   {editMessageOption && isSavedByUser && <div className='flex self-center pt-0.5 text-xs opacity-50 hover:cursor-pointer p-1' onClick={onUnsaveItem}><i className="fa-solid fa-bookmark"></i></div>}
