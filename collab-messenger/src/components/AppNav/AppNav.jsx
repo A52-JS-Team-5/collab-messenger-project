@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from '../../context/AuthContext';
@@ -9,12 +9,11 @@ import StatusBubble from '../StatusBubble/StatusBubble';
 import { changeStatus } from '../../services/users.services';
 import UserProfile from '../../views/UserProfile/UserProfile';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
-import { DEFAULT_USER_PHOTO } from '../../common/constants';
+import Avatar from '../Avatar/Avatar';
 
 export default function AppNav({ onLogout }) {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const [photoURL, setPhotoURL] = useState(DEFAULT_USER_PHOTO);
     const user = useContext(AppContext);
     const [currentStatus, setCurrentStatus] = useState(user.userData?.status);
 
@@ -23,12 +22,6 @@ export default function AppNav({ onLogout }) {
         changeStatus(user.userData?.handle, selection);
         setCurrentStatus(selection);
     }
-
-    useEffect(() => {
-        if (user.userData?.photoURL) {
-            setPhotoURL(user.userData.photoURL);
-        }
-    }, [user]);
 
     const handleSearch = () => {
         navigate('/app/search-results', { state: { searchTerm: searchTerm } });
@@ -73,9 +66,9 @@ export default function AppNav({ onLogout }) {
                 </div>
                 {user !== null && (
                     <div className="dropdown dropdown-end">
-                        <label tabIndex="0" className="btn btn-ghost btn-circle avatar" onClick={handleDropDownClick}>
-                            <div className="w-10 rounded-full static">
-                                <img src={photoURL} />
+                        <label tabIndex="0" className="btn btn-ghost btn-circle" onClick={handleDropDownClick}>
+                            <div className='self-center'>
+                                <Avatar user={user.userData?.handle} />
                             </div>
                             <StatusBubble view={'AppNav'} userHandle={user.userData?.handle} />
                         </label>

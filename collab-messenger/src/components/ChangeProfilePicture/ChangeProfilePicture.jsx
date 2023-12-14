@@ -1,10 +1,11 @@
 import { getAuth, updateProfile } from "firebase/auth";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import { editUserProfile } from "../../services/users.services";
 import PropTypes from 'prop-types';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Avatar from "../Avatar/Avatar";
 
 export default function ChangeProfilePicture({ handle }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -13,13 +14,6 @@ export default function ChangeProfilePicture({ handle }) {
   const [fileErrorMsg, setFileErrorMsg] = useState('');
   const auth = getAuth();
   const storage = getStorage();
-  const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg');
-
-  useEffect(() => {
-    if (auth?.currentUser.photoURL) {
-      setPhotoURL(auth.currentUser.photoURL);
-    }
-  }, [auth?.currentUser.photoURL])
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -83,7 +77,7 @@ export default function ChangeProfilePicture({ handle }) {
         </div>
         <div className="flex flex-row gap-4 max-md:flex-col items-center w-full">
           <div className='flex flex-col self-stretch w-24 h-24 aspect-square justify-top'>
-            <img src={photoURL} alt="Profile Photo" className="w-24 h-24 object-cover rounded-md" />
+            <Avatar user={handle} chatComponent="ChangeProfilePicture" />
           </div>
           <div className="flex flex-col justify-center w-full">
             <label className="label self-stretch">
